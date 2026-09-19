@@ -29,21 +29,28 @@
     updateHeader();
     window.addEventListener("scroll", updateHeader, { passive: true });
 
-    const setMenu = (open) => {
+    const setMenu = (open, restoreFocus = false) => {
         if (!menuToggle || !mobileMenu) return;
         menuToggle.setAttribute("aria-expanded", String(open));
         menuToggle.setAttribute("aria-label", open ? "بستن منو" : "باز کردن منو");
         mobileMenu.hidden = !open;
         document.body.classList.toggle("menu-open", open);
+        if (open) {
+            window.requestAnimationFrame(() => mobileMenu.querySelector("a")?.focus({ preventScroll: true }));
+        } else if (restoreFocus) {
+            menuToggle.focus({ preventScroll: true });
+        }
     };
 
     menuToggle?.addEventListener("click", () => setMenu(menuToggle.getAttribute("aria-expanded") !== "true"));
     mobileMenu?.querySelectorAll("a").forEach((link) => link.addEventListener("click", () => setMenu(false)));
     document.addEventListener("keydown", (event) => {
         if (event.key === "Escape" && menuToggle?.getAttribute("aria-expanded") === "true") {
-            setMenu(false);
-            menuToggle.focus();
+            setMenu(false, true);
         }
+    });
+    window.matchMedia("(min-width: 1051px)").addEventListener("change", (event) => {
+        if (event.matches && menuToggle?.getAttribute("aria-expanded") === "true") setMenu(false);
     });
 
     const supportDock = document.querySelector("[data-support-dock]");

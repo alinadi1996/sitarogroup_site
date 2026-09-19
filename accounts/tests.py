@@ -35,5 +35,17 @@ class AccountFlowTests(TestCase):
         self.assertContains(response, 'حساب من')
         self.assertContains(response, 'client')
         self.assertContains(response, reverse('accounts:logout'))
+        self.assertContains(response, 'mobile-auth-user')
+        self.assertContains(response, 'ورود به پنل کاربری client')
+
+    def test_mobile_navigation_has_account_action_for_guests(self):
+        response = self.client.get(reverse('home'))
+
+        self.assertContains(response, 'mobile-auth-login')
+        self.assertContains(response, 'mobile-auth-icon')
+        self.assertContains(response, 'theme-icon-sun')
+        self.assertContains(response, 'theme-icon-moon')
+        self.assertContains(response, reverse('accounts:login'))
+        self.assertNotContains(response, 'mobile-account-panel')
 
 # Create your tests here.

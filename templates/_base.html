@@ -18,7 +18,7 @@
     </script>
     <link rel="canonical" href="{{ request.scheme }}://{{ request.get_host }}{{ request.path }}">
     <link rel="icon" href="{% static 'images/sitaro-logo.svg' %}" type="image/svg+xml">
-    <link rel="stylesheet" href="{% static 'css/main.css' %}?v=20260919-contact1">
+    <link rel="stylesheet" href="{% static 'css/main.css' %}?v=20260919-theme-icons1">
     {% block extra_head %}{% endblock %}
 </head>
 <body class="{% block body_class %}{% endblock %}">
@@ -56,24 +56,39 @@
                 {% endif %}
             </div>
             <button class="theme-toggle" type="button" data-theme-toggle aria-label="فعال‌کردن حالت روشن" aria-pressed="false">
-                <svg class="theme-icon-sun" aria-hidden="true"><use href="{% static 'icons/sitaro-support-icons.svg' %}#sun"></use></svg>
-                <svg class="theme-icon-moon" aria-hidden="true"><use href="{% static 'icons/sitaro-support-icons.svg' %}#moon"></use></svg>
+                <span class="theme-icon theme-icon-sun" aria-hidden="true"></span>
+                <span class="theme-icon theme-icon-moon" aria-hidden="true"></span>
             </button>
+            {% if user.is_authenticated %}
+            <a class="mobile-auth-shortcut mobile-auth-user" href="{% url 'accounts:profile' %}" aria-label="ورود به پنل کاربری {{ user.username }}">
+                <span class="mobile-auth-avatar" aria-hidden="true">{{ user.username|first|upper }}</span>
+                <span>پنل</span>
+            </a>
+            {% else %}
+            <a class="mobile-auth-shortcut mobile-auth-login" href="{% url 'accounts:login' %}">
+                <span class="mobile-auth-icon" aria-hidden="true"></span>
+                <span>ورود</span>
+            </a>
+            {% endif %}
         </div>
         <button class="menu-toggle" type="button" aria-label="باز کردن منو" aria-expanded="false" aria-controls="mobile-menu" data-menu-toggle>
             <span></span><span></span>
         </button>
-        <div class="mobile-menu" id="mobile-menu" data-mobile-menu hidden>
-            <a href="{% url 'home' %}#services">خدمات</a>
-            <a href="{% url 'portfolio:project_list' %}">نمونه‌کارها</a>
-            <a href="{% url 'home' %}#process">فرایند ما</a>
-            <a href="{% url 'blog:blog_list' %}">مجله سیتارو</a>
-            <a href="{% url 'leads:contact' %}">تماس</a>
-            {% if user.is_authenticated %}
-            <a href="{% url 'accounts:profile' %}">پنل {{ user.username }}</a>
-            <form class="mobile-logout" action="{% url 'accounts:logout' %}" method="post">{% csrf_token %}<button type="submit">خروج از حساب</button></form>
-            {% else %}<a href="{% url 'accounts:login' %}">ورود به حساب</a>{% endif %}
-        </div>
+        <nav class="mobile-menu" id="mobile-menu" data-mobile-menu aria-label="منوی موبایل و تبلت" hidden>
+            <div class="mobile-menu-head">
+                <span><i aria-hidden="true"></i> NAVIGATION / SITARO</span>
+                <small>مسیر موردنظر را انتخاب کنید</small>
+            </div>
+            <div class="mobile-menu-links">
+                <a href="{% url 'home' %}#services"><span>خدمات</span><small>01</small></a>
+                <a href="{% url 'portfolio:project_list' %}"><span>نمونه‌کارها</span><small>02</small></a>
+                <a href="{% url 'home' %}#process"><span>فرایند ما</span><small>03</small></a>
+                <a href="{% url 'blog:blog_list' %}"><span>مجله سیتارو</span><small>04</small></a>
+                <a href="{% url 'leads:contact' %}"><span>تماس و شروع همکاری</span><small>05</small></a>
+            </div>
+
+            <div class="mobile-menu-foot"><span>SITARO / DIGITAL LAB</span><small>{ DESIGN + CODE + GROWTH }</small></div>
+        </nav>
     </header>
 
     {% block content %}{% endblock %}
