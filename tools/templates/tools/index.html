@@ -1,0 +1,106 @@
+{% extends "_base.html" %}
+
+{% block title %}ابزارهای رایگان سئو و بررسی سایت | Sitaro{% endblock %}
+{% block description %}ابزارهای رایگان Sitaro برای بررسی سئو، سرعت، ساختار فنی، محتوا و بهینه‌سازی وب‌سایت.{% endblock %}
+{% block og_title %}ابزارهای رایگان Sitaro{% endblock %}
+{% block og_description %}مجموعه ابزارهای Sitaro برای بررسی و بهینه‌سازی وب‌سایت.{% endblock %}
+{% block body_class %}tools-page{% endblock %}
+
+{% block content %}
+<main id="main" class="tools-main">
+    <header class="tools-hero" aria-labelledby="tools-page-title">
+        <div class="tools-hero-grid" aria-hidden="true"></div>
+        <div class="tools-hero-copy">
+            <span class="tools-kicker"><i></i> SITARO / WEB UTILITIES</span>
+            <h1 id="tools-page-title">ابزارهای رایگان<br><em>Sitaro</em></h1>
+            <p>مجموعه‌ای از ابزارهای کاربردی برای بررسی، بهینه‌سازی و رشد وب‌سایت شما.</p>
+            <a href="#tools-archive">مشاهده ابزارها <span aria-hidden="true">↓</span></a>
+        </div>
+        <div class="tools-console" aria-hidden="true">
+            <div><span></span><span></span><span></span><b>utilities@sitaro:~</b></div>
+            <pre><i>01</i> inspect.website()
+<i>02</i> improve.structure()
+<i>03</i> optimize.performance()
+<strong>&gt; tools.loading_</strong></pre>
+        </div>
+    </header>
+
+    <section class="tools-archive" id="tools-archive" aria-labelledby="tools-archive-title">
+        <div class="tools-section-head">
+            <div>
+                <span>TOOLS / DIRECTORY</span>
+                <h2 id="tools-archive-title">جعبه‌ابزار سیتارو</h2>
+            </div>
+            <p>{{ visible_tool_count }} ابزار در مسیر توسعه</p>
+        </div>
+
+        {% if featured_tool %}
+        <article class="featured-tool reveal-on-scroll" id="tool-{{ featured_tool.slug }}">
+            <div class="featured-tool-visual" aria-hidden="true">
+                <span class="tool-visual-orbit"></span>
+                {% if featured_tool.icon %}
+                <img src="{{ featured_tool.icon.url }}" width="72" height="72" alt="">
+                {% else %}
+                <span class="tool-code-mark">&lt;/&gt;</span>
+                {% endif %}
+                <small>FEATURED / TOOL</small>
+            </div>
+            <div class="featured-tool-copy">
+                <div class="tool-card-meta">
+                    <span>{{ featured_tool.category.title|default:"ابزار عمومی" }}</span>
+                    {% if featured_tool.status == "coming_soon" %}<b class="tool-status is-coming">به‌زودی</b>{% else %}<b class="tool-status is-active">فعال</b>{% endif %}
+                </div>
+                <h2>{{ featured_tool.title }}</h2>
+                <p>{{ featured_tool.short_description }}</p>
+                {% if featured_tool.is_available %}
+                <a class="tool-action" href="{{ featured_tool.get_absolute_url }}">ورود به ابزار <span aria-hidden="true">←</span></a>
+                {% else %}
+                <span class="tool-action is-disabled" aria-disabled="true">در حال آماده‌سازی <span aria-hidden="true">—</span></span>
+                {% endif %}
+            </div>
+        </article>
+        {% endif %}
+
+        {% if tools %}
+        <div class="tools-grid" aria-label="فهرست ابزارها">
+            {% for tool in tools %}
+            <article class="tool-card reveal-on-scroll" id="tool-{{ tool.slug }}">
+                <div class="tool-card-top">
+                    <span class="tool-card-icon" aria-hidden="true">
+                        {% if tool.icon %}<img src="{{ tool.icon.url }}" width="42" height="42" alt="">{% else %}<i></i><i></i><i></i>{% endif %}
+                    </span>
+                    <span class="tool-card-index" aria-hidden="true">{{ forloop.counter|stringformat:"02d" }}</span>
+                </div>
+                <div class="tool-card-meta">
+                    <span>{{ tool.category.title|default:"ابزار عمومی" }}</span>
+                    {% if tool.status == "coming_soon" %}<b class="tool-status is-coming">به‌زودی</b>{% else %}<b class="tool-status is-active">فعال</b>{% endif %}
+                </div>
+                <h3>{{ tool.title }}</h3>
+                <p>{{ tool.short_description }}</p>
+                {% if tool.is_available %}
+                <a class="tool-action" href="{{ tool.get_absolute_url }}">ورود به ابزار <span aria-hidden="true">←</span></a>
+                {% else %}
+                <span class="tool-action is-disabled" aria-disabled="true">در حال آماده‌سازی <span aria-hidden="true">—</span></span>
+                {% endif %}
+            </article>
+            {% endfor %}
+        </div>
+        {% elif not featured_tool %}
+        <div class="tools-empty">
+            <span aria-hidden="true">TOOLS / INITIALIZING</span>
+            <h2>ابزارهای Sitaro در حال آماده‌سازی هستند.</h2>
+            <p>پس از افزودن اولین ابزار از پنل مدیریت، اطلاعات آن در همین صفحه نمایش داده می‌شود.</p>
+        </div>
+        {% endif %}
+    </section>
+
+    <section class="tools-final-cta" aria-labelledby="tools-cta-title">
+        <span>EXPERT / REVIEW</span>
+        <div>
+            <h2 id="tools-cta-title">سایت شما به بررسی تخصصی نیاز دارد؟</h2>
+            <p>اگر ابزارها مشکلی را نشان داده‌اند یا به بررسی دقیق‌تری نیاز دارید، درخواست خود را برای Sitaro ارسال کنید.</p>
+        </div>
+        <a class="button button-primary" href="{% url 'leads:contact' %}">شروع همکاری <span aria-hidden="true">←</span></a>
+    </section>
+</main>
+{% endblock %}

@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'pages',
     'portfolio',
     'leads',
+    'tools',
 ]
 
 MIDDLEWARE = [
@@ -68,6 +69,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'tools.context_processors.header_tools',
             ],
         },
     },
@@ -139,6 +141,7 @@ MAILERS = {
 }
 
 AUTH_USER_MODEL = 'accounts.CustomUser'
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # media files
 MEDIA_URL = '/media/'
 MEDIA_ROOT = str(BASE_DIR.joinpath('media'))
