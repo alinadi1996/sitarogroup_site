@@ -1,0 +1,117 @@
+{% extends "_base.html" %}
+{% load static %}
+
+{% block title %}{% if project.meta_title %}{{ project.meta_title }}{% else %}{{ project.title }} | نمونه‌کار گروه سیتارو{% endif %}{% endblock %}
+{% block description %}{% if project.meta_description %}{{ project.meta_description }}{% else %}{{ project.summary }}{% endif %}{% endblock %}
+{% block og_title %}{% if project.meta_title %}{{ project.meta_title }}{% else %}{{ project.title }}{% endif %}{% endblock %}
+{% block og_description %}{% if project.meta_description %}{{ project.meta_description }}{% else %}{{ project.summary }}{% endif %}{% endblock %}
+{% block og_type %}article{% endblock %}
+{% block extra_head %}
+{% if project.cover %}<meta property="og:image" content="{{ request.scheme }}://{{ request.get_host }}{{ project.cover.url }}">{% endif %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "CreativeWork",
+  "name": "{{ project.title|escapejs }}",
+  "description": "{{ project.summary|escapejs }}",
+  "url": "{{ request.build_absolute_uri }}"{% if project.cover %},
+  "image": "{{ request.scheme }}://{{ request.get_host }}{{ project.cover.url }}"{% endif %}
+}
+</script>
+{% endblock %}
+{% block body_class %}portfolio-detail-page{% endblock %}
+
+{% block content %}
+<main id="main" class="case-main">
+    <article>
+        <header class="case-hero">
+            <div class="case-hero-copy">
+                <a class="case-back" href="{% url 'portfolio:project_list' %}"><span aria-hidden="true">→</span> بازگشت به نمونه‌کارها</a>
+                <span class="case-label">CASE STUDY / {{ project.industry }}</span>
+                <h1>{{ project.title }}</h1>
+                <p>{{ project.summary }}</p>
+                <div class="case-meta">
+                    <span><small>حوزه فعالیت</small><b>{{ project.industry }}</b></span>
+                    {% if project.website_url %}
+                    <a href="{{ project.website_url }}" target="_blank" rel="noopener noreferrer"><small>وب‌سایت پروژه</small><b>مشاهده سایت <span aria-hidden="true">↗</span></b></a>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="case-code-mark" aria-hidden="true"><span>{</span><b>CASE</b><span>}</span><small>{{ project.slug }}</small></div>
+        </header>
+
+        {% if project.cover %}
+        <figure class="case-cover">
+            <img src="{{ project.cover.url }}" alt="{{ project.cover_alt }}" width="1440" height="900">
+            <figcaption><span>01 / COVER</span><b>{{ project.cover_alt }}</b></figcaption>
+        </figure>
+        {% endif %}
+
+        <div class="case-story">
+            <aside class="case-rail" aria-label="فهرست بخش‌های پروژه">
+                <span>ON THIS CASE</span>
+                <a href="#introduction">معرفی</a>
+                <a href="#challenge">مسئله</a>
+                <a href="#solution">راه‌حل</a>
+                <a href="#completed-work">کارهای انجام‌شده</a>
+                {% if project.result %}<a href="#result">نتیجه</a>{% endif %}
+                {% if project.gallery_images.all %}<a href="#gallery">گالری</a>{% endif %}
+            </aside>
+
+            <div class="case-sections">
+                <section id="introduction" class="case-section">
+                    <span>01 / INTRODUCTION</span>
+                    <h2>معرفی پروژه</h2>
+                    <div class="case-copy">{{ project.introduction|linebreaks }}</div>
+                </section>
+                <section id="challenge" class="case-section">
+                    <span>02 / CHALLENGE</span>
+                    <h2>مسئله</h2>
+                    <div class="case-copy">{{ project.challenge|linebreaks }}</div>
+                </section>
+                <section id="solution" class="case-section">
+                    <span>03 / SOLUTION</span>
+                    <h2>راه‌حل</h2>
+                    <div class="case-copy">{{ project.solution|linebreaks }}</div>
+                </section>
+                <section id="completed-work" class="case-section">
+                    <span>04 / SCOPE</span>
+                    <h2>کارهای انجام‌شده</h2>
+                    <ul class="case-deliverables">
+                        {% for item in project.completed_work_items %}<li><i aria-hidden="true"></i>{{ item }}</li>{% endfor %}
+                    </ul>
+                </section>
+                {% if project.result %}
+                <section id="result" class="case-section case-result">
+                    <span>05 / OUTCOME</span>
+                    <h2>نتیجه</h2>
+                    <div class="case-copy">{{ project.result|linebreaks }}</div>
+                </section>
+                {% endif %}
+            </div>
+        </div>
+
+        {% if project.gallery_images.all %}
+        <section class="case-gallery" id="gallery" aria-labelledby="gallery-title">
+            <div class="case-gallery-head"><span>VISUAL / ARCHIVE</span><h2 id="gallery-title">گالری پروژه</h2></div>
+            <div class="case-gallery-grid">
+                {% for item in project.gallery_images.all %}
+                <figure class="reveal-on-scroll">
+                    <img src="{{ item.image.url }}" alt="{{ item.alt_text }}" width="980" height="720" loading="lazy">
+                    {% if item.caption %}<figcaption><span>{{ forloop.counter|stringformat:"02d" }}</span>{{ item.caption }}</figcaption>{% endif %}
+                </figure>
+                {% endfor %}
+            </div>
+        </section>
+        {% endif %}
+
+        <footer class="case-cta">
+            <div><span>NEXT / PROJECT</span><h2>مسئله بعدی را<br>با هم حل کنیم.</h2></div>
+            <div class="case-cta-actions">
+                <a class="button button-primary" href="{% url 'leads:contact' %}">شروع پروژه <span aria-hidden="true">←</span></a>
+                <a class="case-cta-secondary" href="{% url 'portfolio:project_list' %}">دیدن همه نمونه‌کارها</a>
+            </div>
+        </footer>
+    </article>
+</main>
+{% endblock %}

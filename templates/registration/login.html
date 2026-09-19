@@ -1,0 +1,42 @@
+{% extends "_base.html" %}
+{% load static %}
+
+{% block title %}ورود به حساب | گروه سیتارو{% endblock %}
+{% block description %}ورود امن به فضای همکاری مشتریان گروه سیتارو.{% endblock %}
+{% block robots %}noindex, nofollow{% endblock %}
+{% block body_class %}auth-page{% endblock %}
+
+{% block content %}
+<main class="auth-shell" id="main">
+    <section class="auth-card" aria-labelledby="login-title">
+        <div class="auth-card-head">
+            <span class="auth-step">ACCOUNT / 01</span>
+            <h1 id="login-title">خوش آمدید.</h1>
+            <p>برای ورود به فضای همکاری، اطلاعات حساب خود را وارد کنید.</p>
+        </div>
+        {% if form.non_field_errors %}
+        <div class="form-alert" role="alert">نام کاربری یا رمز عبور صحیح نیست. دوباره تلاش کنید.</div>
+        {% endif %}
+        <form class="auth-form" method="post" novalidate>
+            {% csrf_token %}
+            <div class="field-group">
+                <label for="{{ form.username.id_for_label }}">{{ form.username.label }}</label>
+                {{ form.username }}
+                {% for error in form.username.errors %}<p class="field-error" role="alert">{{ error }}</p>{% endfor %}
+            </div>
+            <div class="field-group">
+                <div class="label-row"><label for="{{ form.password.id_for_label }}">{{ form.password.label }}</label><a href="{% url 'password_reset' %}">رمز را فراموش کرده‌اید؟</a></div>
+                {{ form.password }}
+                {% for error in form.password.errors %}<p class="field-error" role="alert">{{ error }}</p>{% endfor %}
+            </div>
+            {% if next %}<input type="hidden" name="next" value="{{ next }}">{% endif %}
+            <button class="auth-submit" type="submit">ورود به حساب <span aria-hidden="true">←</span></button>
+        </form>
+        <p class="auth-switch">هنوز حساب ندارید؟ <a href="{% url 'accounts:signup' %}">ثبت‌نام کنید</a></p>
+    </section>
+    <aside class="auth-art" aria-hidden="true">
+        <div class="auth-planet"><i></i><span></span></div>
+        <p>DESIGN<br>BUILD<br>GROW</p>
+    </aside>
+</main>
+{% endblock %}

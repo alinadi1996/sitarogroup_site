@@ -1,0 +1,186 @@
+{% extends "_base.html" %}
+{% load static %}
+
+{% block extra_head %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "ProfessionalService",
+  "name": "گروه سیتارو",
+  "url": "{{ request.scheme }}://{{ request.get_host }}/",
+  "logo": "{{ request.scheme }}://{{ request.get_host }}{% static 'images/sitaro-logo.svg' %}",
+  "description": "طراحی و توسعه وب‌سایت اختصاصی با Django و WordPress، سئو، بهینه‌سازی عملکرد و ربات تلگرام اختصاصی",
+  "areaServed": "IR",
+  "knowsAbout": ["Django", "WordPress", "Technical SEO", "Web Performance", "UI/UX", "Telegram Bot"]
+}
+</script>
+{% endblock %}
+{% block body_class %}home-page{% endblock %}
+
+{% block content %}
+<div class="site-shell">
+    <main id="main">
+        <section class="hero" id="top" aria-labelledby="hero-title">
+            <div class="hero-grid" aria-hidden="true"></div>
+            <div class="hero-glow" aria-hidden="true"></div>
+            <div class="hero-copy">
+                <div class="eyebrow reveal-item"><span class="live-dot"></span> استودیوی طراحی و توسعه وب</div>
+                <h1 id="hero-title" class="reveal-item">ما برای رشد،<br><span>کُد می‌نویسیم.</span></h1>
+                <p class="hero-lead reveal-item">از یک ایدهٔ خام تا محصولی سریع، زیبا و قابل توسعه؛ وب‌سایت‌هایی می‌سازیم که فقط دیده نمی‌شوند، <strong>نتیجه می‌سازند.</strong></p>
+                <div class="hero-actions reveal-item">
+                    <a class="button button-primary" href="{% url 'leads:contact' %}">پروژه‌تان را شروع کنیم <span aria-hidden="true">←</span></a>
+                    <a class="text-link" href="{% url 'portfolio:project_list' %}">دیدن نمونه‌کارها <span aria-hidden="true">←</span></a>
+                </div>
+                <ul class="hero-trust reveal-item" aria-label="تخصص‌های اصلی">
+                    <li>DJANGO</li><li>WORDPRESS</li><li>TECHNICAL SEO</li><li>PERFORMANCE</li>
+                </ul>
+            </div>
+
+            <div class="hero-visual" aria-label="نمایش سه‌بعدی نماد معماری دیجیتال گروه سیتارو" role="img">
+                <canvas id="hero-canvas" aria-hidden="true"></canvas>
+                <div class="code-system" aria-hidden="true">
+                    <span class="system-core"><b>{</b> SITARO <b>}</b><small>CORE / DJANGO</small></span>
+                    <i class="system-orbit orbit-one"><b></b></i>
+                    <i class="system-orbit orbit-two"><b></b></i>
+                    <i class="system-orbit orbit-three"><b></b></i>
+                    <span class="tech-node node-python">PY</span>
+                    <span class="tech-node node-seo">SEO</span>
+                    <span class="tech-node node-ui">UI</span>
+                </div>
+                <div class="visual-hud hud-top" aria-hidden="true"><span>CODE SYSTEM</span><b>ONLINE</b></div>
+                <div class="visual-hud hud-bottom" aria-hidden="true"><span>ORBIT / 2026</span><b>60 FPS</b></div>
+                <div class="code-fragment code-a" aria-hidden="true"><span>01</span> deploy.orbit()</div>
+                <div class="code-fragment code-b" aria-hidden="true"><span>02</span> django.scale()</div>
+                <div class="code-fragment code-c" aria-hidden="true"><span>03</span> seo.accelerate()</div>
+                <noscript><div class="canvas-fallback" aria-hidden="true"></div></noscript>
+            </div>
+
+            <div class="scroll-cue" aria-hidden="true"><span>SCROLL TO EXPLORE</span><i></i></div>
+            <div class="hero-index" aria-hidden="true">[ 01 — 05 ]</div>
+        </section>
+
+        <section class="manifesto section-pad" aria-label="رویکرد گروه سیتارو">
+            <div class="section-kicker"><span>01</span><p>فراتر از یک وب‌سایت</p></div>
+            <div class="manifesto-copy reveal-on-scroll">
+                <p>ترکیب دقیق <em>طراحی، مهندسی و استراتژی</em>؛ برای ساخت تجربه‌ای که برند شما را متمایز می‌کند.</p>
+            </div>
+            <div class="manifesto-meta">
+                <span>DESIGN</span><i></i><span>ENGINEERING</span><i></i><span>GROWTH</span>
+            </div>
+        </section>
+
+        <section class="services section-pad" id="services" aria-labelledby="services-title">
+            <div class="section-heading">
+                <div><span class="section-no">02 / خدمات</span><h2 id="services-title">هر چیزی که یک<br><em>محصول دیجیتال</em> نیاز دارد.</h2></div>
+                <p>راه‌حل یکسان برای همه نداریم. معماری، رابط و مسیر رشد هر پروژه را متناسب با کسب‌وکار شما طراحی می‌کنیم.</p>
+            </div>
+            <div class="service-list">
+                <article class="service-row reveal-on-scroll">
+                    <span class="service-number">01</span>
+                    <div class="service-title"><h3>طراحی سایت اختصاصی</h3><p>تجربه کاربری و رابطی که هویت برند شما را به زبان دیجیتال ترجمه می‌کند.</p></div>
+                    <ul><li>UI / UX</li><li>Design System</li><li>Responsive</li></ul>
+                    <svg aria-hidden="true"><use href="{% static 'icons/sitaro-support-icons.svg' %}#arrow"></use></svg>
+                </article>
+                <article class="service-row reveal-on-scroll">
+                    <span class="service-number">02</span>
+                    <div class="service-title"><h3>توسعه با Django</h3><p>محصولات امن، سریع و مقیاس‌پذیر با معماری تمیز و منطق اختصاصی.</p></div>
+                    <ul><li>Python</li><li>REST API</li><li>Web App</li></ul>
+                    <svg aria-hidden="true"><use href="{% static 'icons/sitaro-support-icons.svg' %}#arrow"></use></svg>
+                </article>
+                <article class="service-row reveal-on-scroll">
+                    <span class="service-number">03</span>
+                    <div class="service-title"><h3>وردپرس حرفه‌ای</h3><p>قالب و افزونه اختصاصی، مدیریت ساده محتوا و زیرساخت آماده توسعه.</p></div>
+                    <ul><li>Custom Theme</li><li>WooCommerce</li><li>ACF</li></ul>
+                    <svg aria-hidden="true"><use href="{% static 'icons/sitaro-support-icons.svg' %}#arrow"></use></svg>
+                </article>
+                <article class="service-row reveal-on-scroll">
+                    <span class="service-number">04</span>
+                    <div class="service-title"><h3>سئو و افزایش سرعت</h3><p>زیرساخت فنی سالم، محتوای هدفمند و تجربه‌ای که گوگل و کاربر دوست دارند.</p></div>
+                    <ul><li>Core Web Vitals</li><li>Technical SEO</li><li>Audit</li></ul>
+                    <svg aria-hidden="true"><use href="{% static 'icons/sitaro-support-icons.svg' %}#arrow"></use></svg>
+                </article>
+                <article class="service-row reveal-on-scroll">
+                    <span class="service-number">05</span>
+                    <div class="service-title"><h3>ربات تلگرام اختصاصی</h3><p>اتوماسیون فروش، پشتیبانی و فرایندهای تکراری با اتصال امن به سرویس‌های کسب‌وکار.</p></div>
+                    <ul><li>Automation</li><li>API Integration</li><li>Support Bot</li></ul>
+                    <svg aria-hidden="true"><use href="{% static 'icons/sitaro-support-icons.svg' %}#arrow"></use></svg>
+                </article>
+            </div>
+        </section>
+
+        <section class="works section-pad" id="works" aria-labelledby="works-title">
+            <div class="works-head">
+                <div><span class="section-no">03 / منتخب پروژه‌ها</span><h2 id="works-title">ساخته شده برای<br><em>اثرگذاری واقعی.</em></h2></div>
+                <a class="works-all-link" href="{% url 'portfolio:project_list' %}">مشاهده همه پروژه‌ها <span aria-hidden="true">←</span></a>
+            </div>
+            <div class="projects-grid">
+                {% for project in projects %}
+                <article class="project-card reveal-on-scroll">
+                    <a class="project-visual" href="{{ project.get_absolute_url }}" aria-label="مشاهده پروژه {{ project.title }}">
+                        {% if project.cover %}<img src="{{ project.cover.url }}" alt="{{ project.cover_alt }}" loading="lazy" width="760" height="520">{% else %}<span class="project-visual-placeholder" aria-hidden="true">SITARO / CASE</span>{% endif %}
+                        <span class="project-mark">{{ forloop.counter|stringformat:"02d" }}</span>
+                    </a>
+                    <div class="project-info">
+                        <div><span>{{ forloop.counter|stringformat:"02d" }} / {{ project.industry }}</span><h3><a href="{{ project.get_absolute_url }}">{{ project.title }}</a></h3></div>
+                        <p>{{ project.summary }}</p>
+                        <a class="project-detail-link" href="{{ project.get_absolute_url }}">مشاهده جزئیات <span aria-hidden="true">←</span></a>
+                    </div>
+                </article>
+                {% empty %}
+                <p class="empty-state">نمونه‌کارهای تازه به‌زودی اضافه می‌شوند.</p>
+                {% endfor %}
+            </div>
+        </section>
+
+        <section class="process section-pad" id="process" aria-labelledby="process-title">
+            <div class="process-copy">
+                <span class="section-no">04 / مسیر همکاری</span>
+                <h2 id="process-title">شفاف، مرحله‌به‌مرحله،<br><em>بدون پیچیدگی اضافه.</em></h2>
+                <p>شما در تمام مسیر می‌دانید چه چیزی، چرا و در چه زمانی ساخته می‌شود.</p>
+            </div>
+            <ol class="process-steps">
+                <li class="reveal-on-scroll"><span>01</span><div><h3>کشف و تحلیل</h3><p>شناخت هدف، کاربر، رقبا و معیارهای موفقیت پروژه.</p></div><b>DISCOVER</b></li>
+                <li class="reveal-on-scroll"><span>02</span><div><h3>طراحی تجربه</h3><p>ساخت مسیر کاربر، وایرفریم و زبان بصری اختصاصی.</p></div><b>DESIGN</b></li>
+                <li class="reveal-on-scroll"><span>03</span><div><h3>توسعه و آزمون</h3><p>پیاده‌سازی تمیز، تست سناریوها و بهینه‌سازی عملکرد.</p></div><b>BUILD</b></li>
+                <li class="reveal-on-scroll"><span>04</span><div><h3>انتشار و رشد</h3><p>تحویل، پایش داده‌ها و بهبود مستمر پس از انتشار.</p></div><b>GROW</b></li>
+            </ol>
+        </section>
+
+        <section class="performance section-pad" aria-labelledby="performance-title">
+            <div class="performance-panel">
+                <div class="terminal" aria-hidden="true">
+                    <div class="terminal-bar"><span></span><span></span><span></span><b>sitaro@build:~</b></div>
+                    <div class="terminal-body">
+                        <p><i>$</i> npm run audit:production</p>
+                        <p class="terminal-muted">Analyzing experience...</p>
+                        <p><span class="check">✓</span> Semantic structure</p>
+                        <p><span class="check">✓</span> Critical assets optimized</p>
+                        <p><span class="check">✓</span> Core Web Vitals ready</p>
+                        <p><span class="check">✓</span> SEO foundations passed</p>
+                        <p class="terminal-result">Build ready. <b>0 errors</b><span class="cursor"></span></p>
+                    </div>
+                </div>
+                <div class="performance-copy">
+                    <span class="section-no">PERFORMANCE / FIRST</span>
+                    <h2 id="performance-title">زیبایی وقتی ارزشمند است که <em>سریع</em> باشد.</h2>
+                    <p>تصمیم‌های طراحی را با بودجه عملکرد می‌سنجیم؛ از تصاویر و فونت‌ها تا جاوااسکریپت و رندر هر صفحه.</p>
+                    <div class="score-row" aria-label="اهداف عملکرد">
+                        <div><strong data-count="95">۹۵</strong><span>Performance</span></div>
+                        <div><strong data-count="100">۱۰۰</strong><span>SEO</span></div>
+                        <div><strong data-count="100">۱۰۰</strong><span>Best Practices</span></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="contact section-pad" id="contact" aria-labelledby="contact-title">
+            <div class="contact-orbit" aria-hidden="true"><i></i><i></i><i></i></div>
+            <span class="section-no">05 / شروع یک همکاری تازه</span>
+            <h2 id="contact-title">ایده‌ای دارید که<br><em>باید ساخته شود؟</em></h2>
+            <p>درباره پروژه، هدف و چالش اصلی‌تان بگویید. ما با یک مسیر روشن برمی‌گردیم.</p>
+            <a class="button button-light" href="{% url 'leads:contact' %}">ثبت درخواست همکاری <span aria-hidden="true">←</span></a>
+        </section>
+    </main>
+
+</div>
+{% endblock %}

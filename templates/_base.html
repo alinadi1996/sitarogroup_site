@@ -1,0 +1,184 @@
+{% load static %}
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}گروه سیتارو | طراحی سایت اختصاصی، جنگو، وردپرس و سئو{% endblock %}</title>
+    <meta name="description" content="{% block description %}طراحی و توسعه وب‌سایت‌های اختصاصی با Django و WordPress، سئو تکنیکال و بهینه‌سازی سرعت توسط گروه سیتارو.{% endblock %}">
+    <meta name="robots" content="{% block robots %}index, follow{% endblock %}">
+    <meta name="theme-color" content="#07110f">
+    <meta property="og:locale" content="fa_IR">
+    <meta property="og:type" content="{% block og_type %}website{% endblock %}">
+    <meta property="og:site_name" content="گروه سیتارو">
+    <meta property="og:title" content="{% block og_title %}گروه سیتارو | معماری تجربه‌های دیجیتال{% endblock %}">
+    <meta property="og:description" content="{% block og_description %}طراحی و توسعه وب‌سایت‌های سریع، اختصاصی و آماده رشد.{% endblock %}">
+    <script>
+        try { document.documentElement.dataset.theme = localStorage.getItem("sitaro-theme") || "dark"; } catch (error) { document.documentElement.dataset.theme = "dark"; }
+    </script>
+    <link rel="canonical" href="{{ request.scheme }}://{{ request.get_host }}{{ request.path }}">
+    <link rel="icon" href="{% static 'images/sitaro-logo.svg' %}" type="image/svg+xml">
+    <link rel="stylesheet" href="{% static 'css/main.css' %}?v=20260919-contact1">
+    {% block extra_head %}{% endblock %}
+</head>
+<body class="{% block body_class %}{% endblock %}">
+    <a class="skip-link" href="#main">پرش به محتوای اصلی</a>
+    <header class="site-header global-header" data-header>
+        <a class="brand" href="{% url 'home' %}" aria-label="گروه سیتارو، صفحه اصلی">
+            <img src="{% static 'images/sitaro-logo.svg' %}" width="44" height="44" alt="">
+            <span class="brand-copy"><strong>گروه سیتارو</strong><small>SITARO / DIGITAL LAB</small></span>
+        </a>
+        <nav class="desktop-nav" aria-label="منوی اصلی">
+            <a href="{% url 'home' %}#services">خدمات</a>
+            <a href="{% url 'portfolio:project_list' %}">نمونه‌کارها</a>
+            <a href="{% url 'home' %}">ابزارها</a>
+            <a href="{% url 'blog:blog_list' %}">مجله سیتارو</a>
+            <a href="{% url 'leads:contact' %}">تماس</a>
+        </nav>
+        <div class="header-tools">
+            <div class="header-actions">
+                {% if user.is_authenticated %}
+                <div class="account-cluster">
+                    <a class="header-account" href="{% url 'accounts:profile' %}">
+                        <span class="header-avatar" aria-hidden="true">{{ user.username|first|upper }}</span>
+                        <span class="header-account-copy"><small>حساب من</small><b>{{ user.username }}</b></span>
+                    </a>
+                    <form class="header-logout-form" action="{% url 'accounts:logout' %}" method="post">
+                        {% csrf_token %}
+                        <button class="header-logout-button" type="submit" aria-label="خروج از حساب کاربری">
+                            <svg aria-hidden="true"><use href="{% static 'icons/sitaro-support-icons.svg' %}#logout"></use></svg><span>خروج</span>
+                        </button>
+                    </form>
+                </div>
+                {% else %}
+                <a class="header-login" href="{% url 'accounts:login' %}">ورود</a>
+                <a class="header-action header-action-primary" href="{% url 'leads:contact' %}">شروع پروژه <span aria-hidden="true">↙</span></a>
+                {% endif %}
+            </div>
+            <button class="theme-toggle" type="button" data-theme-toggle aria-label="فعال‌کردن حالت روشن" aria-pressed="false">
+                <svg class="theme-icon-sun" aria-hidden="true"><use href="{% static 'icons/sitaro-support-icons.svg' %}#sun"></use></svg>
+                <svg class="theme-icon-moon" aria-hidden="true"><use href="{% static 'icons/sitaro-support-icons.svg' %}#moon"></use></svg>
+            </button>
+        </div>
+        <button class="menu-toggle" type="button" aria-label="باز کردن منو" aria-expanded="false" aria-controls="mobile-menu" data-menu-toggle>
+            <span></span><span></span>
+        </button>
+        <div class="mobile-menu" id="mobile-menu" data-mobile-menu hidden>
+            <a href="{% url 'home' %}#services">خدمات</a>
+            <a href="{% url 'portfolio:project_list' %}">نمونه‌کارها</a>
+            <a href="{% url 'home' %}#process">فرایند ما</a>
+            <a href="{% url 'blog:blog_list' %}">مجله سیتارو</a>
+            <a href="{% url 'leads:contact' %}">تماس</a>
+            {% if user.is_authenticated %}
+            <a href="{% url 'accounts:profile' %}">پنل {{ user.username }}</a>
+            <form class="mobile-logout" action="{% url 'accounts:logout' %}" method="post">{% csrf_token %}<button type="submit">خروج از حساب</button></form>
+            {% else %}<a href="{% url 'accounts:login' %}">ورود به حساب</a>{% endif %}
+        </div>
+    </header>
+
+    {% block content %}{% endblock %}
+
+    <footer class="global-footer" id="footer">
+        <div class="footer-constellation" aria-hidden="true">
+            <i></i><i></i><i></i><span></span>
+        </div>
+        <div class="footer-column footer-about">
+            <a class="footer-signature" href="{% url 'home' %}">
+                <img src="{% static 'images/sitaro-logo.svg' %}" width="48" height="48" alt="">
+                <span><b>گروه سیتارو</b><small>DESIGN / CODE / GROWTH</small></span>
+            </a>
+            <p>طراحی و توسعه محصول‌های دیجیتال سریع، اختصاصی و آماده رشد.</p>
+            <a class="footer-compact-cta" href="{% url 'leads:contact' %}">شروع یک پروژه <span aria-hidden="true">←</span></a>
+        </div>
+        <div class="footer-column">
+            <strong>دسترسی سریع</strong>
+            <a href="{% url 'home' %}#services">خدمات</a>
+            <a href="{% url 'portfolio:project_list' %}">نمونه‌کارها</a>
+            <a href="{% url 'blog:blog_list' %}">مجله سیتارو</a>
+            <a href="{% url 'leads:contact' %}">تماس با ما</a>
+        </div>
+        <div class="footer-column">
+            <strong>خدمات سیتارو</strong>
+            <a href="{% url 'home' %}#services">توسعه Django</a>
+            <a href="{% url 'home' %}#services">وردپرس اختصاصی</a>
+            <a href="{% url 'home' %}#services">سئو تکنیکال</a>
+            <a href="{% url 'home' %}#services">افزایش پرفورمنس</a>
+        </div>
+        <div class="footer-column footer-trust">
+            <strong>اعتماد و مجوزها</strong>
+            <div class="trust-placeholder" aria-label="محل قرارگیری نماد اعتماد">
+                <svg aria-hidden="true"><use href="{% static 'icons/sitaro-support-icons.svg' %}#shield"></use></svg>
+                <span><b>نماد اعتماد</b><small>فضای اتصال کد اینماد</small></span>
+            </div>
+            <p>پرداخت و اطلاعات شما در بستری امن پردازش می‌شود.</p>
+        </div>
+        <div class="footer-bottom">
+            <span>© {% now "Y" %} SITARO GROUP</span>
+            <span>ساخته‌شده با دقت در ایران</span>
+            <a href="#main">بازگشت به بالا ↑</a>
+        </div>
+    </footer>
+
+    <aside class="support-dock" data-support-dock aria-label="پشتیبانی گروه سیتارو">
+        <section class="support-console" id="support-console" data-support-panel aria-hidden="true" aria-labelledby="support-title">
+            <div class="support-console-head">
+                <div>
+                    <span class="support-terminal-mark" aria-hidden="true">&gt;_</span>
+                    <span><b id="support-title">SITARO / SUPPORT</b><small><i aria-hidden="true"></i> اپراتور آنلاین</small></span>
+                </div>
+                <button class="support-close" type="button" data-support-close aria-label="بستن پنجره پشتیبانی"><span aria-hidden="true"></span></button>
+            </div>
+
+            <div class="support-log" data-support-log aria-live="polite" aria-relevant="additions">
+                <div class="support-message support-message-agent">
+                    <span class="support-prompt" aria-hidden="true">01</span>
+                    <p>سلام! موضوع پروژه یا سؤال‌تان را بنویسید. این گفت‌وگوی سریع شما را به مسیر مناسب هدایت می‌کند.</p>
+                </div>
+            </div>
+
+            <div class="support-quick" aria-label="پرسش‌های پیشنهادی">
+                <button type="button" data-support-quick="برای طراحی سایت اختصاصی مشاوره می‌خواهم">طراحی اختصاصی</button>
+                <button type="button" data-support-quick="برای بهینه‌سازی سرعت سایت راهنمایی می‌خواهم">افزایش سرعت</button>
+                <button type="button" data-support-quick="درباره خدمات سئو سؤال دارم">سئو</button>
+            </div>
+
+            <form class="support-composer" data-support-form>
+                <label class="sr-only" for="support-message">پیام شما</label>
+                <input id="support-message" data-support-input type="text" maxlength="280" placeholder="پیام خود را بنویسید..." autocomplete="off">
+                <button type="submit" aria-label="ارسال پیام">
+                    <svg aria-hidden="true"><use href="{% static 'icons/sitaro-support-icons.svg' %}#send"></use></svg>
+                </button>
+            </form>
+
+            <div class="support-socials">
+                <button class="support-socials-toggle" type="button" data-social-toggle aria-expanded="false" aria-controls="support-social-list">
+                    <span>شبکه‌های اجتماعی</span><span aria-hidden="true">+</span>
+                </button>
+                <div class="support-social-list" id="support-social-list" data-social-list hidden>
+                    <button type="button" data-support-social="تلگرام" data-support-url="" aria-label="ارتباط از طریق تلگرام">
+                        <svg aria-hidden="true"><use href="{% static 'icons/sitaro-support-icons.svg' %}#telegram"></use></svg><span>تلگرام</span>
+                    </button>
+                    <button type="button" data-support-social="اینستاگرام" data-support-url="" aria-label="ارتباط از طریق اینستاگرام">
+                        <svg aria-hidden="true"><use href="{% static 'icons/sitaro-support-icons.svg' %}#instagram"></use></svg><span>اینستاگرام</span>
+                    </button>
+                    <button type="button" data-support-social="واتساپ" data-support-url="" aria-label="ارتباط از طریق واتساپ">
+                        <svg aria-hidden="true"><use href="{% static 'icons/sitaro-support-icons.svg' %}#whatsapp"></use></svg><span>واتساپ</span>
+                    </button>
+                </div>
+            </div>
+            <a class="support-project-link" href="{% url 'leads:contact' %}">ثبت درخواست رسمی <span aria-hidden="true">←</span></a>
+        </section>
+
+        <button class="support-launcher" type="button" data-support-toggle aria-expanded="false" aria-controls="support-console">
+            <span class="support-launcher-radar" aria-hidden="true"></span>
+            <span class="support-launcher-icon">
+                <svg aria-hidden="true"><use href="{% static 'icons/sitaro-support-icons.svg' %}#support"></use></svg>
+            </span>
+            <span class="support-launcher-copy"><b>پشتیبانی آنلاین</b><small>پاسخ‌گویی سریع</small></span>
+            <span class="support-unread" data-support-unread aria-label="یک پیام خوانده‌نشده">1</span>
+        </button>
+    </aside>
+    <script src="{% static 'js/main.js' %}" defer></script>
+    {% block extra_scripts %}{% endblock %}
+</body>
+</html>

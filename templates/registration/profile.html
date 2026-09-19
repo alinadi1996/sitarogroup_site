@@ -1,0 +1,88 @@
+{% extends "_base.html" %}
+{% load static %}
+
+{% block title %}پنل کاربری | گروه سیتارو{% endblock %}
+{% block description %}مدیریت حساب و تنظیمات امنیتی کاربر در گروه سیتارو.{% endblock %}
+{% block robots %}noindex, nofollow{% endblock %}
+{% block body_class %}dashboard-page{% endblock %}
+
+{% block content %}
+<div class="dashboard-shell">
+    <aside class="dashboard-sidebar" aria-label="منوی پنل کاربری">
+        <div class="profile-identity">
+            <span class="profile-avatar" aria-hidden="true">{{ user.username|first|upper }}</span>
+            <div><small>خوش آمدید</small><strong>{{ user.username }}</strong></div>
+        </div>
+        <nav class="dashboard-nav">
+            <a class="is-active" href="#overview" aria-current="page">
+                <svg aria-hidden="true"><use href="{% static 'icons/sitaro-support-icons.svg' %}#dashboard"></use></svg>
+                نمای کلی
+            </a>
+            <a href="{% url 'password_change' %}">
+                <svg aria-hidden="true"><use href="{% static 'icons/sitaro-support-icons.svg' %}#lock"></use></svg>
+                تغییر رمز عبور
+            </a>
+            <a href="{% url 'password_reset' %}">
+                <svg aria-hidden="true"><use href="{% static 'icons/sitaro-support-icons.svg' %}#refresh"></use></svg>
+                بازیابی رمز عبور
+            </a>
+        </nav>
+        <form class="dashboard-logout" action="{% url 'accounts:logout' %}" method="post">
+            {% csrf_token %}
+            <button type="submit">
+                <svg aria-hidden="true"><use href="{% static 'icons/sitaro-support-icons.svg' %}#logout"></use></svg>
+                خروج امن از حساب
+            </button>
+        </form>
+    </aside>
+
+    <main class="dashboard-main" id="main">
+        <section class="dashboard-intro" id="overview">
+            <div>
+                <span class="dashboard-kicker">ACCOUNT / OVERVIEW</span>
+                <h1>فضای شخصی<br><em>{{ user.username }}</em></h1>
+            </div>
+            <p>تنظیمات امنیتی حساب خود را مدیریت کنید و مسیرهای فعال بازیابی را همیشه در دسترس داشته باشید.</p>
+        </section>
+
+        <section class="account-status-grid" aria-label="وضعیت حساب">
+            <article>
+                <span>01 / IDENTITY</span>
+                <small>نام کاربری</small>
+                <strong>{{ user.username }}</strong>
+            </article>
+            <article>
+                <span>02 / EMAIL</span>
+                <small>ایمیل حساب</small>
+                <strong class="account-email">{{ user.email|default:"ایمیلی ثبت نشده" }}</strong>
+            </article>
+            <article class="security-score">
+                <span>03 / SECURITY</span>
+                <small>وضعیت امنیت</small>
+                <strong>محافظت فعال <i></i></strong>
+            </article>
+        </section>
+
+        <section class="security-panel" aria-labelledby="security-title">
+            <div class="security-panel-head">
+                <span>SECURITY CENTER</span>
+                <div><h2 id="security-title">مرکز امنیت حساب</h2><p>ابزارهای ضروری برای حفظ دسترسی و امنیت حساب شما.</p></div>
+            </div>
+            <div class="security-actions">
+                <a class="security-action security-action-primary" href="{% url 'password_change' %}">
+                    <span class="action-icon"><svg aria-hidden="true"><use href="{% static 'icons/sitaro-support-icons.svg' %}#lock"></use></svg></span>
+                    <span><small>پیشنهاد امنیتی</small><strong>تغییر رمز عبور</strong><p>رمز فعلی را با یک رمز امن و تازه جایگزین کنید.</p></span>
+                    <svg class="action-arrow" aria-hidden="true"><use href="{% static 'icons/sitaro-support-icons.svg' %}#arrow"></use></svg>
+                </a>
+                <a class="security-action" href="{% url 'password_reset' %}">
+                    <span class="action-icon"><svg aria-hidden="true"><use href="{% static 'icons/sitaro-support-icons.svg' %}#refresh"></use></svg></span>
+                    <span><small>دسترسی اضطراری</small><strong>بازیابی رمز عبور</strong><p>لینک امن انتخاب رمز جدید را از طریق ایمیل دریافت کنید.</p></span>
+                    <svg class="action-arrow" aria-hidden="true"><use href="{% static 'icons/sitaro-support-icons.svg' %}#arrow"></use></svg>
+                </a>
+            </div>
+        </section>
+
+        <p class="dashboard-footnote"><i></i> سیتارو هیچ‌وقت رمز عبور شما را در پیام یا تماس تلفنی درخواست نمی‌کند.</p>
+    </main>
+</div>
+{% endblock %}

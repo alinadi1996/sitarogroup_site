@@ -1,0 +1,95 @@
+{% extends "_base.html" %}
+{% load static %}
+
+{% block title %}مجله سیتارو | طراحی سایت، جنگو و سئو{% endblock %}
+{% block description %}مقاله‌ها و تجربه‌های گروه سیتارو درباره طراحی محصول، توسعه جنگو، وردپرس، سئو و بهینه‌سازی عملکرد وب.{% endblock %}
+{% block body_class %}blog-page{% endblock %}
+
+{% block content %}
+<div class="journal-shell">
+    <main id="main">
+        <section class="journal-hero">
+            <div class="journal-heading">
+                <span>IDEAS / CODE / GROWTH</span>
+                <h1>مجله<br><em>سیتارو</em></h1>
+            </div>
+            <div class="journal-manifesto">
+                <p>یادداشت‌هایی برای ساختن وبِ سریع‌تر، روشن‌تر و اثرگذارتر.</p>
+                <div><span>طراحی محصول</span><span>توسعه وب</span><span>سئو و عملکرد</span></div>
+            </div>
+            <div class="journal-orbit" aria-hidden="true"><i></i><i></i><span></span></div>
+        </section>
+
+        <section class="journal-feed" data-blog-feed data-view="grid" aria-labelledby="latest-posts">
+            <div class="journal-section-head">
+                <div><span>01 / ARCHIVE</span><h2 id="latest-posts">تازه‌ترین نوشته‌ها</h2></div>
+                <div class="journal-feed-meta">
+                    <p>{{ blog_list|length }} یادداشت منتشرشده</p>
+                    <div class="journal-view-switch" role="group" aria-label="نحوه نمایش مقاله‌ها">
+                        <button type="button" data-blog-view="grid" aria-pressed="true" aria-label="نمایش شبکه‌ای">
+                            <svg aria-hidden="true"><use href="{% static 'icons/sitaro-support-icons.svg' %}#dashboard"></use></svg><span>شبکه‌ای</span>
+                        </button>
+                        <button type="button" data-blog-view="list" aria-pressed="false" aria-label="نمایش فهرستی">
+                            <svg aria-hidden="true"><use href="{% static 'icons/sitaro-support-icons.svg' %}#list"></use></svg><span>فهرستی</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="journal-channel-bar">
+                <div><span>CHANNEL / FOLLOW</span><p>ادامه یادداشت‌ها و نکته‌های کوتاه سیتارو در شبکه‌های اجتماعی.</p></div>
+                <div class="journal-social-actions" aria-label="شبکه‌های اجتماعی سیتارو">
+                    <button type="button" data-journal-social="تلگرام"><svg aria-hidden="true"><use href="{% static 'icons/sitaro-support-icons.svg' %}#telegram"></use></svg><span>تلگرام</span></button>
+                    <button type="button" data-journal-social="اینستاگرام"><svg aria-hidden="true"><use href="{% static 'icons/sitaro-support-icons.svg' %}#instagram"></use></svg><span>اینستاگرام</span></button>
+                    <button type="button" data-journal-social="واتساپ"><svg aria-hidden="true"><use href="{% static 'icons/sitaro-support-icons.svg' %}#whatsapp"></use></svg><span>واتساپ</span></button>
+                </div>
+            </div>
+
+            {% for post in blog_list %}
+                {% if forloop.first %}
+                <article class="featured-post">
+                    <a class="featured-post-art" href="{% url 'blog:blog_detail' post.pk %}" aria-label="مطالعه {{ post.title }}">
+                        <span class="post-code">ARTICLE / {{ post.pk|stringformat:"02d" }}</span>
+                        {% if post.cover %}
+                        <img class="post-cover post-cover-featured" src="{{ post.cover.url }}" width="960" height="720" alt="تصویر شاخص {{ post.title }}" fetchpriority="high" decoding="async">
+                        {% else %}
+                        <div class="code-window" aria-hidden="true"><i></i><i></i><i></i><b></b><span></span></div>
+                        {% endif %}
+                    </a>
+                    <div class="featured-post-copy">
+                        <div class="post-meta"><span>{{ post.datetime_created|date:"Y/m/d" }}</span><span>توسط {{ post.author }}</span></div>
+                        <h2><a href="{% url 'blog:blog_detail' post.pk %}">{{ post.title }}</a></h2>
+                        <p>{{ post.content|striptags|truncatewords:30 }}</p>
+                        <a class="read-article" href="{% url 'blog:blog_detail' post.pk %}">مطالعه مقاله <span aria-hidden="true">←</span></a>
+                    </div>
+                </article>
+                {% else %}
+                    {% if forloop.counter == 2 %}<div class="post-grid">{% endif %}
+                    <article class="post-card">
+                        <a class="post-card-top" href="{% url 'blog:blog_detail' post.pk %}" aria-label="مطالعه {{ post.title }}">
+                            {% if post.cover %}<img class="post-cover" src="{{ post.cover.url }}" width="640" height="420" alt="تصویر شاخص {{ post.title }}" loading="lazy" decoding="async">{% endif %}
+                            <span>{{ forloop.counter|stringformat:"02d" }}</span><i aria-hidden="true"></i>
+                        </a>
+                        <div class="post-meta"><span>{{ post.datetime_created|date:"Y/m/d" }}</span><span>{{ post.author }}</span></div>
+                        <h3><a href="{% url 'blog:blog_detail' post.pk %}">{{ post.title }}</a></h3>
+                        <p>{{ post.content|striptags|truncatewords:22 }}</p>
+                        <a class="post-card-link" href="{% url 'blog:blog_detail' post.pk %}" aria-label="ادامه مطالعه {{ post.title }}">
+                            ادامه مطلب
+                            <svg aria-hidden="true"><use href="{% static 'icons/sitaro-support-icons.svg' %}#arrow"></use></svg>
+                        </a>
+                    </article>
+                    {% if forloop.last %}</div>{% endif %}
+                {% endif %}
+            {% empty %}
+                <div class="journal-empty">
+                    <span>NO ARTICLES / YET</span>
+                    <h2>اولین یادداشت<br>در راه است.</h2>
+                    <p>به‌زودی درباره طراحی، توسعه و رشد محصول اینجا می‌نویسیم.</p>
+                    <a href="{% url 'home' %}">بازگشت به صفحه اصلی <span aria-hidden="true">←</span></a>
+                </div>
+            {% endfor %}
+        </section>
+    </main>
+
+</div>
+{% endblock %}

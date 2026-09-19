@@ -1,0 +1,162 @@
+{% extends "_base.html" %}
+{% load static %}
+
+{% block title %}تماس با ما و شروع همکاری | گروه سیتارو{% endblock %}
+{% block description %}برای طراحی سایت، توسعه اختصاصی، سئو، بهینه‌سازی عملکرد یا اتوماسیون، درخواست همکاری خود را برای گروه سیتارو ارسال کنید.{% endblock %}
+{% block og_title %}شروع همکاری با گروه سیتارو{% endblock %}
+{% block og_description %}درباره پروژه‌تان بگویید تا نیاز، مسیر اجرا و گام بعدی را بررسی کنیم.{% endblock %}
+{% block body_class %}contact-page{% endblock %}
+
+{% block content %}
+<main id="main" class="contact-main">
+    <header class="contact-hero" aria-labelledby="contact-page-title">
+        <div class="contact-hero-grid" aria-hidden="true"></div>
+        <div class="contact-hero-copy">
+            <span class="contact-kicker"><i></i> START / A PROJECT</span>
+            <h1 id="contact-page-title">بیایید درباره<br><em>پروژه‌تان صحبت کنیم</em></h1>
+            <p>از طراحی سایت و توسعه اختصاصی تا سئو، افزایش پرفورمنس و اتوماسیون؛ مسئله را بررسی می‌کنیم تا مسیر درست همکاری روشن شود.</p>
+            <a href="#collaboration-form">شروع فرم <span aria-hidden="true">↓</span></a>
+        </div>
+        <div class="contact-terminal" aria-hidden="true">
+            <div><span></span><span></span><span></span><b>new-project.sitaro</b></div>
+            <pre><i>01</i> listen(requirements)
+<i>02</i> inspect(context)
+<i>03</i> define(solution)
+<strong>&gt; start.collaboration_</strong></pre>
+        </div>
+    </header>
+
+    <section class="contact-workspace" aria-labelledby="form-title">
+        <div class="contact-form-panel" id="collaboration-form">
+            <div class="contact-section-head">
+                <span>01 / PROJECT BRIEF</span>
+                <h2 id="form-title">فرم شروع همکاری</h2>
+                <p>فیلدهای ضروری با برچسب «الزامی» مشخص شده‌اند.</p>
+            </div>
+
+            {% if messages %}
+            <div class="contact-messages" aria-live="polite">
+                {% for message in messages %}
+                <div class="contact-success" role="status">
+                    <svg aria-hidden="true"><use href="{% static 'icons/sitaro-support-icons.svg' %}#check"></use></svg>
+                    <div><strong>درخواست ثبت شد</strong><p>{{ message }}</p></div>
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            <form class="contact-form" method="post" action="{% url 'leads:contact' %}" novalidate>
+                {% csrf_token %}
+
+                {% if form.non_field_errors %}
+                <div class="contact-form-alert" role="alert">
+                    <strong>فرم نیاز به بررسی دارد.</strong>
+                    {{ form.non_field_errors }}
+                </div>
+                {% endif %}
+
+                <div class="honeypot-field" aria-hidden="true">
+                    {{ form.company_website.label_tag }}
+                    {{ form.company_website }}
+                    {{ form.company_website.errors }}
+                </div>
+
+                <div class="contact-field{% if form.full_name.errors %} has-error{% endif %}">
+                    <div class="contact-label-row"><label for="{{ form.full_name.id_for_label }}">{{ form.full_name.label }}</label><span>الزامی</span></div>
+                    {{ form.full_name }}
+                    <small id="id_full_name_help">نام فردی که برای هماهنگی پروژه با او در ارتباط باشیم.</small>
+                    {% if form.full_name.errors %}<ul class="contact-errors" id="id_full_name_errors" role="alert">{% for error in form.full_name.errors %}<li><b aria-hidden="true">!</b>{{ error }}</li>{% endfor %}</ul>{% endif %}
+                </div>
+
+                <div class="contact-field{% if form.phone.errors %} has-error{% endif %}">
+                    <div class="contact-label-row"><label for="{{ form.phone.id_for_label }}">{{ form.phone.label }}</label><span>الزامی</span></div>
+                    {{ form.phone }}
+                    <small id="id_phone_help">فرمت قابل قبول: 09xxxxxxxxx یا +989xxxxxxxxx</small>
+                    {% if form.phone.errors %}<ul class="contact-errors" id="id_phone_errors" role="alert">{% for error in form.phone.errors %}<li><b aria-hidden="true">!</b>{{ error }}</li>{% endfor %}</ul>{% endif %}
+                </div>
+
+                <div class="contact-field{% if form.service.errors %} has-error{% endif %}">
+                    <div class="contact-label-row"><label for="{{ form.service.id_for_label }}">{{ form.service.label }}</label><span>الزامی</span></div>
+                    {{ form.service }}
+                    <small id="id_service_help">نزدیک‌ترین گزینه به نیاز فعلی را انتخاب کنید.</small>
+                    {% if form.service.errors %}<ul class="contact-errors" id="id_service_errors" role="alert">{% for error in form.service.errors %}<li><b aria-hidden="true">!</b>{{ error }}</li>{% endfor %}</ul>{% endif %}
+                </div>
+
+                <div class="contact-field{% if form.project_description.errors %} has-error{% endif %}">
+                    <div class="contact-label-row"><label for="{{ form.project_description.id_for_label }}">{{ form.project_description.label }}</label><span>الزامی</span></div>
+                    {{ form.project_description }}
+                    <small id="id_project_description_help">هدف، چالش اصلی و خروجی موردانتظار برای بررسی اولیه کافی است.</small>
+                    {% if form.project_description.errors %}<ul class="contact-errors" id="id_project_description_errors" role="alert">{% for error in form.project_description.errors %}<li><b aria-hidden="true">!</b>{{ error }}</li>{% endfor %}</ul>{% endif %}
+                </div>
+
+                <div class="contact-field{% if form.website_url.errors %} has-error{% endif %}">
+                    <div class="contact-label-row"><label for="{{ form.website_url.id_for_label }}">{{ form.website_url.label }}</label><span class="is-optional">اختیاری</span></div>
+                    {{ form.website_url }}
+                    <small id="id_website_url_help">اگر وب‌سایت فعالی دارید، نشانی کامل آن را وارد کنید.</small>
+                    {% if form.website_url.errors %}<ul class="contact-errors" id="id_website_url_errors" role="alert">{% for error in form.website_url.errors %}<li><b aria-hidden="true">!</b>{{ error }}</li>{% endfor %}</ul>{% endif %}
+                </div>
+
+                <div class="contact-field{% if form.estimated_budget.errors %} has-error{% endif %}">
+                    <div class="contact-label-row"><label for="{{ form.estimated_budget.id_for_label }}">{{ form.estimated_budget.label }}</label><span class="is-optional">اختیاری</span></div>
+                    {{ form.estimated_budget }}
+                    <small id="id_estimated_budget_help">این اطلاعات فقط برای پیشنهاد راه‌حل متناسب استفاده می‌شود.</small>
+                    {% if form.estimated_budget.errors %}<ul class="contact-errors" id="id_estimated_budget_errors" role="alert">{% for error in form.estimated_budget.errors %}<li><b aria-hidden="true">!</b>{{ error }}</li>{% endfor %}</ul>{% endif %}
+                </div>
+
+                <div class="contact-field{% if form.preferred_contact_method.errors %} has-error{% endif %}">
+                    <div class="contact-label-row"><label for="{{ form.preferred_contact_method.id_for_label }}">{{ form.preferred_contact_method.label }}</label><span class="is-optional">اختیاری</span></div>
+                    {{ form.preferred_contact_method }}
+                    <small id="id_preferred_contact_method_help">در صورت عدم انتخاب، تماس تلفنی در نظر گرفته می‌شود.</small>
+                    {% if form.preferred_contact_method.errors %}<ul class="contact-errors" id="id_preferred_contact_method_errors" role="alert">{% for error in form.preferred_contact_method.errors %}<li><b aria-hidden="true">!</b>{{ error }}</li>{% endfor %}</ul>{% endif %}
+                </div>
+
+                <button class="contact-submit" type="submit">
+                    <span><b>ارسال درخواست همکاری</b><small>PROJECT.REQUEST()</small></span>
+                    <svg aria-hidden="true"><use href="{% static 'icons/sitaro-support-icons.svg' %}#send"></use></svg>
+                </button>
+                <p class="contact-privacy"><svg aria-hidden="true"><use href="{% static 'icons/sitaro-support-icons.svg' %}#lock"></use></svg>اطلاعات این فرم فقط برای بررسی و هماهنگی همین درخواست استفاده می‌شود.</p>
+            </form>
+        </div>
+
+        <aside class="contact-aside" aria-labelledby="direct-contact-title">
+            <div class="contact-aside-head"><span>02 / DIRECT</span><h2 id="direct-contact-title">راه‌های ارتباط مستقیم</h2><p>اطلاعات این بخش از تنظیمات پروژه خوانده می‌شود و بدون داده واقعی، هیچ شماره یا نشانی فرضی نمایش داده نمی‌شود.</p></div>
+            <div class="contact-channel-list">
+                {% if contact_phone %}
+                <a href="tel:{{ contact_phone }}"><svg aria-hidden="true"><use href="{% static 'icons/sitaro-support-icons.svg' %}#support"></use></svg><span><small>تماس تلفنی</small><b dir="ltr">{{ contact_phone }}</b></span><i aria-hidden="true">↙</i></a>
+                {% else %}
+                <div class="contact-channel-placeholder"><svg aria-hidden="true"><use href="{% static 'icons/sitaro-support-icons.svg' %}#support"></use></svg><span><small>تماس تلفنی</small><b>اطلاعات تماس هنوز تنظیم نشده</b></span><code>PHONE / PLACEHOLDER</code></div>
+                {% endif %}
+                {% if whatsapp_url %}
+                <a href="{{ whatsapp_url }}" target="_blank" rel="noopener noreferrer"><svg aria-hidden="true"><use href="{% static 'icons/sitaro-support-icons.svg' %}#whatsapp"></use></svg><span><small>واتساپ</small><b>شروع گفت‌وگو</b></span><i aria-hidden="true">↗</i></a>
+                {% else %}
+                <div class="contact-channel-placeholder"><svg aria-hidden="true"><use href="{% static 'icons/sitaro-support-icons.svg' %}#whatsapp"></use></svg><span><small>واتساپ</small><b>لینک رسمی هنوز تنظیم نشده</b></span><code>WHATSAPP / PLACEHOLDER</code></div>
+                {% endif %}
+                {% if telegram_url %}
+                <a href="{{ telegram_url }}" target="_blank" rel="noopener noreferrer"><svg aria-hidden="true"><use href="{% static 'icons/sitaro-support-icons.svg' %}#telegram"></use></svg><span><small>تلگرام</small><b>شروع گفت‌وگو</b></span><i aria-hidden="true">↗</i></a>
+                {% else %}
+                <div class="contact-channel-placeholder"><svg aria-hidden="true"><use href="{% static 'icons/sitaro-support-icons.svg' %}#telegram"></use></svg><span><small>تلگرام</small><b>لینک رسمی هنوز تنظیم نشده</b></span><code>TELEGRAM / PLACEHOLDER</code></div>
+                {% endif %}
+            </div>
+            <div class="contact-response-note"><i aria-hidden="true"></i><span><b>پس از ثبت چه می‌شود؟</b><small>درخواست در پنل مدیریت ثبت می‌شود تا تیم، موضوع و راه ارتباط ترجیحی شما را بررسی کند.</small></span></div>
+        </aside>
+    </section>
+
+    <section class="contact-benefits" aria-labelledby="benefits-title">
+        <div class="contact-section-head"><span>03 / PRINCIPLES</span><h2 id="benefits-title">شروع شفاف، مسیر مطمئن</h2></div>
+        <div class="contact-benefit-grid">
+            <article><span>01</span><h3>پاسخ اولیه در یک روز کاری</h3><p>برای تأیید دریافت درخواست و هماهنگی گام بعدی با شما در ارتباط خواهیم بود.</p></article>
+            <article><span>02</span><h3>بررسی نیاز پیش از اعلام هزینه</h3><p>پیشنهاد اجرا بعد از شناخت دامنه، هدف و محدودیت‌های واقعی پروژه آماده می‌شود.</p></article>
+            <article><span>03</span><h3>حفظ محرمانگی اطلاعات پروژه</h3><p>جزئیات ثبت‌شده فقط در مسیر بررسی و هماهنگی همان پروژه استفاده می‌شود.</p></article>
+        </div>
+    </section>
+
+    <section class="contact-faq" aria-labelledby="faq-title">
+        <div class="contact-faq-intro"><span>04 / FAQ</span><h2 id="faq-title">پیش از شروع<br>چه چیزهایی بدانیم؟</h2><p>پاسخ کوتاه به سه پرسش رایج پیش از همکاری.</p></div>
+        <div class="contact-faq-list">
+            <details><summary><span>هزینه پروژه چگونه مشخص می‌شود؟</span><b aria-hidden="true">+</b></summary><p>هزینه پس از بررسی نیازها، دامنه کار، پیچیدگی فنی و خروجی‌های موردانتظار اعلام می‌شود؛ بنابراین رقم ثابت و حدسی پیش از شناخت پروژه ارائه نمی‌کنیم.</p></details>
+            <details><summary><span>زمان اجرای پروژه چقدر است؟</span><b aria-hidden="true">+</b></summary><p>زمان اجرا به دامنه و اولویت‌های پروژه وابسته است. پس از گفت‌وگوی اولیه، مسیر و برآورد زمانی متناسب با همان پروژه مشخص می‌شود.</p></details>
+            <details><summary><span>بعد از تحویل، پشتیبانی هم دارید؟</span><b aria-hidden="true">+</b></summary><p>نوع و بازه پشتیبانی در پیشنهاد همکاری شفاف می‌شود و می‌تواند بر اساس نیاز پروژه شامل نگهداری، بهبود یا توسعه مرحله‌ای باشد.</p></details>
+        </div>
+    </section>
+</main>
+{% endblock %}

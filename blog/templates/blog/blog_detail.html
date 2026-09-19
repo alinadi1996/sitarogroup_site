@@ -1,0 +1,85 @@
+{% extends "_base.html" %}
+{% load static %}
+
+{% block title %}{{ post.title }} | مجله سیتارو{% endblock %}
+{% block description %}{{ post.content|striptags|truncatewords:24 }}{% endblock %}
+{% block og_title %}{{ post.title }} | مجله سیتارو{% endblock %}
+{% block og_description %}{{ post.content|striptags|truncatewords:24 }}{% endblock %}
+{% block extra_head %}{% if post.cover %}<meta property="og:image" content="{{ request.scheme }}://{{ request.get_host }}{{ post.cover.url }}">{% endif %}{% endblock %}
+{% block body_class %}blog-page article-page{% endblock %}
+
+{% block content %}
+<div class="journal-shell">
+    <main id="main">
+        <article class="article-layout">
+            <header class="article-hero">
+                <div class="article-index"><span>ARTICLE</span><strong>{{ post.pk|stringformat:"02d" }}</strong></div>
+                <div class="article-title-wrap">
+                    <p class="article-label">SITARO / INSIGHT</p>
+                    <h1>{{ post.title }}</h1>
+                    <div class="article-byline">
+                        <span>نویسنده <b>{{ post.author }}</b></span>
+                        <span>انتشار <time datetime="{{ post.datetime_created|date:'c' }}">{{ post.datetime_created|date:"Y/m/d" }}</time></span>
+                        {% if post.datetime_updated != post.datetime_created %}<span>به‌روزرسانی <time datetime="{{ post.datetime_updated|date:'c' }}">{{ post.datetime_updated|date:"Y/m/d" }}</time></span>{% endif %}
+                    </div>
+                </div>
+                <div class="article-hero-art" aria-hidden="true"><i></i><i></i><i></i><span></span><b></b></div>
+            </header>
+
+            {% if post.cover %}
+            <figure class="article-cover">
+                <img src="{{ post.cover.url }}" width="1440" height="850" alt="تصویر شاخص {{ post.title }}" fetchpriority="high" decoding="async">
+                <figcaption><span>VISUAL / STORY</span><b>{{ post.title }}</b></figcaption>
+            </figure>
+            {% endif %}
+
+            <div class="article-body-grid">
+                <aside class="article-aside">
+                    <span>READ / THINK / BUILD</span>
+                    <div class="article-rule"><i></i></div>
+                    <a href="{% url 'blog:blog_list' %}">مشاهده آرشیو <span aria-hidden="true">←</span></a>
+                    <div class="article-social-block">
+                        <b>همراه سیتارو</b>
+                        <div class="journal-social-actions" aria-label="شبکه‌های اجتماعی سیتارو">
+                            <button type="button" data-journal-social="تلگرام" aria-label="تلگرام سیتارو"><svg aria-hidden="true"><use href="{% static 'icons/sitaro-support-icons.svg' %}#telegram"></use></svg></button>
+                            <button type="button" data-journal-social="اینستاگرام" aria-label="اینستاگرام سیتارو"><svg aria-hidden="true"><use href="{% static 'icons/sitaro-support-icons.svg' %}#instagram"></use></svg></button>
+                            <button type="button" data-journal-social="واتساپ" aria-label="واتساپ سیتارو"><svg aria-hidden="true"><use href="{% static 'icons/sitaro-support-icons.svg' %}#whatsapp"></use></svg></button>
+                        </div>
+                    </div>
+                </aside>
+                <div class="article-content">
+                    {{ post.content|linebreaks }}
+                </div>
+            </div>
+
+            <section class="related-posts" aria-labelledby="related-title">
+                <div class="related-posts-head">
+                    <div><span>MORE / INSIGHTS</span><h2 id="related-title">مطالب مرتبط</h2></div>
+                    <a href="{% url 'blog:blog_list' %}">همه مقاله‌ها <span aria-hidden="true">←</span></a>
+                </div>
+                <div class="related-post-grid">
+                    {% for related in post.author.post_set.all|slice:":4" %}
+                        {% if related.pk != post.pk %}
+                        <article class="related-post-card">
+                            <a class="related-post-cover" href="{% url 'blog:blog_detail' related.pk %}" aria-label="مطالعه {{ related.title }}">
+                                {% if related.cover %}<img src="{{ related.cover.url }}" width="480" height="300" loading="lazy" decoding="async" alt="تصویر شاخص {{ related.title }}">{% else %}<span aria-hidden="true">ARTICLE / {{ related.pk|stringformat:"02d" }}</span>{% endif %}
+                            </a>
+                            <div><time datetime="{{ related.datetime_created|date:'c' }}">{{ related.datetime_created|date:"Y/m/d" }}</time><h3><a href="{% url 'blog:blog_detail' related.pk %}">{{ related.title }}</a></h3></div>
+                        </article>
+                        {% endif %}
+                    {% empty %}
+                        <p class="related-empty">مطلب مرتبط دیگری هنوز منتشر نشده است.</p>
+                    {% endfor %}
+                    <p class="related-empty related-empty-fallback">به‌محض انتشار یادداشت بعدی، پیشنهادهای مرتبط اینجا نمایش داده می‌شوند.</p>
+                </div>
+            </section>
+
+            <footer class="article-end">
+                <div><span>پایان یادداشت</span><h2>ایده بعدی<br>همین نزدیکی‌ست.</h2></div>
+                <a href="{% url 'blog:blog_list' %}">بازگشت به مجله <span aria-hidden="true">←</span></a>
+            </footer>
+        </article>
+    </main>
+
+</div>
+{% endblock %}
