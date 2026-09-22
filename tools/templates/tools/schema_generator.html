@@ -1,0 +1,108 @@
+{% extends "_base.html" %}
+{% load static %}
+
+{% block title %}ساخت اسکیما JSON-LD آنلاین و رایگان | Sitaro{% endblock %}
+{% block description %}با ابزار رایگان Sitaro کد اسکیما برای سازمان، کسب‌وکار محلی، مقاله، محصول و Breadcrumb بسازید و JSON-LD آماده دریافت کنید.{% endblock %}
+{% block og_title %}ساخت اسکیما JSON-LD | Sitaro{% endblock %}
+{% block og_description %}کد JSON-LD ساختاریافته را برای صفحه‌های فارسی و انگلیسی، به‌صورت محلی و بدون ارسال اطلاعات تولید کنید.{% endblock %}
+{% block body_class %}schema-generator-page{% endblock %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="{% static 'css/schema-generator.css' %}?v=20260921-2">
+{% endblock %}
+
+{% block content %}
+<main id="main" class="schema-main" data-schema-tool>
+    <div class="schema-shell">
+        <nav class="schema-breadcrumb" aria-label="مسیر صفحه">
+            <a href="{% url 'tools:index' %}">ابزارها</a><span aria-hidden="true">/</span><span aria-current="page">ساخت اسکیما JSON-LD</span>
+        </nav>
+
+        <header class="schema-hero">
+            <div>
+                <span class="schema-eyebrow"><i aria-hidden="true"></i> STRUCTURED / DATA</span>
+                <h1>ساخت اسکیما<br><em>JSON-LD</em></h1>
+            </div>
+            <p>نوع صفحه را انتخاب کنید، اطلاعات واقعی را وارد کنید و کد ساختاریافته آماده دریافت کنید.</p>
+        </header>
+
+        <section class="schema-type-section" aria-labelledby="schema-type-title">
+            <div class="schema-section-head">
+                <span>01 / TYPE</span>
+                <h2 id="schema-type-title">نوع اسکیما را انتخاب کنید</h2>
+            </div>
+            <div class="schema-types" role="tablist" aria-label="انواع اسکیما">
+                <button type="button" role="tab" aria-selected="true" data-schema-type="organization"><small>Organization</small><b>سازمان</b><span>معرفی برند یا شرکت</span></button>
+                <button type="button" role="tab" aria-selected="false" data-schema-type="localBusiness"><small>LocalBusiness</small><b>کسب‌وکار محلی</b><span>نشانی و اطلاعات محلی</span></button>
+                <button type="button" role="tab" aria-selected="false" data-schema-type="article"><small>Article</small><b>مقاله</b><span>Article یا BlogPosting</span></button>
+                <button type="button" role="tab" aria-selected="false" data-schema-type="product"><small>Product</small><b>محصول</b><span>قیمت و وضعیت موجودی</span></button>
+                <button type="button" role="tab" aria-selected="false" data-schema-type="breadcrumb"><small>BreadcrumbList</small><b>مسیر صفحه</b><span>ساخت breadcrumb خوانا</span></button>
+            </div>
+        </section>
+
+        <section class="schema-workspace" aria-label="ساخت کد اسکیما">
+            <form class="schema-form" data-schema-form novalidate>
+                <div class="schema-form-head">
+                    <div><span>02 / DETAILS</span><h2 data-schema-form-title>اطلاعات سازمان</h2></div>
+                    <p>فیلدهای دارای <b>ضروری</b> برای تولید کد معتبر لازم‌اند.</p>
+                </div>
+                <div data-schema-fields></div>
+                <section class="schema-messages" aria-labelledby="schema-message-title">
+                    <h3 id="schema-message-title">اعتبارسنجی ورودی‌ها</h3>
+                    <div data-schema-errors aria-live="polite" role="status"></div>
+                    <div data-schema-warnings aria-live="polite"></div>
+                </section>
+            </form>
+
+            <aside class="schema-output" aria-labelledby="schema-output-title">
+                <div class="schema-output-head">
+                    <div><span>03 / JSON-LD</span><h2 id="schema-output-title">خروجی آماده</h2></div>
+                    <span class="schema-output-status" data-schema-output-status>در انتظار اطلاعات</span>
+                </div>
+                <pre class="schema-code" dir="ltr" tabindex="0"><code data-schema-code>{
+  "@context": "https://schema.org"
+}</code></pre>
+                <div class="schema-actions">
+                    <button type="button" class="schema-button schema-button-primary" data-schema-copy="json">کپی JSON</button>
+                    <button type="button" class="schema-button" data-schema-copy="html">کپی کد HTML</button>
+                    <button type="button" class="schema-button" data-schema-download>دانلود فایل</button>
+                    <button type="button" class="schema-button schema-button-reset" data-schema-reset>پاک‌کردن فرم</button>
+                </div>
+                <p class="schema-action-feedback" data-schema-feedback aria-live="polite" role="status"></p>
+                <div class="schema-validator-links">
+                    <strong>تست نهایی کد</strong>
+                    <a href="https://search.google.com/test/rich-results" target="_blank" rel="noopener noreferrer">Google Rich Results Test <span aria-hidden="true">↗</span></a>
+                    <a href="https://validator.schema.org/" target="_blank" rel="noopener noreferrer">Schema.org Validator <span aria-hidden="true">↗</span></a>
+                    <p>تولید کد صحیح، نمایش Rich Result را تضمین نمی‌کند. کد نهایی را پس از قرارگیری روی صفحه با ابزارهای رسمی بررسی کنید.</p>
+                </div>
+            </aside>
+        </section>
+
+        <section class="schema-install" aria-labelledby="schema-install-title">
+            <div class="schema-section-head"><span>04 / INSTALL</span><h2 id="schema-install-title">کد را کجا قرار دهیم؟</h2></div>
+            <div class="schema-install-grid">
+                <article><b>HTML</b><p>کد HTML کپی‌شده را در بخش <code>head</code> یا <code>body</code> همان صفحه قرار دهید.</p></article>
+                <article><b>Django</b><p>کد را در template همان صفحه قرار دهید؛ داده‌های پویا را فقط پس از تبدیل امن به JSON وارد کنید.</p></article>
+                <article><b>WordPress</b><p>از بخش سفارشی head یا روش استاندارد قالب/افزونه خود برای قرار دادن JSON-LD استفاده کنید.</p></article>
+                <article><b>پس از انتشار</b><p>آدرس واقعی صفحه منتشرشده را در یکی از ابزارهای اعتبارسنجی بالا بررسی کنید.</p></article>
+            </div>
+        </section>
+
+        <section class="schema-related" aria-labelledby="schema-related-title">
+            <div><span>RELATED / TOOL</span><h2 id="schema-related-title">پیش از انتشار، نتیجه جست‌وجو را هم ببینید</h2></div>
+            <a href="{% url 'tools:serp_preview' %}">پیش‌نمایش نتیجه گوگل <span aria-hidden="true">←</span></a>
+        </section>
+
+        <section class="schema-cta" aria-labelledby="schema-cta-title">
+            <span>SEO / CONSULTATION</span>
+            <h2 id="schema-cta-title">برای انتخاب ساختار درست صفحه به بررسی تخصصی نیاز دارید؟</h2>
+            <a class="button button-primary" href="{% url 'leads:contact' %}">درخواست مشاوره سئو <span aria-hidden="true">←</span></a>
+        </section>
+        <a class="schema-back-link" href="{% url 'tools:index' %}"><span aria-hidden="true">→</span> بازگشت به همه ابزارها</a>
+    </div>
+</main>
+{% endblock %}
+
+{% block extra_scripts %}
+<script src="{% static 'js/schema-generator.js' %}?v=20260921-2" defer></script>
+{% endblock %}

@@ -1,0 +1,148 @@
+{% extends "_base.html" %}
+{% load static %}
+
+{% block title %}پیش‌نمایش نتیجه گوگل و بررسی متا تگ | Sitaro{% endblock %}
+{% block description %}با ابزار رایگان Sitaro ظاهر تقریبی عنوان، آدرس و توضیحات صفحه را در نتایج گوگل برای موبایل و دسکتاپ بررسی کنید.{% endblock %}
+{% block og_title %}پیش‌نمایش نتیجه گوگل | Sitaro{% endblock %}
+{% block og_description %}عنوان، آدرس و توضیحات متا را پیش از انتشار، در نمای تقریبی نتایج جست‌وجو بررسی کنید.{% endblock %}
+{% block body_class %}serp-preview-page{% endblock %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="{% static 'css/serp-preview.css' %}?v=20260921-1">
+{% endblock %}
+
+{% block content %}
+<main id="main" class="serp-main">
+    <div class="serp-shell">
+        <nav class="serp-breadcrumb" aria-label="مسیر صفحه">
+            <a href="{% url 'tools:index' %}">ابزارها</a><span aria-hidden="true">/</span><span aria-current="page">پیش‌نمایش نتیجه گوگل</span>
+        </nav>
+
+        <header class="serp-hero">
+            <div>
+                <span class="serp-eyebrow"><i aria-hidden="true"></i> SEO / SERP PREVIEW</span>
+                <h1>پیش‌نمایش<br><em>نتیجه گوگل</em></h1>
+            </div>
+            <p>عنوان، توضیحات و آدرس صفحه را وارد کنید تا ظاهر تقریبی آن را در نتایج جست‌وجوی گوگل مشاهده کنید.</p>
+        </header>
+
+        <section class="serp-workspace" aria-label="محیط پیش‌نمایش نتیجه جست‌وجو" data-serp-tool>
+            <form class="serp-form" data-serp-form novalidate>
+                <div class="serp-form-head">
+                    <div>
+                        <span>INPUT / META</span>
+                        <h2>اطلاعات صفحه</h2>
+                    </div>
+                    <p>اطلاعات فقط در همین مرورگر پردازش می‌شوند و به سرور ارسال نمی‌شوند.</p>
+                </div>
+
+                <div class="serp-field">
+                    <label for="serp-site-name">نام سایت <span>اختیاری</span></label>
+                    <input id="serp-site-name" name="site_name" type="text" autocomplete="organization" placeholder="مثال: نام برند شما" data-serp-input="siteName">
+                    <p>نامی که کنار نتیجه برای معرفی سایت دیده می‌شود.</p>
+                </div>
+
+                <div class="serp-field">
+                    <label for="serp-title">عنوان صفحه <b>ضروری برای کپی</b></label>
+                    <input id="serp-title" name="title" type="text" autocomplete="off" placeholder="مثال: راهنمای انتخاب عنوان صفحه" data-serp-input="title" aria-describedby="serp-title-help serp-title-status">
+                    <div class="serp-field-bottom">
+                        <p id="serp-title-help">طول کاراکتر فقط راهنماست؛ عرض بصری متن و شرایط نتیجه نیز مؤثرند.</p>
+                        <output id="serp-title-status" class="serp-counter" data-serp-counter="title" aria-live="polite"></output>
+                    </div>
+                </div>
+
+                <div class="serp-field">
+                    <label for="serp-description">توضیحات متا <b>ضروری برای کپی</b></label>
+                    <textarea id="serp-description" name="description" rows="5" autocomplete="off" placeholder="مثال: توضیحی کوتاه و روشن درباره موضوع این صفحه برای کاربر بنویسید." data-serp-input="description" aria-describedby="serp-description-help serp-description-status"></textarea>
+                    <div class="serp-field-bottom">
+                        <p id="serp-description-help">گوگل ممکن است توضیح نهایی را متناسب با عبارت جست‌وجو تغییر دهد.</p>
+                        <output id="serp-description-status" class="serp-counter" data-serp-counter="description" aria-live="polite"></output>
+                    </div>
+                </div>
+
+                <div class="serp-field">
+                    <label for="serp-url">URL صفحه <span>اختیاری</span></label>
+                    <input id="serp-url" name="page_url" type="url" inputmode="url" autocomplete="url" dir="ltr" placeholder="https://example.com/page" data-serp-input="url">
+                    <p>برای نمایش خواناتر، URL انگلیسی در پیش‌نمایش از چپ به راست نمایش داده می‌شود.</p>
+                </div>
+
+                <div class="serp-actions">
+                    <button class="serp-button serp-button-primary" type="button" data-serp-copy>کپی متاتگ‌ها <span aria-hidden="true">↗</span></button>
+                    <button class="serp-button serp-button-quiet" type="button" data-serp-reset>پاک‌کردن همه</button>
+                </div>
+                <p class="serp-feedback" data-serp-feedback aria-live="polite" role="status"></p>
+                <noscript><p class="serp-noscript">برای پیش‌نمایش زنده و کپی متاتگ‌ها، JavaScript را در مرورگر فعال کنید.</p></noscript>
+            </form>
+
+            <section class="serp-preview-area" aria-labelledby="serp-preview-title">
+                <div class="serp-preview-bar">
+                    <div>
+                        <span>OUTPUT / GOOGLE</span>
+                        <h2 id="serp-preview-title">نمای تقریبی نتیجه</h2>
+                    </div>
+                    <div class="serp-tabs" role="tablist" aria-label="نوع دستگاه پیش‌نمایش">
+                        <button type="button" role="tab" id="serp-desktop-tab" aria-selected="true" aria-controls="serp-preview-panel" data-serp-device="desktop">دسکتاپ</button>
+                        <button type="button" role="tab" id="serp-mobile-tab" aria-selected="false" aria-controls="serp-preview-panel" data-serp-device="mobile">موبایل</button>
+                    </div>
+                </div>
+
+                <div class="serp-preview-frame is-desktop" id="serp-preview-panel" role="tabpanel" aria-labelledby="serp-desktop-tab" data-serp-preview>
+                    <span class="serp-preview-label">نمونه آموزشی — نمایش نهایی ممکن است توسط گوگل تغییر کند.</span>
+                    <article class="google-result" aria-label="پیش‌نمایش تقریبی نتیجه جست‌وجو">
+                        <div class="google-result-source">
+                            <span class="google-favicon" aria-hidden="true"><img src="{% static 'images/sitaro-logo.svg' %}" width="20" height="20" alt=""></span>
+                            <span><b data-serp-output="siteName">نام سایت شما</b><small data-serp-output="breadcrumb" dir="ltr">example.com/example</small></span>
+                            <i aria-hidden="true">⋮</i>
+                        </div>
+                        <h3 data-serp-output="title">عنوان نمونه برای پیش‌نمایش نتیجه</h3>
+                        <p data-serp-output="description">این یک نمونه آموزشی است. برای مشاهده ظاهر تقریبی نتیجه، عنوان و توضیحات متای صفحه را وارد کنید.</p>
+                    </article>
+                    <p class="serp-preview-note"><span aria-hidden="true">!</span> این ابزار راهنماست، نه شبیه‌سازی قطعی نتایج گوگل.</p>
+                </div>
+            </section>
+        </section>
+
+        <section class="serp-guide" aria-labelledby="serp-guide-title">
+            <div class="serp-section-heading">
+                <span>GUIDE / BASICS</span>
+                <h2 id="serp-guide-title">چطور از پیش‌نمایش استفاده کنیم؟</h2>
+            </div>
+            <ol>
+                <li><b>01</b><p><strong>موضوع را روشن بنویسید</strong>عنوان باید به‌روشنی وعده و موضوع اصلی صفحه را منتقل کند.</p></li>
+                <li><b>02</b><p><strong>آدرس خوانا وارد کنید</strong>مسیر کوتاه و قابل‌فهم، بررسی نتیجه را دقیق‌تر می‌کند.</p></li>
+                <li><b>03</b><p><strong>پیش‌نمایش را در هر دو نما ببینید</strong>نمای موبایل و دسکتاپ را پیش از کپی متاتگ‌ها کنترل کنید.</p></li>
+            </ol>
+        </section>
+
+        <section class="serp-tips" aria-labelledby="serp-tips-title">
+            <div>
+                <span>TITLE / DESCRIPTION</span>
+                <h2 id="serp-tips-title">دو نکته پیش از انتشار</h2>
+            </div>
+            <div class="serp-tip-list">
+                <article><h3>عنوان</h3><p>از عبارت‌های دقیق و قابل‌فهم استفاده کنید؛ عدد کاراکتر تنها یک شاخص تقریبی است.</p></article>
+                <article><h3>توضیحات متا</h3><p>خلاصه‌ای مرتبط بنویسید که به کاربر برای انتخاب نتیجه کمک کند، نه مجموعه‌ای از کلیدواژه‌ها.</p></article>
+            </div>
+        </section>
+
+        <section class="serp-faq" aria-labelledby="serp-faq-title">
+            <div class="serp-section-heading"><span>FAQ / SERP</span><h2 id="serp-faq-title">پرسش‌های کوتاه</h2></div>
+            <details><summary>آیا گوگل دقیقاً همین متن را نمایش می‌دهد؟</summary><p>خیر. گوگل می‌تواند عنوان یا توضیحات را براساس عبارت جست‌وجو، صفحه و دستگاه کاربر تغییر دهد.</p></details>
+            <details><summary>آیا طول کاراکتر معیار قطعی است؟</summary><p>خیر. عرض بصری حروف، زبان و شرایط نمایش اهمیت دارد؛ شمارنده فقط برای تصمیم‌گیری اولیه است.</p></details>
+            <details><summary>آیا اطلاعات واردشده ذخیره می‌شوند؟</summary><p>خیر. این ابزار هیچ فرم یا درخواستی به سرور ارسال نمی‌کند و اطلاعات را ذخیره نمی‌کند.</p></details>
+        </section>
+
+        <section class="serp-cta" aria-labelledby="serp-cta-title">
+            <span>SEO / CONSULTATION</span>
+            <h2 id="serp-cta-title">برای انتخاب عنوان و توضیحات مناسب نیاز به بررسی تخصصی دارید؟</h2>
+            <a class="button button-primary" href="{% url 'leads:contact' %}">درخواست مشاوره سئو <span aria-hidden="true">←</span></a>
+        </section>
+
+        <a class="serp-back-link" href="{% url 'tools:index' %}"><span aria-hidden="true">→</span> بازگشت به همه ابزارها</a>
+    </div>
+</main>
+{% endblock %}
+
+{% block extra_scripts %}
+<script src="{% static 'js/serp-preview.js' %}?v=20260921-1" defer></script>
+{% endblock %}

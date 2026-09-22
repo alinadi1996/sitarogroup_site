@@ -107,6 +107,67 @@ class ToolsPublicPagesTests(TestCase):
         self.assertRedirects(response, f"{reverse('tools:index')}#tool-ready", fetch_redirect_response=False)
         self.assertEqual(self.client.get(reverse("tools:launch", kwargs={"slug": coming.slug})).status_code, 404)
 
+    def test_serp_preview_page_and_active_tool_link(self):
+        serp_preview = self.create_tool(
+            title="پیش‌نمایش نتیجه گوگل",
+            slug="serp-preview",
+            status=Tool.Status.ACTIVE,
+        )
+
+        response = self.client.get(reverse("tools:serp_preview"))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, "tools/serp_preview.html")
+        self.assertContains(response, "پیش‌نمایش نتیجه گوگل")
+        self.assertContains(response, reverse("tools:index"))
+        self.assertContains(response, reverse("leads:contact"))
+        self.assertEqual(serp_preview.get_absolute_url(), reverse("tools:serp_preview"))
+
+    def test_serp_preview_card_and_header_use_the_real_tool_url(self):
+        serp_preview = self.create_tool(
+            title="پیش‌نمایش نتیجه گوگل",
+            slug="serp-preview",
+            status=Tool.Status.ACTIVE,
+        )
+        coming = self.create_tool(title="ابزار بعدی", slug="next-tool", order=20)
+
+        response = self.client.get(reverse("tools:index"))
+
+        self.assertContains(response, serp_preview.get_absolute_url())
+        self.assertContains(response, "data-tools-toggle")
+        self.assertContains(response, "به‌زودی")
+        self.assertEqual(coming.get_absolute_url(), "")
+
+    def test_schema_generator_page_and_active_tool_link(self):
+        schema_generator = self.create_tool(
+            title="ساخت اسکیما JSON-LD",
+            slug="schema-generator",
+            status=Tool.Status.ACTIVE,
+        )
+
+        response = self.client.get(reverse("tools:schema_generator"))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, "tools/schema_generator.html")
+        self.assertContains(response, "ساخت اسکیما JSON-LD")
+        self.assertContains(response, reverse("tools:index"))
+        self.assertContains(response, reverse("leads:contact"))
+        self.assertEqual(schema_generator.get_absolute_url(), reverse("tools:schema_generator"))
+
+    def test_schema_generator_card_and_header_use_the_real_tool_url(self):
+        schema_generator = self.create_tool(
+            title="ساخت اسکیما JSON-LD",
+            slug="schema-generator",
+            status=Tool.Status.ACTIVE,
+        )
+        coming = self.create_tool(title="ابزار بعدی", slug="later-tool", order=20)
+
+        response = self.client.get(reverse("tools:index"))
+
+        self.assertContains(response, schema_generator.get_absolute_url())
+        self.assertContains(response, "data-tools-toggle")
+        self.assertContains(response, "به‌زودی")
+        self.assertEqual(coming.get_absolute_url(), "")
     def test_active_image_converter_links_directly_to_converter(self):
         converter = self.create_tool(slug="image-optimizer", status=Tool.Status.ACTIVE)
 
