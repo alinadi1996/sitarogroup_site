@@ -3,7 +3,7 @@ from django.contrib.auth import get_user_model
 from django.test import TestCase
 from django.urls import reverse
 
-from .models import ContactRequest
+from .models import ClientProject, ContactRequest
 
 
 class ContactRequestTests(TestCase):
@@ -31,6 +31,21 @@ class ContactRequestTests(TestCase):
         response = self.client.post(self.url, self.valid_data)
         self.assertRedirects(response, self.url)
         self.assertEqual(ContactRequest.objects.count(), 1)
+
+    def test_authenticated_submission_creates_a_trackable_client_project(self):
+        user = get_user_model().objects.create_user(
+            username="project-client", email="project-client@example.test", password="strong-test-password"
+        )
+        self.client.force_login(user)
+
+        response = self.client.post(self.url, self.valid_data)
+
+        self.assertRedirects(response, self.url)
+        project = ClientProject.objects.get()
+        self.assertEqual(project.client, user)
+        self.assertEqual(project.contact_request.user, user)
+        self.assertEqual(project.status, ClientProject.Status.PENDING)
+        self.assertEqual(project.progress, 5)
 
         refreshed = self.client.get(self.url)
         self.assertEqual(refreshed.status_code, 200)

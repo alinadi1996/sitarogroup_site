@@ -1,3 +1,5 @@
+from django.conf import settings
+from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 
 
@@ -23,6 +25,7 @@ class ContactRequest(models.Model):
         REJECTED = "rejected", "ردشده"
 
     full_name = models.CharField("نام و نام خانوادگی", max_length=150)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, related_name="contact_requests", verbose_name="حساب کاربری", blank=True, null=True)
     phone = models.CharField("شماره موبایل", max_length=13)
     service = models.CharField("نوع خدمت", max_length=32, choices=Service.choices)
     project_description = models.TextField("توضیحات پروژه")
@@ -52,3 +55,48 @@ class ContactRequest(models.Model):
     def __str__(self):
         return f"{self.full_name} — {self.phone}"
 
+
+class ClientProject(models.Model):
+    class Status(models.TextChoices):
+        PENDING = "pending", "در انتظار بررسی"
+        DISCOVERY = "discovery", "کشف و برنامه‌ریزی"
+        DESIGN = "design", "طراحی"
+        DEVELOPMENT = "development", "توسعه"
+        REVIEW = "review", "بازبینی و تأیید"
+        LAUNCH = "launch", "آماده انتشار"
+        COMPLETED = "completed", "تکمیل‌شده"
+
+    client = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="client_projects", verbose_name="مشتری")
+    contact_request = models.OneToOneField(ContactRequest, on_delete=models.SET_NULL, related_name="client_project", verbose_name="درخواست اولیه", blank=True, null=True)
+    title = models.CharField("نام پروژه", max_length=180)
+    service = models.CharField("خدمت", max_length=32, choices=ContactRequest.Service.choices)
+    status = models.CharField("مرحله فعلی", max_length=16, choices=Status.choices, default=Status.PENDING)
+    progress = models.PositiveSmallIntegerField("درصد پیشرفت", default=5, validators=[MinValueValidator(0), MaxValueValidator(100)])
+    target_date = models.DateField("تاریخ هدف", blank=True, null=True)
+    created_at = models.DateTimeField("تاریخ ایجاد", auto_now_add=True)
+    updated_at = models.DateTimeField("آخرین به‌روزرسانی", auto_now=True)
+
+    class Meta:
+        ordering = ("-updated_at",)
+        verbose_name = "پروژه مشتری"
+        verbose_name_plural = "پروژه‌های مشتریان"
+
+    def __str__(self):
+        return f"{self.title} — {self.client}"
+
+
+class ProjectUpdate(models.Model):
+    project = models.ForeignKey(ClientProject, on_delete=models.CASCADE, related_name="updates", verbose_name="پروژه")
+    title = models.CharField("عنوان به‌روزرسانی", max_length=180)
+    message = models.TextField("شرح برای مشتری")
+    progress = models.PositiveSmallIntegerField("درصد پیشرفت در این به‌روزرسانی", validators=[MinValueValidator(0), MaxValueValidator(100)])
+    is_visible = models.BooleanField("نمایش به مشتری", default=True)
+    created_at = models.DateTimeField("زمان ثبت", auto_now_add=True)
+
+    class Meta:
+        ordering = ("-created_at",)
+        verbose_name = "به‌روزرسانی پروژه"
+        verbose_name_plural = "به‌روزرسانی‌های پروژه"
+
+    def __str__(self):
+        return f"{self.project} — {self.title}"

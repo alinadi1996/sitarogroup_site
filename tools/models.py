@@ -79,4 +79,13 @@ class Tool(models.Model):
     def get_absolute_url(self):
         if not self.is_available:
             return ""
+        tool_routes = {
+            "website-analyzer": "tools:website_analyzer",
+            "serp-preview": "tools:serp_preview",
+            "image-optimizer": "tools:image_converter",
+            "schema-generator": "tools:schema_generator",
+            "sitemap-robots-generator": "tools:sitemap_robots_generator",
+        }
+        if route_name := tool_routes.get(self.slug):
+            return reverse(route_name)
         return reverse("tools:launch", kwargs={"slug": self.slug})

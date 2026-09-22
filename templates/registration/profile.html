@@ -18,6 +18,10 @@
                 <svg aria-hidden="true"><use href="{% static 'icons/sitaro-support-icons.svg' %}#dashboard"></use></svg>
                 نمای کلی
             </a>
+            <a href="#my-projects">
+                <svg aria-hidden="true"><use href="{% static 'icons/sitaro-support-icons.svg' %}#dashboard"></use></svg>
+                پروژه‌های من
+            </a>
             <a href="{% url 'password_change' %}">
                 <svg aria-hidden="true"><use href="{% static 'icons/sitaro-support-icons.svg' %}#lock"></use></svg>
                 تغییر رمز عبور
@@ -42,7 +46,7 @@
                 <span class="dashboard-kicker">ACCOUNT / OVERVIEW</span>
                 <h1>فضای شخصی<br><em>{{ user.username }}</em></h1>
             </div>
-            <p>تنظیمات امنیتی حساب خود را مدیریت کنید و مسیرهای فعال بازیابی را همیشه در دسترس داشته باشید.</p>
+            <p>وضعیت پروژه‌های فعال، مرحله‌های انجام کار و به‌روزرسانی‌های تیم سیتارو را یک‌جا دنبال کنید.</p>
         </section>
 
         <section class="account-status-grid" aria-label="وضعیت حساب">
@@ -61,6 +65,58 @@
                 <small>وضعیت امنیت</small>
                 <strong>محافظت فعال <i></i></strong>
             </article>
+        </section>
+
+        <section class="client-projects" id="my-projects" aria-labelledby="client-projects-title">
+            <div class="client-projects-head">
+                <div>
+                    <span>PROJECT / TRACKER</span>
+                    <h2 id="client-projects-title">مسیر پروژه‌های شما</h2>
+                </div>
+                <p>هر به‌روزرسانی جدید از طرف تیم سیتارو، در همین بخش ثبت می‌شود.</p>
+            </div>
+
+            {% for project in client_projects %}
+            <article class="client-project-card">
+                <header class="client-project-summary">
+                    <div>
+                        <span>{{ project.get_service_display }}</span>
+                        <h3>{{ project.title }}</h3>
+                    </div>
+                    <div class="client-project-progress" style="--progress: {{ project.progress }}%" aria-label="{{ project.progress }} درصد پیشرفت">
+                        <strong>{{ project.progress }}<small>%</small></strong>
+                        <span>پیشرفت</span>
+                    </div>
+                </header>
+                <div class="client-project-meter" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="{{ project.progress }}" aria-label="پیشرفت {{ project.title }}">
+                    <i style="--progress: {{ project.progress }}%"></i>
+                </div>
+                <div class="client-project-meta">
+                    <span><small>مرحله فعلی</small><b>{{ project.get_status_display }}</b></span>
+                    <span><small>آخرین به‌روزرسانی</small><b>{{ project.updated_at|date:"j F Y" }}</b></span>
+                    {% if project.target_date %}<span><small>تاریخ هدف</small><b>{{ project.target_date|date:"j F Y" }}</b></span>{% endif %}
+                </div>
+                {% if project.updates.all %}
+                <ol class="project-updates" aria-label="آخرین به‌روزرسانی‌های {{ project.title }}">
+                    {% for update in project.updates.all %}
+                    <li>
+                        <i aria-hidden="true"></i>
+                        <div><span>{{ update.created_at|date:"j F Y" }} · {{ update.progress }}%</span><h4>{{ update.title }}</h4><p>{{ update.message }}</p></div>
+                    </li>
+                    {% endfor %}
+                </ol>
+                {% else %}
+                <p class="client-project-empty"><i></i> درخواست شما ثبت شده است؛ پس از بررسی اولیه، نخستین به‌روزرسانی اینجا نمایش داده می‌شود.</p>
+                {% endif %}
+            </article>
+            {% empty %}
+            <div class="client-projects-empty">
+                <span>NO ACTIVE PROJECTS</span>
+                <h3>هنوز پروژه‌ای برای پیگیری ندارید.</h3>
+                <p>اگر درخواست خود را با همین حساب ثبت کنید، وضعیت و مراحل پروژه‌تان در این بخش نمایش داده می‌شود.</p>
+                <a href="{% url 'leads:contact' %}">ثبت درخواست پروژه <span aria-hidden="true">←</span></a>
+            </div>
+            {% endfor %}
         </section>
 
         <section class="security-panel" aria-labelledby="security-title">

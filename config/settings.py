@@ -11,9 +11,23 @@ https://docs.djangoproject.com/en/6.1/ref/settings/
 """
 
 from pathlib import Path
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+# Docker Compose supplies these variables through env_file. Read the same local
+# file for direct manage.py runs without overriding variables from the host.
+local_env = BASE_DIR / ".env"
+if local_env.is_file():
+    for entry in local_env.read_text(encoding="utf-8-sig").splitlines():
+        entry = entry.strip()
+        if not entry or entry.startswith("#") or "=" not in entry:
+            continue
+        name, value = entry.split("=", 1)
+        name = name.strip()
+        if name in {"OPENAI_API_KEY", "SITARO_SUPPORT_MODEL", "SITARO_SUPPORT_API_BASE_URL"}:
+            os.environ.setdefault(name, value.strip().strip('"').strip("'"))
 
 
 # Quick-start development settings - unsuitable for production

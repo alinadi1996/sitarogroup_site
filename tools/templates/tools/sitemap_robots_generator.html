@@ -1,0 +1,50 @@
+{% extends "_base.html" %}
+{% load static %}
+
+{% block title %}ساخت Sitemap XML و Robots.txt آنلاین | Sitaro{% endblock %}
+{% block description %}با ابزار رایگان Sitaro فایل sitemap.xml و robots.txt آماده برای وب‌سایت خود بسازید و دانلود کنید.{% endblock %}
+{% block og_title %}ساخت Sitemap و Robots.txt | Sitaro{% endblock %}
+{% block og_description %}فایل‌های ضروری راهنمای موتورهای جست‌وجو را در مرورگر خود بسازید.{% endblock %}
+{% block body_class %}sitemap-robots-page{% endblock %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="{% static 'css/sitemap-robots-generator.css' %}?v=20260922-1">
+{% endblock %}
+
+{% block content %}
+<main id="main" class="sr-main" data-sr-tool>
+    <div class="sr-shell">
+        <nav class="sr-breadcrumb" aria-label="مسیر صفحه"><a href="{% url 'tools:index' %}">ابزارها</a><span>/</span><span aria-current="page">ساخت Sitemap و Robots.txt</span></nav>
+        <header class="sr-hero">
+            <div><span class="sr-eyebrow"><i></i> TECHNICAL / SEO</span><h1>ساخت <em>Sitemap</em><br>و Robots.txt</h1></div>
+            <p>صفحه‌های مهم سایت را وارد کنید تا دو فایل پایه برای راهنمایی خزنده‌های جست‌وجو، آماده و قابل دانلود شوند.</p>
+        </header>
+
+        <section class="sr-workspace" aria-label="ساخت فایل‌های sitemap و robots">
+            <form class="sr-form" data-sr-form novalidate>
+                <div class="sr-form-head"><div><span>01 / SITE DETAILS</span><h2>آدرس‌های سایت</h2></div><p>همه پردازش‌ها در مرورگر شما انجام می‌شود و اطلاعات به سرور ارسال نمی‌شوند.</p></div>
+                <div class="sr-field"><label for="sr-site-url">آدرس اصلی سایت <b>ضروری</b></label><input id="sr-site-url" data-sr-site-url type="url" dir="ltr" inputmode="url" placeholder="https://example.com" required><p>این آدرس برای ساخت مسیر Sitemap در robots.txt استفاده می‌شود.</p></div>
+                <div class="sr-field"><label for="sr-urls">URL صفحه‌ها <b>ضروری</b></label><textarea id="sr-urls" data-sr-urls dir="ltr" rows="10" placeholder="https://example.com/&#10;https://example.com/about/&#10;https://example.com/blog/"></textarea><p>هر URL را در یک خط وارد کنید. آدرس‌های تکراری به‌صورت خودکار حذف می‌شوند.</p></div>
+                <div class="sr-options"><label><input type="checkbox" data-sr-lastmod checked> افزودن تاریخ امروز به Sitemap</label><label><input type="checkbox" data-sr-allow checked> افزودن Allow برای فایل‌های CSS و JavaScript</label></div>
+                <div class="sr-field"><label for="sr-disallow">مسیرهای غیرقابل‌خزش <span>اختیاری</span></label><textarea id="sr-disallow" data-sr-disallow dir="ltr" rows="4" placeholder="/admin/&#10;/account/private/"></textarea><p>هر مسیر را در یک خط وارد کنید. مسیرها باید با <code>/</code> آغاز شوند.</p></div>
+                <div class="sr-actions"><button type="button" class="sr-button sr-primary" data-sr-generate>ساخت فایل‌ها</button><button type="button" class="sr-button" data-sr-reset>پاک‌کردن فرم</button></div>
+                <p class="sr-feedback" data-sr-feedback role="status" aria-live="polite"></p>
+            </form>
+
+            <section class="sr-output" aria-labelledby="sr-output-title">
+                <div class="sr-output-head"><div><span>02 / READY FILES</span><h2 id="sr-output-title">خروجی آماده</h2></div><output data-sr-status>در انتظار اطلاعات</output></div>
+                <div class="sr-file"><div><b>sitemap.xml</b><span data-sr-count>0 URL</span></div><pre dir="ltr"><code data-sr-sitemap>&lt;!-- URLهای سایت را وارد کنید. --&gt;</code></pre><div class="sr-file-actions"><button type="button" data-sr-copy="sitemap">کپی</button><button type="button" data-sr-download="sitemap">دانلود XML</button></div></div>
+                <div class="sr-file"><div><b>robots.txt</b><span>متن استاندارد</span></div><pre dir="ltr"><code data-sr-robots># robots.txt آماده می‌شود</code></pre><div class="sr-file-actions"><button type="button" data-sr-copy="robots">کپی</button><button type="button" data-sr-download="robots">دانلود TXT</button></div></div>
+            </section>
+        </section>
+
+        <section class="sr-guide" aria-labelledby="sr-guide-title"><div><span>03 / PUBLISH</span><h2 id="sr-guide-title">بعد از ساخت فایل‌ها</h2></div><article><b>01</b><p><strong>sitemap.xml را در ریشه سایت قرار دهید</strong>مثال: <code>example.com/sitemap.xml</code></p></article><article><b>02</b><p><strong>robots.txt را در ریشه دامنه منتشر کنید</strong>فایل را در مسیر <code>example.com/robots.txt</code> قرار دهید.</p></article><article><b>03</b><p><strong>Sitemap را در Search Console ثبت کنید</strong>پس از انتشار، URL فایل Sitemap را در بخش Sitemaps ثبت و بررسی کنید.</p></article></section>
+        <section class="sr-cta"><span>SEO / CONSULTATION</span><h2>برای بررسی دقیق‌تر وضعیت ایندکس و Crawl سایت به کمک نیاز دارید؟</h2><a class="button button-primary" href="{% url 'leads:contact' %}">درخواست مشاوره سئو <span>←</span></a></section>
+        <a class="sr-back" href="{% url 'tools:index' %}"><span>→</span> بازگشت به همه ابزارها</a>
+    </div>
+</main>
+{% endblock %}
+
+{% block extra_scripts %}
+<script src="{% static 'js/sitemap-robots-generator.js' %}?v=20260922-1" defer></script>
+{% endblock %}

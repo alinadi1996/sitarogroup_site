@@ -1,13 +1,11 @@
-from profile import Profile
-
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.shortcuts import render
 from django.urls import reverse_lazy
-from django.utils.text import normalize_newlines
 from django.views.generic import CreateView
 from django.contrib.auth.views import LoginView, LogoutView
-from accounts.models import CustomUser
 from django.views.generic import DetailView
+from django.db.models import Prefetch
+
+from leads.models import ProjectUpdate
 
 from .forms import CustomUserCreationForm, PersianAuthenticationForm
 
@@ -34,3 +32,9 @@ class ProfileView(LoginRequiredMixin, DetailView):
     def get_object(self, queryset=None):
         return self.request.user
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["client_projects"] = self.request.user.client_projects.prefetch_related(
+            Prefetch("updates", queryset=ProjectUpdate.objects.filter(is_visible=True))
+        )
+        return context

@@ -178,6 +178,22 @@ class ToolsPublicPagesTests(TestCase):
 
         self.assertEqual(analyzer.get_absolute_url(), reverse("tools:website_analyzer"))
 
+    def test_sitemap_robots_generator_page_and_active_tool_link(self):
+        generator = self.create_tool(
+            title="ساخت Sitemap و Robots.txt",
+            slug="sitemap-robots-generator",
+            status=Tool.Status.ACTIVE,
+        )
+
+        response = self.client.get(reverse("tools:sitemap_robots_generator"))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, "tools/sitemap_robots_generator.html")
+        self.assertContains(response, "ساخت Sitemap")
+        self.assertEqual(
+            generator.get_absolute_url(), reverse("tools:sitemap_robots_generator")
+        )
+
 
 class ImageConverterTests(TestCase):
     @staticmethod

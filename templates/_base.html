@@ -171,7 +171,7 @@
             <div class="support-console-head">
                 <div>
                     <span class="support-terminal-mark" aria-hidden="true">&gt;_</span>
-                    <span><b id="support-title">SITARO / SUPPORT</b><small><i aria-hidden="true"></i> اپراتور آنلاین</small></span>
+                    <span><b id="support-title">SITARO / SUPPORT</b><small><i aria-hidden="true"></i> دستیار هوشمند</small></span>
                 </div>
                 <button class="support-close" type="button" data-support-close aria-label="بستن پنجره پشتیبانی"><span aria-hidden="true"></span></button>
             </div>
@@ -179,7 +179,7 @@
             <div class="support-log" data-support-log aria-live="polite" aria-relevant="additions">
                 <div class="support-message support-message-agent">
                     <span class="support-prompt" aria-hidden="true">01</span>
-                    <p>سلام! موضوع پروژه یا سؤال‌تان را بنویسید. این گفت‌وگوی سریع شما را به مسیر مناسب هدایت می‌کند.</p>
+                    <p>سلام! من دستیار هوشمند سیتارو هستم. درباره خدمات و مسیر شروع پروژه بپرسید؛ برای پیگیری اختصاصی از پنل کاربری یا فرم درخواست استفاده کنید.</p>
                 </div>
             </div>
 
@@ -189,7 +189,8 @@
                 <button type="button" data-support-quick="درباره خدمات سئو سؤال دارم">سئو</button>
             </div>
 
-            <form class="support-composer" data-support-form>
+            <form class="support-composer" data-support-form data-support-url="{% url 'support_answer' %}">
+                {% csrf_token %}
                 <label class="sr-only" for="support-message">پیام شما</label>
                 <input id="support-message" data-support-input type="text" maxlength="280" placeholder="پیام خود را بنویسید..." autocomplete="off">
                 <button type="submit" aria-label="ارسال پیام">
@@ -219,11 +220,11 @@
         <button class="support-launcher" type="button" data-support-toggle aria-expanded="false" aria-controls="support-console">
             <span class="support-launcher-radar" aria-hidden="true"></span>
             <span class="support-launcher-icon"></span>
-            <span class="support-launcher-copy"><b>پشتیبانی آنلاین</b><small>پاسخ‌گویی سریع</small></span>
+            <span class="support-launcher-copy"><b>دستیار هوشمند</b><small>راهنمای سریع</small></span>
             <span class="support-unread" data-support-unread aria-label="یک پیام خوانده‌نشده">1</span>
         </button>
     </aside>
-    <script src="{% static 'js/main.js' %}?v=20260920-tools1" defer></script>
+    <script src="{% static 'js/main.js' %}?v=20260922-support-ai1" defer></script>
     {% block extra_scripts %}{% endblock %}
 </body>
 </html>

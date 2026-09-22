@@ -4,6 +4,7 @@ from django.urls import reverse_lazy
 from django.views.generic import FormView
 
 from .forms import ContactRequestForm
+from .models import ClientProject
 
 
 class ContactRequestView(FormView):
@@ -12,7 +13,19 @@ class ContactRequestView(FormView):
     success_url = reverse_lazy("leads:contact")
 
     def form_valid(self, form):
-        form.save()
+        contact_request = form.save(commit=False)
+        if self.request.user.is_authenticated:
+            contact_request.user = self.request.user
+        contact_request.save()
+        if contact_request.user_id:
+            ClientProject.objects.get_or_create(
+                contact_request=contact_request,
+                defaults={
+                    "client": contact_request.user,
+                    "title": f"پروژه {contact_request.get_service_display()}",
+                    "service": contact_request.service,
+                },
+            )
         messages.success(
             self.request,
             "درخواست شما با موفقیت ثبت شد. برای هماهنگی اولیه با شما تماس می‌گیریم.",
@@ -29,4 +42,3 @@ class ContactRequestView(FormView):
             }
         )
         return context
-

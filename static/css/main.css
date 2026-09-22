@@ -382,6 +382,8 @@ h2 em, .manifesto-copy em { color: var(--mint-dark); font-style: normal; }
 .support-composer input::placeholder { color: #657a72; opacity: 1; }
 .support-composer button { display: grid; place-items: center; border: 0; border-right: 1px solid rgba(255,255,255,.1); background: var(--mint); color: var(--ink); cursor: pointer; transition: background .2s, transform .2s; }
 .support-composer button:hover { background: var(--white); }.support-composer button:active { transform: scale(.93); }
+.support-composer button:disabled { opacity: .55; cursor: wait; }
+.support-waiting p { color: var(--support-muted); }
 .support-composer svg, .support-social-list svg, .support-launcher svg { width: 21px; height: 21px; fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
 .support-socials { padding: 13px 14px 0; }
 .support-socials-toggle { width: 100%; min-height: 44px; padding: 0; display: flex; align-items: center; justify-content: space-between; border: 0; border-bottom: 1px solid rgba(255,255,255,.09); background: transparent; color: var(--support-muted); font-size: 10px; cursor: pointer; }
@@ -626,6 +628,23 @@ html[data-theme="light"] .footer-constellation i { border-color: rgba(17,116,83,
 .action-arrow { width: 24px; margin-top: 11px; fill: none; stroke: currentColor; stroke-width: 1.4; transform: rotate(180deg); transition: transform .25s var(--ease); }
 .security-action:hover .action-arrow { transform: rotate(180deg) translateX(-5px); }
 .dashboard-footnote { margin: 26px 0 0; display: flex; align-items: center; gap: 10px; color: #60716a; font-size: 10px; }
+
+/* Client project tracker */
+.client-projects { margin-top: clamp(42px, 6vw, 74px); }
+.client-projects-head { display: flex; align-items: end; justify-content: space-between; gap: 28px; padding-bottom: 18px; border-bottom: 1px solid var(--line); }
+.client-projects-head > div > span, .client-project-summary > div > span, .client-projects-empty > span { color: var(--mint); font: 9px/1.2 monospace; letter-spacing: .12em; }
+.client-projects-head h2 { margin: 11px 0 0; font-size: clamp(1.85rem, 3vw, 3rem); letter-spacing: -.04em; }
+.client-projects-head > p { max-width: 315px; margin: 0; color: #82938c; font-size: 11px; line-height: 1.9; }
+.client-project-card { margin-top: 20px; padding: clamp(22px, 3.5vw, 38px); border: 1px solid var(--line); background: linear-gradient(135deg, rgba(103,245,196,.06), transparent 38%), rgba(255,255,255,.018); }
+.client-project-summary { display: flex; align-items: start; justify-content: space-between; gap: 18px; }
+.client-project-summary h3 { margin: 10px 0 0; font-size: clamp(1.45rem, 2.4vw, 2.25rem); letter-spacing: -.035em; }
+.client-project-progress { width: 82px; aspect-ratio: 1; flex: 0 0 82px; display: grid; place-content: center; border: 4px solid rgba(103,245,196,.2); border-top-color: var(--mint); border-right-color: var(--mint); border-radius: 50%; text-align: center; transform: rotate(calc(var(--progress) * 1.8deg)); }
+.client-project-progress > * { transform: rotate(calc(var(--progress) * -1.8deg)); }.client-project-progress strong { font: 700 21px/1 monospace; direction: ltr; }.client-project-progress strong small { font-size: 10px; }.client-project-progress span { margin-top: 4px; color: #82938c; font-size: 8px; }
+.client-project-meter { height: 6px; margin: 28px 0 20px; overflow: hidden; background: rgba(255,255,255,.09); }.client-project-meter i { width: var(--progress); height: 100%; display: block; background: var(--mint); box-shadow: 0 0 18px rgba(103,245,196,.5); }
+.client-project-meta { display: flex; gap: 0; border-block: 1px solid var(--line); }.client-project-meta > span { min-width: 0; flex: 1; padding: 15px 12px; display: grid; gap: 7px; }.client-project-meta > span:not(:last-child) { border-left: 1px solid var(--line); }.client-project-meta small { color: #72837c; font-size: 9px; }.client-project-meta b { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 11px; }
+.project-updates { margin: 26px 0 0; padding: 0; list-style: none; }.project-updates li { position: relative; padding: 0 24px 23px 0; border-right: 1px solid rgba(103,245,196,.25); }.project-updates li:last-child { padding-bottom: 0; border-right-color: transparent; }.project-updates li > i { width: 9px; height: 9px; position: absolute; top: 5px; right: -5px; border-radius: 50%; background: var(--mint); box-shadow: 0 0 0 5px #0b1714; }.project-updates span { color: #70827b; font: 9px/1.4 monospace; direction: ltr; }.project-updates h4 { margin: 7px 0 5px; font-size: 13px; }.project-updates p { max-width: 720px; margin: 0; color: #9aaca5; font-size: 11px; line-height: 1.9; }
+.client-project-empty { margin: 24px 0 0; display: flex; align-items: center; gap: 9px; color: #9aaca5; font-size: 11px; line-height: 1.8; }.client-project-empty i { width: 6px; height: 6px; flex: 0 0 6px; border-radius: 50%; background: var(--mint); box-shadow: 0 0 13px rgba(103,245,196,.7); }
+.client-projects-empty { padding: clamp(35px, 6vw, 70px); border: 1px dashed rgba(103,245,196,.32); background: rgba(103,245,196,.025); text-align: center; }.client-projects-empty h3 { margin: 15px 0 8px; font-size: clamp(1.55rem, 3vw, 2.5rem); }.client-projects-empty p { max-width: 440px; margin: 0 auto; color: #9aaca5; font-size: 12px; line-height: 1.9; }.client-projects-empty a { margin-top: 21px; display: inline-flex; color: var(--mint); font-size: 12px; font-weight: 700; }
 
 /* Sitaro journal */
 .blog-page { background: var(--paper); color: var(--ink); }

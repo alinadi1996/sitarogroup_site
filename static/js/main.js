@@ -102,6 +102,9 @@
     const supportForm = document.querySelector("[data-support-form]");
     const supportInput = document.querySelector("[data-support-input]");
     const supportLog = document.querySelector("[data-support-log]");
+    const supportSubmit = supportForm?.querySelector('button[type="submit"]');
+    const supportHistory = [];
+    let supportBusy = false;
     const socialToggle = document.querySelector("[data-social-toggle]");
     const socialList = document.querySelector("[data-social-list]");
 
@@ -134,10 +137,38 @@
         supportLog.scrollTo({ top: supportLog.scrollHeight, behavior: prefersReducedMotion ? "auto" : "smooth" });
     };
 
-    const answerSupportMessage = () => {
-        window.setTimeout(() => {
-            appendSupportMessage("برای بررسی دقیق و پیگیری درخواست، از گزینه «ثبت درخواست رسمی» استفاده کنید؛ تیم سیتارو اطلاعات پروژه را از همان مسیر دریافت می‌کند.");
-        }, prefersReducedMotion ? 0 : 420);
+    const answerSupportMessage = async (message) => {
+        supportBusy = true;
+        if (supportSubmit) supportSubmit.disabled = true;
+        supportInput?.setAttribute("aria-busy", "true");
+        const waiting = document.createElement("div");
+        waiting.className = "support-message support-message-agent support-waiting";
+        waiting.innerHTML = '<span class="support-prompt" aria-hidden="true">AI</span><p>در حال آماده‌کردن پاسخ…</p>';
+        supportLog?.append(waiting);
+        supportLog?.scrollTo({ top: supportLog.scrollHeight, behavior: "smooth" });
+        try {
+            const response = await fetch(supportForm.dataset.supportUrl, {
+                method: "POST",
+                credentials: "same-origin",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRFToken": supportForm.querySelector('[name="csrfmiddlewaretoken"]').value,
+                },
+                body: JSON.stringify({ message, history: supportHistory.slice(-6) }),
+            });
+            const data = await response.json();
+            if (!response.ok) throw new Error(data.error || "پاسخ‌گو فعلاً در دسترس نیست.");
+            appendSupportMessage(data.answer);
+            supportHistory.push({ role: "user", content: message }, { role: "assistant", content: data.answer });
+            if (supportHistory.length > 6) supportHistory.splice(0, supportHistory.length - 6);
+        } catch (error) {
+            appendSupportMessage(error.message || "اتصال برقرار نشد. لطفاً دوباره تلاش کنید یا درخواست رسمی ثبت کنید.");
+        } finally {
+            waiting.remove();
+            supportBusy = false;
+            if (supportSubmit) supportSubmit.disabled = false;
+            supportInput?.removeAttribute("aria-busy");
+        }
     };
 
     supportPanel?.setAttribute("inert", "");
@@ -145,6 +176,7 @@
     supportClose?.addEventListener("click", () => setSupport(false, true));
     supportForm?.addEventListener("submit", (event) => {
         event.preventDefault();
+        if (supportBusy) return;
         const text = supportInput?.value.trim();
         if (!text) {
             supportInput?.focus();
@@ -152,7 +184,7 @@
         }
         appendSupportMessage(text, "user");
         supportForm.reset();
-        answerSupportMessage();
+        answerSupportMessage(text);
     });
     document.querySelectorAll("[data-support-quick]").forEach((button) => {
         button.addEventListener("click", () => {
