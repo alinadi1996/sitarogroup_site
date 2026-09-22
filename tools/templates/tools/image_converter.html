@@ -1,0 +1,48 @@
+{% extends "_base.html" %}
+
+{% block title %}تبدیل تصویر به WebP، PNG و JPEG | Sitaro{% endblock %}
+{% block description %}تصاویر تکی یا ZIP را به WebP، PNG و JPEG تبدیل کنید.{% endblock %}
+{% block body_class %}image-converter-page{% endblock %}
+
+{% block content %}
+<main id="main" class="image-converter-main">
+    <section class="image-converter-hero" aria-labelledby="image-converter-title">
+        <div class="image-converter-copy">
+            <span class="tools-kicker"><i></i> SITARO / IMAGE CONVERTER</span>
+            <h1 id="image-converter-title">تبدیل تصویر<br><em>بدون پیچیدگی</em></h1>
+            <p>یک تصویر را بارگذاری کنید یا یک فایل ZIP از تصاویر بفرستید و خروجی WebP، PNG یا JPEG را همان لحظه دریافت کنید.</p>
+        </div>
+        <aside class="image-converter-notes" aria-label="راهنمای ابزار">
+            <span>OUTPUT / READY</span>
+            <strong>WEBP&nbsp; PNG&nbsp; JPEG</strong>
+            <small>فایل‌ها ذخیره نمی‌شوند و پس از تبدیل مستقیماً برای دانلود ارسال می‌شوند.</small>
+        </aside>
+    </section>
+
+    <section class="image-converter-workspace" aria-labelledby="converter-form-title">
+        <div class="image-converter-heading">
+            <span>01 / UPLOAD</span>
+            <h2 id="converter-form-title">فایل خود را انتخاب کنید</h2>
+        </div>
+        <form class="image-converter-form" method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            {% if error %}<p class="image-converter-error" role="alert">{{ error }}</p>{% endif %}
+            <label class="image-drop-zone" for="image-input">
+                <input id="image-input" name="image" type="file" accept="image/*,.zip" required>
+                <span class="image-drop-icon" aria-hidden="true">↑</span>
+                <strong>تصویر یا ZIP تصاویر را اینجا رها کنید</strong>
+                <small>PNG، JPG، JPEG، WebP، GIF، TIFF، BMP، AVIF یا ZIP</small>
+                <b>انتخاب فایل</b>
+            </label>
+            <fieldset class="image-format-picker">
+                <legend>02 / فرمت خروجی</legend>
+                <label><input type="radio" name="output_format" value="webp" checked><span><b>WebP</b><small>وب سریع‌تر</small></span></label>
+                <label><input type="radio" name="output_format" value="png"><span><b>PNG</b><small>شفافیت کامل</small></span></label>
+                <label><input type="radio" name="output_format" value="jpeg"><span><b>JPEG</b><small>فایل سبک</small></span></label>
+            </fieldset>
+            <button class="button button-primary image-converter-submit" type="submit">تبدیل و دانلود <span aria-hidden="true">←</span></button>
+            <p class="image-converter-limit">حداکثر حجم هر بارگذاری: ۲۵ مگابایت. ZIP: حداکثر ۵۰ تصویر و ۱۰۰ مگابایت پس از بازشدن.</p>
+        </form>
+    </section>
+</main>
+{% endblock %}

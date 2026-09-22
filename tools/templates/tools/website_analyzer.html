@@ -1,0 +1,55 @@
+{% extends "_base.html" %}
+
+{% block title %}تحلیل سایت و تست سرعت Google PageSpeed | Sitaro{% endblock %}
+{% block description %}اطلاعات پایه سایت و گزارش سرعت موبایل Google PageSpeed را بررسی کنید.{% endblock %}
+{% block body_class %}website-analyzer-page{% endblock %}
+
+{% block content %}
+<main id="main" class="website-analyzer-main">
+    <section class="website-analyzer-hero" aria-labelledby="website-analyzer-title">
+        <span class="tools-kicker"><i></i> SITARO / SITE INTELLIGENCE</span>
+        <h1 id="website-analyzer-title">سایت خود را<br><em>دقیق‌تر ببینید</em></h1>
+        <p>عنوان، توضیحات متا، ساختار H1 و امتیاز سرعت موبایل را در یک گزارش جمع‌وجور بررسی کنید.</p>
+    </section>
+
+    <section class="website-analyzer-workspace" aria-labelledby="website-analyzer-form-title">
+        <form class="website-analyzer-form" method="post">
+            {% csrf_token %}
+            <label for="website-url" id="website-analyzer-form-title">آدرس وب‌سایت</label>
+            <div>
+                <input id="website-url" name="url" type="url" value="{{ url|default:'' }}" placeholder="https://example.com" required>
+                <button class="button button-primary" type="submit">شروع تحلیل <span aria-hidden="true">←</span></button>
+            </div>
+            <small>فقط آدرس‌های عمومی HTTP و HTTPS بررسی می‌شوند. گزارش سرعت با داده Google PageSpeed موبایل تهیه می‌شود.</small>
+        </form>
+
+        {% if error %}<p class="website-analyzer-error" role="alert">{{ error }}</p>{% endif %}
+
+        {% if analysis %}
+        <div class="website-report" aria-live="polite">
+            <div class="website-report-head"><span>REPORT / {{ analysis.status_code }}</span><a href="{{ analysis.final_url }}" rel="noopener noreferrer" target="_blank">{{ analysis.final_url }}</a></div>
+            <section class="website-metadata" aria-labelledby="metadata-title">
+                <h2 id="metadata-title">ساختار صفحه</h2>
+                <dl>
+                    <div><dt>عنوان صفحه</dt><dd>{{ analysis.title|default:"یافت نشد" }}</dd></div>
+                    <div><dt>توضیحات متا</dt><dd>{{ analysis.description|default:"یافت نشد" }}</dd></div>
+                    <div><dt>تعداد H1</dt><dd>{{ analysis.h1_count }}</dd></div>
+                </dl>
+            </section>
+            <section class="website-pagespeed" aria-labelledby="pagespeed-title">
+                <div><span>GOOGLE / PAGESPEED</span><h2 id="pagespeed-title">عملکرد موبایل</h2></div>
+                {% if page_speed %}
+                <strong class="website-score{% if page_speed.score >= 90 %} is-good{% elif page_speed.score >= 50 %} is-mid{% endif %}">{{ page_speed.score }}</strong>
+                <dl>
+                    <div><dt>FCP</dt><dd>{{ page_speed.first_contentful_paint }}</dd></div>
+                    <div><dt>LCP</dt><dd>{{ page_speed.largest_contentful_paint }}</dd></div>
+                    <div><dt>TBT</dt><dd>{{ page_speed.total_blocking_time }}</dd></div>
+                    <div><dt>CLS</dt><dd>{{ page_speed.cumulative_layout_shift }}</dd></div>
+                </dl>
+                {% else %}<p class="website-pagespeed-unavailable">{{ page_speed_error }}</p>{% endif %}
+            </section>
+        </div>
+        {% endif %}
+    </section>
+</main>
+{% endblock %}

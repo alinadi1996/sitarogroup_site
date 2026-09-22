@@ -79,4 +79,8 @@ class Tool(models.Model):
     def get_absolute_url(self):
         if not self.is_available:
             return ""
+        if self.slug == "image-optimizer":
+            return reverse("tools:image_converter")
+        if self.slug == "website-analyzer":
+            return reverse("tools:website_analyzer")
         return reverse("tools:launch", kwargs={"slug": self.slug})

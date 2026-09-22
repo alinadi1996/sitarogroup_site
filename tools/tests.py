@@ -1,6 +1,12 @@
 from django.contrib import admin
+from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import TestCase
 from django.urls import resolve, reverse
+from io import BytesIO
+from unittest.mock import patch
+from zipfile import ZIP_DEFLATED, ZipFile
+
+from PIL import Image
 
 from .models import Tool, ToolCategory
 
@@ -100,4 +106,100 @@ class ToolsPublicPagesTests(TestCase):
         response = self.client.get(active.get_absolute_url())
         self.assertRedirects(response, f"{reverse('tools:index')}#tool-ready", fetch_redirect_response=False)
         self.assertEqual(self.client.get(reverse("tools:launch", kwargs={"slug": coming.slug})).status_code, 404)
+
+    def test_active_image_converter_links_directly_to_converter(self):
+        converter = self.create_tool(slug="image-optimizer", status=Tool.Status.ACTIVE)
+
+        self.assertEqual(converter.get_absolute_url(), reverse("tools:image_converter"))
+
+    def test_active_website_analyzer_links_directly_to_analyzer(self):
+        analyzer = self.create_tool(slug="website-analyzer", status=Tool.Status.ACTIVE)
+
+        self.assertEqual(analyzer.get_absolute_url(), reverse("tools:website_analyzer"))
+
+
+class ImageConverterTests(TestCase):
+    @staticmethod
+    def image_upload(name="sample.png", color=(255, 0, 0, 255)):
+        image = Image.new("RGBA", (12, 12), color)
+        content = BytesIO()
+        image.save(content, "PNG")
+        return SimpleUploadedFile(name, content.getvalue(), content_type="image/png")
+
+    def test_converter_page_opens(self):
+        response = self.client.get(reverse("tools:image_converter"))
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "تبدیل تصویر")
+
+    def test_single_image_converts_to_webp(self):
+        response = self.client.post(
+            reverse("tools:image_converter"),
+            {"image": self.image_upload(), "output_format": "webp"},
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response["Content-Type"], "image/webp")
+        self.assertIn('filename="sample.webp"', response["Content-Disposition"])
+        self.assertEqual(Image.open(BytesIO(response.content)).format, "WEBP")
+
+    def test_zip_images_convert_to_requested_format(self):
+        archive_content = BytesIO()
+        with ZipFile(archive_content, "w", ZIP_DEFLATED) as archive:
+            archive.writestr("first.png", self.image_upload().read())
+            archive.writestr("nested/second.png", self.image_upload("second.png").read())
+        upload = SimpleUploadedFile("images.zip", archive_content.getvalue(), content_type="application/zip")
+
+        response = self.client.post(
+            reverse("tools:image_converter"), {"image": upload, "output_format": "jpeg"}
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response["Content-Type"], "application/zip")
+        with ZipFile(BytesIO(response.content)) as result:
+            self.assertEqual(sorted(result.namelist()), ["01-first.jpg", "02-second.jpg"])
+            self.assertEqual(Image.open(BytesIO(result.read("01-first.jpg"))).format, "JPEG")
+
+    def test_invalid_file_returns_form_error(self):
+        upload = SimpleUploadedFile("not-an-image.txt", b"not an image", content_type="text/plain")
+        response = self.client.post(
+            reverse("tools:image_converter"), {"image": upload, "output_format": "png"}
+        )
+        self.assertEqual(response.status_code, 400)
+        self.assertContains(response, "فایل تصویر معتبر نیست", status_code=400)
+
+
+class WebsiteAnalyzerTests(TestCase):
+    def test_analyzer_page_opens(self):
+        response = self.client.get(reverse("tools:website_analyzer"))
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "تحلیل سایت")
+
+    @patch("tools.views.fetch_page_speed")
+    @patch("tools.views.inspect_website")
+    @patch("tools.views.validate_public_url", return_value="https://example.com")
+    def test_analyzer_renders_website_and_pagespeed_results(self, validate_url, inspect, page_speed):
+        inspect.return_value = {
+            "final_url": "https://example.com",
+            "status_code": 200,
+            "title": "Example",
+            "description": "Example description",
+            "h1_count": 1,
+        }
+        page_speed.return_value = (
+            {"score": 92, "first_contentful_paint": "0.8 s", "largest_contentful_paint": "1.4 s", "total_blocking_time": "0 ms", "cumulative_layout_shift": "0"},
+            None,
+        )
+
+        response = self.client.post(reverse("tools:website_analyzer"), {"url": "https://example.com"})
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Example description")
+        self.assertContains(response, "92")
+        page_speed.assert_called_once_with("https://example.com")
+
+    @patch("tools.views.validate_public_url", side_effect=ValueError("آدرس‌های محلی یا خصوصی قابل بررسی نیستند."))
+    def test_private_address_is_rejected(self, validate_url):
+        response = self.client.post(reverse("tools:website_analyzer"), {"url": "http://127.0.0.1"})
+
+        self.assertEqual(response.status_code, 400)
+        self.assertContains(response, "آدرس‌های محلی یا خصوصی", status_code=400)
 
