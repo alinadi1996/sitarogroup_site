@@ -71,7 +71,7 @@
                 </div>
                 {% else %}
                 <a class="header-login" href="{% url 'accounts:login' %}">ورود</a>
-                <a class="header-action header-action-primary" href="{% url 'leads:contact' %}">شروع پروژه <span aria-hidden="true">↙</span></a>
+                <a class="header-action header-action-primary" href="{% url 'leads:contact' %}">شروع پروژه <span class="project-icon" aria-hidden="true">↙</span></a>
                 {% endif %}
             </div>
             <button class="theme-toggle" type="button" data-theme-toggle aria-label="فعال‌کردن حالت روشن" aria-pressed="false">
@@ -218,9 +218,7 @@
 
         <button class="support-launcher" type="button" data-support-toggle aria-expanded="false" aria-controls="support-console">
             <span class="support-launcher-radar" aria-hidden="true"></span>
-            <span class="support-launcher-icon">
-                <svg aria-hidden="true"><use href="{% static 'icons/sitaro-support-icons.svg' %}#support"></use></svg>
-            </span>
+            <span class="support-launcher-icon"></span>
             <span class="support-launcher-copy"><b>پشتیبانی آنلاین</b><small>پاسخ‌گویی سریع</small></span>
             <span class="support-unread" data-support-unread aria-label="یک پیام خوانده‌نشده">1</span>
         </button>
