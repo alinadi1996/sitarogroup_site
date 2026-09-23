@@ -356,7 +356,7 @@
         };
     };
 
-    const drawOrbit = (radius, tilt, rotation, alpha) => {
+    const drawOrbit = (radius, tilt, rotation, alpha, color) => {
         context.beginPath();
         const steps = 90;
         for (let i = 0; i <= steps; i += 1) {
@@ -366,14 +366,17 @@
             if (i === 0) context.moveTo(projected.x, projected.y);
             else context.lineTo(projected.x, projected.y);
         }
-        context.strokeStyle = `rgba(103, 245, 196, ${alpha})`;
-        context.lineWidth = .7;
+        context.strokeStyle = `rgba(${color}, ${alpha})`;
+        context.lineWidth = .9;
         context.stroke();
     };
 
     const draw = (time = 0) => {
         if (!visible) return;
         context.clearRect(0, 0, width, height);
+        const isLight = document.documentElement.dataset.theme === "light";
+        const orbitColor = isLight ? "8, 105, 75" : "103, 245, 196";
+        const vertexColor = isLight ? "8, 86, 62" : "255, 255, 249";
         pointerX += (targetX - pointerX) * .035;
         pointerY += (targetY - pointerY) * .035;
 
@@ -384,10 +387,10 @@
         const size = Math.min(width, height) * .47;
 
         context.save();
-        context.globalCompositeOperation = "lighter";
-        drawOrbit(size * 1.18, 1.12, rotationY * .5, .11);
-        drawOrbit(size * 1.02, -.62, rotationY * -.38, .085);
-        drawOrbit(size * .9, .25, rotationY * .3, .06);
+        context.globalCompositeOperation = isLight ? "source-over" : "lighter";
+        drawOrbit(size * 1.18, 1.12, rotationY * .5, isLight ? .3 : .11, orbitColor);
+        drawOrbit(size * 1.02, -.62, rotationY * -.38, isLight ? .23 : .085, orbitColor);
+        drawOrbit(size * .9, .25, rotationY * .3, isLight ? .17 : .06, orbitColor);
         context.restore();
 
         const transformed = vertices.map((vertex) => project(rotatePoint(vertex, rotationX, rotationY, rotationZ), size));
@@ -400,8 +403,8 @@
             context.beginPath();
             context.moveTo(start.x, start.y);
             context.lineTo(end.x, end.y);
-            context.strokeStyle = `rgba(103, 245, 196, ${.07 + depth * .43})`;
-            context.lineWidth = .55 + depth * 1.1;
+            context.strokeStyle = `rgba(${orbitColor}, ${isLight ? .19 + depth * .53 : .07 + depth * .43})`;
+            context.lineWidth = (isLight ? .8 : .55) + depth * 1.1;
             context.stroke();
         });
 
@@ -410,20 +413,20 @@
             const radius = 1.4 + depth * 3;
             context.beginPath();
             context.arc(point.x, point.y, radius, 0, Math.PI * 2);
-            context.fillStyle = depth > .62 ? `rgba(255, 255, 249, ${.35 + depth * .6})` : `rgba(103, 245, 196, ${.15 + depth * .55})`;
+            context.fillStyle = depth > .62 ? `rgba(${vertexColor}, ${isLight ? .4 + depth * .55 : .35 + depth * .6})` : `rgba(${orbitColor}, ${isLight ? .3 + depth * .6 : .15 + depth * .55})`;
             context.fill();
             if (index % 3 === 0 && depth > .55) {
                 context.beginPath();
                 context.arc(point.x, point.y, radius * 3.2, 0, Math.PI * 2);
-                context.strokeStyle = `rgba(103, 245, 196, ${depth * .12})`;
+                context.strokeStyle = `rgba(${orbitColor}, ${depth * (isLight ? .25 : .12)})`;
                 context.stroke();
             }
         });
 
         const coreGradient = context.createRadialGradient(width * .5, height * .5, 0, width * .5, height * .5, size * .36);
-        coreGradient.addColorStop(0, "rgba(103,245,196,.13)");
-        coreGradient.addColorStop(.45, "rgba(103,245,196,.035)");
-        coreGradient.addColorStop(1, "rgba(103,245,196,0)");
+        coreGradient.addColorStop(0, `rgba(${orbitColor},${isLight ? .14 : .13})`);
+        coreGradient.addColorStop(.45, `rgba(${orbitColor},${isLight ? .05 : .035})`);
+        coreGradient.addColorStop(1, `rgba(${orbitColor},0)`);
         context.fillStyle = coreGradient;
         context.beginPath();
         context.arc(width * .5, height * .5, size * .36, 0, Math.PI * 2);
@@ -448,14 +451,23 @@
         }
     };
 
-    const resizeObserver = "ResizeObserver" in window ? new ResizeObserver(resize) : null;
+    const resizeObserver = "ResizeObserver" in window ? new ResizeObserver(() => {
+        resize();
+        if (prefersReducedMotion) draw(5000);
+    }) : null;
     resizeObserver?.observe(host);
-    if (!resizeObserver) window.addEventListener("resize", resize, { passive: true });
+    if (!resizeObserver) window.addEventListener("resize", () => {
+        resize();
+        if (prefersReducedMotion) draw(5000);
+    }, { passive: true });
     if (window.matchMedia("(pointer: fine)").matches && !prefersReducedMotion) {
         host.addEventListener("pointermove", handlePointer, { passive: true });
         host.addEventListener("pointerleave", () => { targetX = 0; targetY = 0; }, { passive: true });
     }
     document.addEventListener("visibilitychange", handleVisibility);
+    if (prefersReducedMotion) {
+        new MutationObserver(() => draw(5000)).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+    }
     resize();
     draw(5000);
 })();

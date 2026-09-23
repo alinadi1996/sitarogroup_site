@@ -12,6 +12,8 @@ https://docs.djangoproject.com/en/6.1/ref/settings/
 
 from pathlib import Path
 import os
+from django.templatetags.static import static
+from django.urls import reverse_lazy
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -45,6 +47,8 @@ ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'testserver']
 # Application definition
 
 INSTALLED_APPS = [
+    'unfold',
+    'unfold.contrib.filters',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -60,6 +64,68 @@ INSTALLED_APPS = [
     'leads',
     'tools',
 ]
+
+UNFOLD = {
+    'SITE_TITLE': 'مدیریت سیتارو',
+    'SITE_HEADER': 'سیتارو',
+    'SITE_SUBHEADER': 'مدیریت پروژه و محتوا',
+    'SITE_URL': '/',
+    'DASHBOARD_CALLBACK': 'config.admin_dashboard.dashboard_callback',
+    'STYLES': [lambda request: static('css/admin-dashboard.css')],
+    'SIDEBAR': {
+        'show_search': True,
+        'show_all_applications': False,
+        'navigation': [
+            {
+                'title': 'نمای کلی',
+                'items': [
+                    {'title': 'داشبورد', 'icon': 'dashboard', 'link': reverse_lazy('admin:index')},
+                ],
+            },
+            {
+                'title': 'مشتریان و پروژه‌ها',
+                'separator': True,
+                'items': [
+                    {'title': 'درخواست‌ها', 'icon': 'inbox', 'link': reverse_lazy('admin:leads_contactrequest_changelist'), 'permission': lambda request: request.user.has_perm('leads.view_contactrequest') or request.user.has_perm('leads.change_contactrequest')},
+                    {'title': 'پروژه‌های مشتریان', 'icon': 'account_tree', 'link': reverse_lazy('admin:leads_clientproject_changelist'), 'permission': lambda request: request.user.has_perm('leads.view_clientproject') or request.user.has_perm('leads.change_clientproject')},
+                ],
+            },
+            {
+                'title': 'محتوا و ابزارها',
+                'separator': True,
+                'items': [
+                    {'title': 'نمونه‌کارها', 'icon': 'work', 'link': reverse_lazy('admin:portfolio_project_changelist'), 'permission': lambda request: request.user.has_perm('portfolio.view_project') or request.user.has_perm('portfolio.change_project')},
+                    {'title': 'بلاگ', 'icon': 'article', 'link': reverse_lazy('admin:blog_post_changelist'), 'permission': lambda request: request.user.has_perm('blog.view_post') or request.user.has_perm('blog.change_post')},
+                    {'title': 'ابزارها', 'icon': 'construction', 'link': reverse_lazy('admin:tools_tool_changelist'), 'permission': lambda request: request.user.has_perm('tools.view_tool') or request.user.has_perm('tools.change_tool')},
+                    {'title': 'دسته‌های ابزار', 'icon': 'category', 'link': reverse_lazy('admin:tools_toolcategory_changelist'), 'permission': lambda request: request.user.has_perm('tools.view_toolcategory') or request.user.has_perm('tools.change_toolcategory')},
+                ],
+            },
+            {
+                'title': 'دسترسی‌ها',
+                'separator': True,
+                'items': [
+                    {'title': 'کاربران', 'icon': 'group', 'link': reverse_lazy('admin:accounts_customuser_changelist'), 'permission': lambda request: request.user.has_perm('accounts.view_customuser') or request.user.has_perm('accounts.change_customuser')},
+                    {'title': 'گروه‌ها', 'icon': 'admin_panel_settings', 'link': reverse_lazy('admin:auth_group_changelist'), 'permission': lambda request: request.user.has_perm('auth.view_group') or request.user.has_perm('auth.change_group')},
+                ],
+            },
+        ],
+    },
+    'COLORS': {
+        'primary': {
+            '50': '#effcf5',
+            '100': '#dcf8e9',
+            '200': '#b9f0d4',
+            '300': '#83e1b5',
+            '400': '#4dcb96',
+            '500': '#20b37b',
+            '600': '#0b9466',
+            '700': '#087551',
+            '800': '#095b41',
+            '900': '#0a4936',
+            '950': '#062b20',
+        },
+    },
+}
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

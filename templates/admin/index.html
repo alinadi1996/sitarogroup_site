@@ -1,0 +1,80 @@
+{% extends "admin/base.html" %}
+{% load i18n %}
+
+{% block branding %}{% include "unfold/helpers/site_branding.html" %}{% endblock %}
+
+{% block content %}
+<div class="sitaro-dashboard" dir="rtl">
+    <div class="sitaro-dashboard-intro">
+        <div>
+            <span class="sitaro-dashboard-kicker"><i></i> SITARO / CONTROL CENTER</span>
+            <h1>نمای کلی سیتارو</h1>
+            <p>درخواست‌ها، پیشرفت پروژه‌ها و محتوای سایت در یک نگاه.</p>
+        </div>
+        <a href="/" target="_blank" rel="noopener noreferrer">مشاهدهٔ سایت <span aria-hidden="true">↗</span></a>
+    </div>
+
+    {% if dashboard_metrics %}
+    <div class="sitaro-dashboard-metrics" aria-label="آمار مدیریتی">
+        {% for metric in dashboard_metrics %}
+        <a class="sitaro-dashboard-metric sitaro-dashboard-metric--{{ metric.accent }}" href="{{ metric.url }}">
+            <span>{{ metric.label }}</span>
+            <strong>{{ metric.value }}</strong>
+            <small>مشاهدهٔ فهرست <span aria-hidden="true">←</span></small>
+        </a>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    {% if show_requests or show_projects %}
+    <div class="sitaro-dashboard-feeds">
+        {% if show_requests %}
+        <section class="sitaro-dashboard-panel" aria-labelledby="dashboard-requests-title">
+            <header>
+                <div><span>01 / LEADS</span><h2 id="dashboard-requests-title">درخواست‌های اخیر</h2></div>
+                <a href="{% url 'admin:leads_contactrequest_changelist' %}">همهٔ درخواست‌ها</a>
+            </header>
+            {% if recent_requests %}
+            <ul>
+                {% for item in recent_requests %}
+                <li>
+                    <a href="{% url 'admin:leads_contactrequest_change' item.pk %}">
+                        <span><strong>{{ item.full_name }}</strong><small>{{ item.get_service_display }}</small></span>
+                        <span class="sitaro-dashboard-row-meta"><em class="sitaro-status sitaro-status--{{ item.status }}">{{ item.get_status_display }}</em><time datetime="{{ item.created_at|date:'c' }}">{{ item.created_at|date:"Y/m/d" }}</time></span>
+                    </a>
+                </li>
+                {% endfor %}
+            </ul>
+            {% else %}<p class="sitaro-dashboard-empty">هنوز درخواستی ثبت نشده است.</p>{% endif %}
+        </section>
+        {% endif %}
+
+        {% if show_projects %}
+        <section class="sitaro-dashboard-panel" aria-labelledby="dashboard-projects-title">
+            <header>
+                <div><span>02 / PROJECTS</span><h2 id="dashboard-projects-title">پروژه‌های اخیر</h2></div>
+                <a href="{% url 'admin:leads_clientproject_changelist' %}">همهٔ پروژه‌ها</a>
+            </header>
+            {% if recent_projects %}
+            <ul>
+                {% for item in recent_projects %}
+                <li>
+                    <a href="{% url 'admin:leads_clientproject_change' item.pk %}">
+                        <span><strong>{{ item.title }}</strong><small>{{ item.client }}</small></span>
+                        <span class="sitaro-dashboard-row-meta"><em class="sitaro-status sitaro-status--{{ item.status }}">{{ item.get_status_display }}</em><span class="sitaro-dashboard-progress"><progress value="{{ item.progress }}" max="100">{{ item.progress }}٪</progress><small>{{ item.progress }}٪</small></span></span>
+                    </a>
+                </li>
+                {% endfor %}
+            </ul>
+            {% else %}<p class="sitaro-dashboard-empty">هنوز پروژه‌ای تعریف نشده است.</p>{% endif %}
+        </section>
+        {% endif %}
+    </div>
+    {% endif %}
+
+    <section class="sitaro-dashboard-models" aria-labelledby="dashboard-models-title">
+        <h2 id="dashboard-models-title">مدیریت بخش‌ها</h2>
+        {% include "unfold/helpers/app_list_default.html" %}
+    </section>
+</div>
+{% endblock %}

@@ -1,0 +1,63 @@
+@font-face { font-family: "IRANYekanX"; src: url("../fonts/IRANYekanXVF.woff2") format("woff2"); font-style: normal; font-weight: 100 900; font-display: swap; }
+html[lang^="fa"] :is(body, button, input, select, textarea) { font-family: "IRANYekanX", Tahoma, sans-serif; }
+.sitaro-dashboard { --dashboard-line: #dce8e0; --dashboard-muted: #557064; color: #123227; font-family: "IRANYekanX", Tahoma, sans-serif; }
+.sitaro-dashboard-intro { min-height: 174px; padding: clamp(24px, 4vw, 44px); display: flex; align-items: end; justify-content: space-between; gap: 24px; border: 1px solid #c9e8d6; border-radius: 16px; background: radial-gradient(circle at 5% 10%, rgba(90, 216, 150, .22), transparent 34%), linear-gradient(135deg, #f5fcf7, #e9f5ed); }
+.sitaro-dashboard-kicker { display: inline-flex; align-items: center; gap: 9px; color: #087551; direction: ltr; font: 700 10px/1.2 monospace; letter-spacing: .12em; }
+.sitaro-dashboard-kicker i { width: 7px; height: 7px; border-radius: 50%; background: #0b9466; box-shadow: 0 0 0 5px rgba(11, 148, 102, .12); }
+.sitaro-dashboard-intro h1 { margin: 16px 0 7px; font-size: clamp(25px, 3vw, 38px); font-weight: 800; line-height: 1.3; }
+.sitaro-dashboard-intro p { margin: 0; color: var(--dashboard-muted); font-size: 13px; line-height: 1.8; }
+.sitaro-dashboard-intro > a { flex: 0 0 auto; padding: 11px 15px; border: 1px solid #99cbb0; border-radius: 9px; color: #075d41; font-size: 12px; font-weight: 700; white-space: nowrap; transition: background .2s, transform .2s; }
+.sitaro-dashboard-intro > a:hover { background: #dcf8e9; transform: translateY(-2px); }
+.sitaro-dashboard-metrics { margin: 22px 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 13px; }
+.sitaro-dashboard-metric { min-height: 144px; padding: 20px; display: flex; flex-direction: column; align-items: flex-start; border: 1px solid var(--dashboard-line); border-radius: 12px; background: #fff; box-shadow: 0 8px 24px rgba(10, 63, 40, .04); transition: border-color .2s, transform .2s; }
+.sitaro-dashboard-metric:hover { border-color: #66b991; transform: translateY(-3px); }
+.sitaro-dashboard-metric > span { color: var(--dashboard-muted); font-size: 12px; }
+.sitaro-dashboard-metric strong { margin: 11px 0 auto; color: #087551; font: 750 35px/1.2 monospace; }
+.sitaro-dashboard-metric--blue strong { color: #3f66ae; }
+.sitaro-dashboard-metric--amber strong { color: #a16b26; }
+.sitaro-dashboard-metric small { color: #5e7769; font-size: 10px; }
+.sitaro-dashboard-feeds { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 17px; }
+.sitaro-dashboard-panel { min-width: 0; border: 1px solid var(--dashboard-line); border-radius: 12px; background: #fff; overflow: hidden; }
+.sitaro-dashboard-panel header { padding: 21px 22px; display: flex; align-items: end; justify-content: space-between; gap: 12px; border-bottom: 1px solid var(--dashboard-line); }
+.sitaro-dashboard-panel header span { color: #0b9466; direction: ltr; font: 700 9px/1.2 monospace; letter-spacing: .11em; }
+.sitaro-dashboard-panel h2, .sitaro-dashboard-models h2 { margin: 8px 0 0; font-size: 18px; font-weight: 800; }
+.sitaro-dashboard-panel header a { color: #087551; font-size: 11px; white-space: nowrap; }
+.sitaro-dashboard-panel ul { margin: 0; padding: 0; list-style: none; }
+.sitaro-dashboard-panel li + li { border-top: 1px solid var(--dashboard-line); }
+.sitaro-dashboard-panel li > a { min-height: 68px; padding: 13px 22px; display: flex; align-items: center; justify-content: space-between; gap: 14px; transition: background .2s; }
+.sitaro-dashboard-panel li > a:hover { background: #f3faf5; }
+.sitaro-dashboard-panel li > a > span:first-child { min-width: 0; display: grid; gap: 5px; }
+.sitaro-dashboard-panel li strong { overflow: hidden; font-size: 12px; font-weight: 700; text-overflow: ellipsis; white-space: nowrap; }
+.sitaro-dashboard-panel li small, .sitaro-dashboard-row-meta time { color: var(--dashboard-muted); font-size: 10px; }
+.sitaro-dashboard-row-meta { flex: 0 0 auto; display: grid; justify-items: end; gap: 5px; }
+.sitaro-dashboard-row-meta em { color: #087551; font-size: 10px; font-style: normal; font-weight: 700; }
+.sitaro-dashboard-row-meta .sitaro-status { padding: 4px 8px; border-radius: 6px; background: #e7f6ec; color: #086747; white-space: nowrap; }
+.sitaro-dashboard-row-meta :is(.sitaro-status--new, .sitaro-status--pending, .sitaro-status--review) { background: #fff3dd; color: #875814; }
+.sitaro-dashboard-row-meta :is(.sitaro-status--contacted, .sitaro-status--design, .sitaro-status--development, .sitaro-status--discovery) { background: #e8f0fc; color: #315f9c; }
+.sitaro-dashboard-row-meta :is(.sitaro-status--rejected) { background: #fdecea; color: #ad423d; }
+.sitaro-dashboard-progress { display: flex; align-items: center; gap: 7px; direction: ltr; }
+.sitaro-dashboard-progress progress { width: 68px; height: 5px; border: 0; border-radius: 9px; overflow: hidden; background: #dce9e0; accent-color: #0b9466; }
+.sitaro-dashboard-progress progress::-webkit-progress-bar { background: #dce9e0; }
+.sitaro-dashboard-progress progress::-webkit-progress-value { background: #0b9466; border-radius: 9px; }
+.sitaro-dashboard-progress progress::-moz-progress-bar { background: #0b9466; }
+.sitaro-dashboard-empty { padding: 20px 22px; color: var(--dashboard-muted); font-size: 12px; }
+.sitaro-dashboard-models { margin-top: 34px; }
+.sitaro-dashboard-models h2 { margin-bottom: 16px; }
+.dark .sitaro-dashboard { --dashboard-line: #274439; --dashboard-muted: #9db9aa; color: #e9f7ed; }
+.dark .sitaro-dashboard-intro { border-color: #2b6247; background: radial-gradient(circle at 5% 10%, rgba(44, 186, 112, .16), transparent 34%), linear-gradient(135deg, #10291d, #0b1e16); }
+.dark .sitaro-dashboard-kicker, .dark .sitaro-dashboard-panel header span { color: #78e0ac; }
+.dark .sitaro-dashboard-intro > a { border-color: #34694e; color: #a9edc9; }
+.dark .sitaro-dashboard-intro > a:hover, .dark .sitaro-dashboard-panel li > a:hover { background: #183a29; }
+.dark .sitaro-dashboard-metric, .dark .sitaro-dashboard-panel { background: #14291d; box-shadow: none; }
+.dark .sitaro-dashboard-metric strong, .dark .sitaro-dashboard-panel header a, .dark .sitaro-dashboard-row-meta em { color: #78e0ac; }
+.dark .sitaro-dashboard-metric--blue strong { color: #9cbaff; }
+.dark .sitaro-dashboard-metric--amber strong { color: #e8c17f; }
+.dark .sitaro-dashboard-metric small { color: #a3bdad; }
+.dark .sitaro-dashboard-row-meta .sitaro-status { background: #174631; color: #9aebbb; }
+.dark .sitaro-dashboard-row-meta :is(.sitaro-status--new, .sitaro-status--pending, .sitaro-status--review) { background: #47351b; color: #f0cb86; }
+.dark .sitaro-dashboard-row-meta :is(.sitaro-status--contacted, .sitaro-status--design, .sitaro-status--development, .sitaro-status--discovery) { background: #233854; color: #a7c8ff; }
+.dark .sitaro-dashboard-row-meta .sitaro-status--rejected { background: #4a2928; color: #f2aaa4; }
+.dark .sitaro-dashboard-progress progress, .dark .sitaro-dashboard-progress progress::-webkit-progress-bar { background: #355044; }
+@media (max-width: 760px) { .sitaro-dashboard-intro { min-height: 0; align-items: start; flex-direction: column; }.sitaro-dashboard-feeds { grid-template-columns: 1fr; }.sitaro-dashboard-metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 480px) { .sitaro-dashboard-metrics { grid-template-columns: 1fr; }.sitaro-dashboard-metric { min-height: 114px; }.sitaro-dashboard-intro { padding: 23px; } }
+@media (prefers-reduced-motion: reduce) { .sitaro-dashboard a { transition: none; }.sitaro-dashboard a:hover { transform: none; } }
