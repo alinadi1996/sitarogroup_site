@@ -12,7 +12,7 @@ class CustomUserCreationForm(UserCreationForm):
 
     class Meta:
         model = CustomUser
-        fields = UserCreationForm.Meta.fields + ('email', )
+        fields = UserCreationForm.Meta.fields + ('email', 'username',  )
         labels = {'username': 'نام کاربری', 'email': 'ایمیل'}
 
     def __init__(self, *args, **kwargs):

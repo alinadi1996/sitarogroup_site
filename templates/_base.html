@@ -62,7 +62,7 @@
                         <span class="header-avatar" aria-hidden="true">{{ user.username|first|upper }}</span>
                         <span class="header-account-copy"><small>حساب من</small><b>{{ user.username }}</b></span>
                     </a>
-                    <form class="header-logout-form" action="{% url 'accounts:logout' %}" method="post">
+                    <form class="header-logout-form" action="{% url 'account_logout' %}" method="post">
                         {% csrf_token %}
                         <button class="header-logout-button" type="submit" aria-label="خروج از حساب کاربری">
                             <svg aria-hidden="true"><use href="{% static 'icons/sitaro-support-icons.svg' %}#logout"></use></svg><span>خروج</span>
@@ -70,7 +70,7 @@
                     </form>
                 </div>
                 {% else %}
-                <a class="header-login" href="{% url 'accounts:login' %}">ورود | ثبت نام</a>
+                <a class="header-login" href="{% url 'account_login' %}">ورود | ثبت نام</a>
                 <a class="header-action header-action-primary" href="{% url 'leads:contact' %}">شروع پروژه <span class="project-icon" aria-hidden="true">↙</span></a>
                 {% endif %}
             </div>
@@ -84,7 +84,7 @@
                 <span>پنل</span>
             </a>
             {% else %}
-            <a class="mobile-auth-shortcut mobile-auth-login" href="{% url 'accounts:login' %}">
+            <a class="mobile-auth-shortcut mobile-auth-login" href="{% url 'account_login' %}">
                 <span class="mobile-auth-icon" aria-hidden="true"></span>
                 <span>ورود</span>
             </a>

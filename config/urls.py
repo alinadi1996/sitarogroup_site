@@ -21,11 +21,11 @@ from django.conf import settings
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('account/', include('accounts.urls')),
-    path('account/' , include('django.contrib.auth.urls')),
+    path('account/', include('allauth.urls')),
     path('blog/', include('blog.urls')),
     path('portfolio/', include('portfolio.urls')),
     path('contact/', include('leads.urls')),
     path('tools/', include('tools.urls')),
     path('' , include('pages.urls')),
+    path('profile/', include('accounts.urls')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

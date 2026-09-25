@@ -31,7 +31,6 @@ if local_env.is_file():
         if name in {"OPENAI_API_KEY", "SITARO_SUPPORT_MODEL", "SITARO_SUPPORT_API_BASE_URL"}:
             os.environ.setdefault(name, value.strip().strip('"').strip("'"))
 
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/6.1/howto/deployment/checklist/
 
@@ -41,13 +40,15 @@ SECRET_KEY = 'django-insecure-@_e-z-75t*5_=cnx^iyr^0(su%@17-pqb8+$8io$yqr@t!9*w$
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'testserver']
-
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'testserver' , '7fe5566ff3095e.lhr.life']
 
 # Application definition
 
 INSTALLED_APPS = [
     'unfold',
+    # all auth
+    'allauth',
+    'allauth.account',
     'unfold.contrib.filters',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -56,7 +57,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
-    #apps
+    # apps
     'blog',
     'accounts',
     'pages',
@@ -86,26 +87,46 @@ UNFOLD = {
                 'title': 'مشتریان و پروژه‌ها',
                 'separator': True,
                 'items': [
-                    {'title': 'درخواست‌ها', 'icon': 'inbox', 'link': reverse_lazy('admin:leads_contactrequest_changelist'), 'permission': lambda request: request.user.has_perm('leads.view_contactrequest') or request.user.has_perm('leads.change_contactrequest')},
-                    {'title': 'پروژه‌های مشتریان', 'icon': 'account_tree', 'link': reverse_lazy('admin:leads_clientproject_changelist'), 'permission': lambda request: request.user.has_perm('leads.view_clientproject') or request.user.has_perm('leads.change_clientproject')},
+                    {'title': 'درخواست‌ها', 'icon': 'inbox',
+                     'link': reverse_lazy('admin:leads_contactrequest_changelist'),
+                     'permission': lambda request: request.user.has_perm(
+                         'leads.view_contactrequest') or request.user.has_perm('leads.change_contactrequest')},
+                    {'title': 'پروژه‌های مشتریان', 'icon': 'account_tree',
+                     'link': reverse_lazy('admin:leads_clientproject_changelist'),
+                     'permission': lambda request: request.user.has_perm(
+                         'leads.view_clientproject') or request.user.has_perm('leads.change_clientproject')},
                 ],
             },
             {
                 'title': 'محتوا و ابزارها',
                 'separator': True,
                 'items': [
-                    {'title': 'نمونه‌کارها', 'icon': 'work', 'link': reverse_lazy('admin:portfolio_project_changelist'), 'permission': lambda request: request.user.has_perm('portfolio.view_project') or request.user.has_perm('portfolio.change_project')},
-                    {'title': 'بلاگ', 'icon': 'article', 'link': reverse_lazy('admin:blog_post_changelist'), 'permission': lambda request: request.user.has_perm('blog.view_post') or request.user.has_perm('blog.change_post')},
-                    {'title': 'ابزارها', 'icon': 'construction', 'link': reverse_lazy('admin:tools_tool_changelist'), 'permission': lambda request: request.user.has_perm('tools.view_tool') or request.user.has_perm('tools.change_tool')},
-                    {'title': 'دسته‌های ابزار', 'icon': 'category', 'link': reverse_lazy('admin:tools_toolcategory_changelist'), 'permission': lambda request: request.user.has_perm('tools.view_toolcategory') or request.user.has_perm('tools.change_toolcategory')},
+                    {'title': 'نمونه‌کارها', 'icon': 'work', 'link': reverse_lazy('admin:portfolio_project_changelist'),
+                     'permission': lambda request: request.user.has_perm(
+                         'portfolio.view_project') or request.user.has_perm('portfolio.change_project')},
+                    {'title': 'بلاگ', 'icon': 'article', 'link': reverse_lazy('admin:blog_post_changelist'),
+                     'permission': lambda request: request.user.has_perm('blog.view_post') or request.user.has_perm(
+                         'blog.change_post')},
+                    {'title': 'ابزارها', 'icon': 'construction', 'link': reverse_lazy('admin:tools_tool_changelist'),
+                     'permission': lambda request: request.user.has_perm('tools.view_tool') or request.user.has_perm(
+                         'tools.change_tool')},
+                    {'title': 'دسته‌های ابزار', 'icon': 'category',
+                     'link': reverse_lazy('admin:tools_toolcategory_changelist'),
+                     'permission': lambda request: request.user.has_perm(
+                         'tools.view_toolcategory') or request.user.has_perm('tools.change_toolcategory')},
                 ],
             },
             {
                 'title': 'دسترسی‌ها',
                 'separator': True,
                 'items': [
-                    {'title': 'کاربران', 'icon': 'group', 'link': reverse_lazy('admin:accounts_customuser_changelist'), 'permission': lambda request: request.user.has_perm('accounts.view_customuser') or request.user.has_perm('accounts.change_customuser')},
-                    {'title': 'گروه‌ها', 'icon': 'admin_panel_settings', 'link': reverse_lazy('admin:auth_group_changelist'), 'permission': lambda request: request.user.has_perm('auth.view_group') or request.user.has_perm('auth.change_group')},
+                    {'title': 'کاربران', 'icon': 'group', 'link': reverse_lazy('admin:accounts_customuser_changelist'),
+                     'permission': lambda request: request.user.has_perm(
+                         'accounts.view_customuser') or request.user.has_perm('accounts.change_customuser')},
+                    {'title': 'گروه‌ها', 'icon': 'admin_panel_settings',
+                     'link': reverse_lazy('admin:auth_group_changelist'),
+                     'permission': lambda request: request.user.has_perm('auth.view_group') or request.user.has_perm(
+                         'auth.change_group')},
                 ],
             },
         ],
@@ -135,6 +156,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    # all auth
+    "allauth.account.middleware.AccountMiddleware",
 ]
 
 ROOT_URLCONF = 'config.urls'
@@ -157,7 +180,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'config.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/6.1/ref/settings/#databases
 
@@ -171,7 +193,6 @@ DATABASES = {
         'PORT': 5432,
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/6.1/ref/settings/#auth-password-validators
@@ -191,7 +212,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/6.1/topics/i18n/
 
@@ -203,7 +223,6 @@ USE_I18N = True
 
 USE_TZ = True
 
-
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/6.1/howto/static-files/
 
@@ -214,7 +233,6 @@ STATIC_ROOT = BASE_DIR / 'staticfiles'
 LOGIN_REDIRECT_URL = 'home'
 LOGOUT_REDIRECT_URL = 'home'
 
-
 # Email
 # https://docs.djangoproject.com/en/6.1/topics/email/#topic-email-configuration
 
@@ -223,6 +241,10 @@ MAILERS = {
         'BACKEND': 'django.core.mail.backends.console.EmailBackend',
     },
 }
+
+AUTHENTICATION_BACKENDS = [
+    'allauth.account.auth_backends.AuthenticationBackend',
+]
 
 AUTH_USER_MODEL = 'accounts.CustomUser'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
@@ -235,4 +257,6 @@ SITARO_CONTACT_PHONE = "09197736862"
 SITARO_WHATSAPP_URL = "https://wa.me/989197736862"
 SITARO_TELEGRAM_URL = "https://t.me/989197736862"
 
+
+ACCOUNT_LOGIN_METHODS={'email' , 'username' , }
 
