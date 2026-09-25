@@ -26,7 +26,7 @@ class SignUpView(CreateView):
     template_name = 'registration/signup.html'
 
 class ProfileView(LoginRequiredMixin, DetailView):
-    template_name = 'registration/profile.html'
+    template_name = 'account/profile.html'
     context_object_name = 'profile'
 
     def get_object(self, queryset=None):

@@ -22,16 +22,16 @@
                 <svg aria-hidden="true"><use href="{% static 'icons/sitaro-support-icons.svg' %}#dashboard"></use></svg>
                 پروژه‌های من
             </a>
-            <a href="{% url 'password_change' %}">
+            <a href="{% url 'account_change_password' %}">
                 <svg aria-hidden="true"><use href="{% static 'icons/sitaro-support-icons.svg' %}#lock"></use></svg>
                 تغییر رمز عبور
             </a>
-            <a href="{% url 'password_reset' %}">
+            <a href="{% url 'account_reset_password' %}">
                 <svg aria-hidden="true"><use href="{% static 'icons/sitaro-support-icons.svg' %}#refresh"></use></svg>
                 بازیابی رمز عبور
             </a>
         </nav>
-        <form class="dashboard-logout" action="{% url 'accounts:logout' %}" method="post">
+        <form class="dashboard-logout" action="{% url 'account_logout' %}" method="post">
             {% csrf_token %}
             <button type="submit">
                 <svg aria-hidden="true"><use href="{% static 'icons/sitaro-support-icons.svg' %}#logout"></use></svg>
@@ -125,12 +125,12 @@
                 <div><h2 id="security-title">مرکز امنیت حساب</h2><p>ابزارهای ضروری برای حفظ دسترسی و امنیت حساب شما.</p></div>
             </div>
             <div class="security-actions">
-                <a class="security-action security-action-primary" href="{% url 'password_change' %}">
+                <a class="security-action security-action-primary" href="{% url 'account_change_password' %}">
                     <span class="action-icon"><svg aria-hidden="true"><use href="{% static 'icons/sitaro-support-icons.svg' %}#lock"></use></svg></span>
                     <span><small>پیشنهاد امنیتی</small><strong>تغییر رمز عبور</strong><p>رمز فعلی را با یک رمز امن و تازه جایگزین کنید.</p></span>
                     <svg class="action-arrow" aria-hidden="true"><use href="{% static 'icons/sitaro-support-icons.svg' %}#arrow"></use></svg>
                 </a>
-                <a class="security-action" href="{% url 'password_reset' %}">
+                <a class="security-action" href="{% url 'account_reset_password' %}">
                     <span class="action-icon"><svg aria-hidden="true"><use href="{% static 'icons/sitaro-support-icons.svg' %}#refresh"></use></svg></span>
                     <span><small>دسترسی اضطراری</small><strong>بازیابی رمز عبور</strong><p>لینک امن انتخاب رمز جدید را از طریق ایمیل دریافت کنید.</p></span>
                     <svg class="action-arrow" aria-hidden="true"><use href="{% static 'icons/sitaro-support-icons.svg' %}#arrow"></use></svg>
