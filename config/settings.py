@@ -14,6 +14,11 @@ from pathlib import Path
 import os
 from django.templatetags.static import static
 from django.urls import reverse_lazy
+from environs import Env
+
+
+env = Env()
+env.read_env()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -36,7 +41,7 @@ if local_env.is_file():
 # See https://docs.djangoproject.com/en/6.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-@_e-z-75t*5_=cnx^iyr^0(su%@17-pqb8+$8io$yqr@t!9*w$'
+SECRET_KEY = 'DJANGO_SECRET_KEY'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True

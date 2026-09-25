@@ -10,6 +10,10 @@ services:
       - .:/code
     ports:
       - 8000:8000
+    depends_on:
+      - db
+    environment:
+      - "DJANGO_SECRET_KEY=dv+8u%c&p$$z(bz%@i+ok-g@f@^13c1$q67p($k0i1u2w-)o(gp"
 
 
   db:
