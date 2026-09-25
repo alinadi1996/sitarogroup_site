@@ -41,12 +41,12 @@ if local_env.is_file():
 # See https://docs.djangoproject.com/en/6.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'DJANGO_SECRET_KEY'
+SECRET_KEY = env('DJANGO_SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = env('DJANGO_DEBUG')
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'testserver' , '7fe5566ff3095e.lhr.life']
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'testserver' , 'sitarogroup.com' , 'sitarogroup.ir']
 
 # Application definition
 

@@ -14,6 +14,7 @@ services:
       - db
     environment:
       - "DJANGO_SECRET_KEY=dv+8u%c&p$$z(bz%@i+ok-g@f@^13c1$q67p($k0i1u2w-)o(gp"
+      - 'DJANGO_DEBUG=True'
 
 
   db:
