@@ -1,11 +1,6 @@
 {% extends "_base.html" %}
 {% load static %}
 
-{% block title %}{{ post.title }} | مجله سیتارو{% endblock %}
-{% block description %}{{ post.content|striptags|truncatewords:24 }}{% endblock %}
-{% block og_title %}{{ post.title }} | مجله سیتارو{% endblock %}
-{% block og_description %}{{ post.content|striptags|truncatewords:24 }}{% endblock %}
-{% block extra_head %}{% if post.cover %}<meta property="og:image" content="{{ request.scheme }}://{{ request.get_host }}{{ post.cover.url }}">{% endif %}{% endblock %}
 {% block body_class %}blog-page article-page{% endblock %}
 
 {% block content %}

@@ -1,0 +1,64 @@
+{% extends "admin/base.html" %}
+{% block branding %}{% include "unfold/helpers/site_branding.html" %}{% endblock %}
+{% block title %}بررسی سئو و وضعیت سایت | مدیریت سیتارو{% endblock %}
+{% block content %}
+<div class="sitaro-seo" dir="rtl">
+    <header class="sitaro-seo-intro">
+        <span class="sitaro-seo-eyebrow">SITARO / SEO CONTROL</span>
+        <h1>بررسی سئو و وضعیت سایت</h1>
+        <p>وضعیت فنی، محتوای منتشرشده و عملکرد جست‌وجوی گوگل در یک نما.</p>
+    </header>
+
+    <div class="sitaro-seo-grid">
+        <section class="sitaro-seo-card" aria-labelledby="seo-content-title">
+            <div class="sitaro-seo-card-heading"><span class="material-symbols-outlined" aria-hidden="true">article</span><h2 id="seo-content-title">محتوای سایت</h2></div>
+            <dl class="sitaro-seo-stats">
+                <div><dt>همهٔ نوشته‌ها</dt><dd>{{ post_count }}</dd></div>
+                <div><dt>نمونه‌کارهای منتشرشده</dt><dd>{{ project_count }}</dd></div>
+            </dl>
+            <a class="sitaro-seo-link" href="{% url 'admin:blog_post_changelist' %}">مدیریت نوشته‌ها <span aria-hidden="true">←</span></a>
+        </section>
+
+        <section class="sitaro-seo-card" aria-labelledby="seo-health-title">
+            <div class="sitaro-seo-card-heading"><span class="material-symbols-outlined" aria-hidden="true">monitor_heart</span><h2 id="seo-health-title">وضعیت سایت</h2></div>
+            <dl class="sitaro-seo-checks">
+                <div><dt>دسترسی عمومی</dt><dd class="{% if public_site.reachable %}is-good{% else %}is-warning{% endif %}">{% if public_site.reachable %}در دسترس{% elif public_site.http_status %}کد HTTP {{ public_site.http_status }}{% else %}در دسترس نیست{% endif %}</dd></div>
+                <div><dt>پایگاه داده</dt><dd class="{% if database_ok %}is-good{% else %}is-warning{% endif %}">{% if database_ok %}فعال{% else %}نیازمند بررسی{% endif %}</dd></div>
+                <div><dt>robots.txt</dt><dd><a href="{{ robots_url }}" target="_blank" rel="noopener noreferrer">مشاهدهٔ فایل ↗</a></dd></div>
+                <div><dt>sitemap.xml</dt><dd><a href="{{ sitemap_url }}" target="_blank" rel="noopener noreferrer">مشاهدهٔ نقشه ↗</a></dd></div>
+            </dl>
+            <p class="sitaro-seo-note">دسترسی عمومی از سمت سرور بررسی می‌شود و نتیجه تا ۵ دقیقه ذخیره می‌ماند.</p>
+        </section>
+
+        <section class="sitaro-seo-card sitaro-seo-card--wide" aria-labelledby="seo-console-title">
+            <div class="sitaro-seo-card-heading"><span class="material-symbols-outlined" aria-hidden="true">query_stats</span><h2 id="seo-console-title">Google Search Console</h2></div>
+            <p class="sitaro-seo-property" dir="ltr">{{ search_console_property }}</p>
+            {% if search_console.state == 'connected' %}
+                <p class="sitaro-seo-state is-good">اتصال برقرار است · {{ search_console.start_date|date:"Y/m/d" }} تا {{ search_console.end_date|date:"Y/m/d" }}</p>
+                <dl class="sitaro-seo-stats sitaro-seo-stats--four">
+                    <div><dt>کلیک</dt><dd>{{ search_console.clicks }}</dd></div>
+                    <div><dt>نمایش</dt><dd>{{ search_console.impressions }}</dd></div>
+                    <div><dt>نرخ کلیک</dt><dd>{{ search_console.ctr }}٪</dd></div>
+                    <div><dt>میانگین رتبه</dt><dd>{{ search_console.position }}</dd></div>
+                </dl>
+            {% elif search_console.state == 'unconfigured' or search_console.state == 'missing_credentials' %}
+                <p class="sitaro-seo-state is-warning">اتصال هنوز فعال نیست.</p>
+                <p class="sitaro-seo-note">فایل اعتبارنامهٔ Service Account را بیرون از مخزن نگه دارید، مسیر آن را در <code>SITARO_GSC_CREDENTIALS_FILE</code> تنظیم کنید و ایمیل حساب را با دسترسی خواندن به همین property اضافه کنید.</p>
+            {% else %}
+                <p class="sitaro-seo-state is-warning">ارتباط با Search Console برقرار نشد.</p>
+                <p class="sitaro-seo-note">property، دسترسی Service Account و تنظیمات سرور را بررسی کنید. هیچ داده‌ای به‌صورت تخمینی نمایش داده نمی‌شود.</p>
+            {% endif %}
+            <a class="sitaro-seo-link" href="https://search.google.com/search-console" target="_blank" rel="noopener noreferrer">بازکردن Search Console <span aria-hidden="true">↗</span></a>
+        </section>
+    </div>
+
+    <section class="sitaro-seo-tools" aria-labelledby="seo-tools-title">
+        <h2 id="seo-tools-title">ابزارهای تکمیلی</h2>
+        <div>
+            <a href="{% url 'tools:website_analyzer' %}" target="_blank" rel="noopener noreferrer">تحلیل عملکرد سایت ↗</a>
+            <a href="{% url 'tools:serp_preview' %}" target="_blank" rel="noopener noreferrer">پیش‌نمایش نتیجهٔ جست‌وجو ↗</a>
+            <a href="{% url 'tools:schema_generator' %}" target="_blank" rel="noopener noreferrer">ساخت Schema ↗</a>
+        </div>
+    </section>
+</div>
+{% endblock %}

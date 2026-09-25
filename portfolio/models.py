@@ -1,5 +1,6 @@
 from django.db import models
 from django.urls import reverse
+from seo.models import SEOFieldsMixin
 
 
 class ProjectQuerySet(models.QuerySet):
@@ -7,7 +8,7 @@ class ProjectQuerySet(models.QuerySet):
         return self.filter(is_published=True)
 
 
-class Project(models.Model):
+class Project(SEOFieldsMixin):
     title = models.CharField("نام پروژه", max_length=180)
     slug = models.SlugField("آدرس خوانا", max_length=200, unique=True, allow_unicode=True)
     industry = models.CharField("حوزه فعالیت", max_length=120)
@@ -28,12 +29,6 @@ class Project(models.Model):
         max_length=70,
         blank=True,
         help_text="اختیاری؛ در صورت خالی بودن، نام پروژه استفاده می‌شود.",
-    )
-    meta_description = models.CharField(
-        "توضیحات متا",
-        max_length=160,
-        blank=True,
-        help_text="اختیاری؛ در صورت خالی بودن، خلاصه یک‌خطی استفاده می‌شود.",
     )
     is_published = models.BooleanField("منتشر شده", default=False)
     display_order = models.PositiveSmallIntegerField("ترتیب نمایش", default=0)

@@ -1,20 +1,6 @@
 {% extends "_base.html" %}
 {% load static %}
 
-{% block extra_head %}
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "ProfessionalService",
-  "name": "گروه سیتارو",
-  "url": "{{ request.scheme }}://{{ request.get_host }}/",
-  "logo": "{{ request.scheme }}://{{ request.get_host }}{% static 'images/sitaro-logo.svg' %}",
-  "description": "طراحی و توسعه وب‌سایت اختصاصی با Django و WordPress، سئو، بهینه‌سازی عملکرد و ربات تلگرام اختصاصی",
-  "areaServed": "IR",
-  "knowsAbout": ["Django", "WordPress", "Technical SEO", "Web Performance", "UI/UX", "Telegram Bot"]
-}
-</script>
-{% endblock %}
 {% block body_class %}home-page{% endblock %}
 
 {% block content %}

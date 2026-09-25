@@ -1,24 +1,6 @@
 {% extends "_base.html" %}
 {% load static %}
 
-{% block title %}{% if project.meta_title %}{{ project.meta_title }}{% else %}{{ project.title }} | نمونه‌کار گروه سیتارو{% endif %}{% endblock %}
-{% block description %}{% if project.meta_description %}{{ project.meta_description }}{% else %}{{ project.summary }}{% endif %}{% endblock %}
-{% block og_title %}{% if project.meta_title %}{{ project.meta_title }}{% else %}{{ project.title }}{% endif %}{% endblock %}
-{% block og_description %}{% if project.meta_description %}{{ project.meta_description }}{% else %}{{ project.summary }}{% endif %}{% endblock %}
-{% block og_type %}article{% endblock %}
-{% block extra_head %}
-{% if project.cover %}<meta property="og:image" content="{{ request.scheme }}://{{ request.get_host }}{{ project.cover.url }}">{% endif %}
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "CreativeWork",
-  "name": "{{ project.title|escapejs }}",
-  "description": "{{ project.summary|escapejs }}",
-  "url": "{{ request.build_absolute_uri }}"{% if project.cover %},
-  "image": "{{ request.scheme }}://{{ request.get_host }}{{ project.cover.url }}"{% endif %}
-}
-</script>
-{% endblock %}
 {% block body_class %}portfolio-detail-page{% endblock %}
 
 {% block content %}
@@ -26,7 +8,7 @@
     <article>
         <header class="case-hero">
             <div class="case-hero-copy">
-                <a class="case-back" href="{% url 'portfolio:project_list' %}"><span aria-hidden="true">→</span> بازگشت به نمونه‌کارها</a>
+                <nav class="case-breadcrumb" aria-label="مسیر صفحه"><a href="{% url 'portfolio:project_list' %}">نمونه‌کارها</a><span aria-hidden="true">/</span><span aria-current="page">{{ project.title }}</span></nav>
                 <span class="case-label">CASE STUDY / {{ project.industry }}</span>
                 <h1>{{ project.title }}</h1>
                 <p>{{ project.summary }}</p>

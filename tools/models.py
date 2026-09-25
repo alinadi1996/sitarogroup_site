@@ -2,6 +2,7 @@ from django.core.validators import FileExtensionValidator
 from django.db import models
 from django.db.models import Q
 from django.urls import reverse
+from seo.models import SEOFieldsMixin
 
 
 class ToolCategory(models.Model):
@@ -27,7 +28,7 @@ class ToolQuerySet(models.QuerySet):
         )
 
 
-class Tool(models.Model):
+class Tool(SEOFieldsMixin):
     class Status(models.TextChoices):
         ACTIVE = "active", "فعال"
         COMING_SOON = "coming_soon", "به‌زودی"

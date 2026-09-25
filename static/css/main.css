@@ -1263,6 +1263,9 @@ h1, h2, h3, h4, h5, h6, p, a, button, input, textarea, select, label { font-fami
 .case-hero::after { content: ""; position: absolute; inset: 0; opacity: .25; background-image: linear-gradient(rgba(255,255,255,.04) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.04) 1px, transparent 1px); background-size: 68px 68px; mask-image: radial-gradient(circle at 80% 50%, #000, transparent 56%); pointer-events: none; }
 .case-hero-copy { position: relative; z-index: 2; }
 .case-back { width: fit-content; min-height: 44px; display: flex; align-items: center; gap: 10px; color: #8da098; font-size: 10px; transition: color .2s, gap .25s var(--ease); }.case-back:hover { color: var(--mint); gap: 15px; }
+.case-breadcrumb { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; color: #8da098; font-size: 11px; }
+.case-breadcrumb a { color: inherit; text-decoration: none; }.case-breadcrumb a:hover { color: var(--mint); }
+.case-breadcrumb [aria-current="page"] { color: #d9eee3; }
 .case-label { margin-top: 55px; display: block; color: var(--mint); font: 8px/1.3 monospace; direction: ltr; letter-spacing: .13em; }
 .case-hero h1 { max-width: 1000px; margin: 18px 0 20px; font-size: clamp(3.4rem, 7vw, 8.4rem); line-height: 1.02; letter-spacing: -.065em; }
 .case-hero-copy > p { max-width: 720px; margin: 0; color: #9bacA6; font-size: clamp(1rem, 1.45vw, 1.28rem); line-height: 2; }

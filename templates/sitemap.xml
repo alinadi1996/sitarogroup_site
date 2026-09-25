@@ -1,20 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url>
+  {% if 'home' not in hidden_pages %}<url>
     <loc>{{ request.scheme }}://{{ request.get_host }}/</loc>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
-  </url>
-  <url>
+  </url>{% endif %}
+  {% if 'portfolio_index' not in hidden_pages %}<url>
     <loc>{{ request.scheme }}://{{ request.get_host }}{% url 'portfolio:project_list' %}</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
-  </url>
-  <url>
+  </url>{% endif %}
+  {% if 'contact' not in hidden_pages %}<url>
     <loc>{{ request.scheme }}://{{ request.get_host }}{% url 'leads:contact' %}</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
-  </url>
+  </url>{% endif %}
+  {% if 'blog_index' not in hidden_pages %}<url><loc>{{ request.scheme }}://{{ request.get_host }}{% url 'blog:blog_list' %}</loc></url>{% endif %}
+  {% if 'tools' not in hidden_pages %}<url><loc>{{ request.scheme }}://{{ request.get_host }}{% url 'tools:index' %}</loc></url>{% endif %}
+  {% for post in blog_posts %}
+  <url><loc>{{ request.scheme }}://{{ request.get_host }}{{ post.get_absolute_url }}</loc><lastmod>{{ post.datetime_updated|date:"Y-m-d" }}</lastmod></url>
+  {% endfor %}
   {% for project in portfolio_projects %}
   <url>
     <loc>{{ request.scheme }}://{{ request.get_host }}{{ project.get_absolute_url }}</loc>

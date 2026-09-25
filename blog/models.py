@@ -1,9 +1,10 @@
 from django.conf import settings
 from django.db import models
 from django.urls import reverse
+from seo.models import SEOFieldsMixin
 
 
-class Post(models.Model):
+class Post(SEOFieldsMixin):
     status_choices = (
         ('drf', 'Draft'),
         ('pub', 'Published'),
@@ -16,12 +17,19 @@ class Post(models.Model):
     slug = models.SlugField(max_length=200, unique=True)
     author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
 
+    class Meta:
+        ordering = ('-datetime_created',)
+        verbose_name = 'وبلاگ'
+        verbose_name_plural = 'نوشته ها'
+
+
+
     def __str__(self):
         return self.title
 
 
     def get_absolute_url(self):
-        return reverse ('blog_detail', args=[self.id],  kwargs={'slug': self.slug})
+        return reverse('blog:blog_detail', kwargs={'pk': self.pk})
 
 
 

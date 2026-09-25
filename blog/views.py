@@ -4,6 +4,8 @@ from django.views import generic
 
 from blog.models import Post
 from portfolio.models import Project
+from seo.services import build_seo
+from seo.models import StaticPageSEO
 
 
 def index(request):
@@ -59,10 +61,13 @@ def robots_txt(request):
 
 
 def sitemap_xml(request):
+    hidden_pages = set(StaticPageSEO.objects.filter(robots_index=False).values_list("page_key", flat=True))
     return render(
         request,
         "sitemap.xml",
-        {"portfolio_projects": Project.objects.published().only("slug", "updated_at")},
+        {"portfolio_projects": Project.objects.published().filter(robots_index=True).only("slug", "updated_at"),
+         "blog_posts": Post.objects.filter(robots_index=True).only("id", "datetime_updated"),
+         "hidden_pages": hidden_pages},
         content_type="application/xml",
     )
 
@@ -76,3 +81,8 @@ class BlogListView(generic.ListView):
 class BlogDetailView(generic.DetailView):
     model = Post
     template_name = "blog/blog_detail.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["seo"] = build_seo(self.object, self.request)
+        return context

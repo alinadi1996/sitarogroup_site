@@ -28,7 +28,8 @@ if local_env.is_file():
             continue
         name, value = entry.split("=", 1)
         name = name.strip()
-        if name in {"OPENAI_API_KEY", "SITARO_SUPPORT_MODEL", "SITARO_SUPPORT_API_BASE_URL"}:
+        if name in {"OPENAI_API_KEY", "SITARO_SUPPORT_MODEL", "SITARO_SUPPORT_API_BASE_URL",
+                    "SITARO_GSC_SITE_URL", "SITARO_GSC_CREDENTIALS_FILE"}:
             os.environ.setdefault(name, value.strip().strip('"').strip("'"))
 
 # Quick-start development settings - unsuitable for production
@@ -64,14 +65,17 @@ INSTALLED_APPS = [
     'portfolio',
     'leads',
     'tools',
+    'seo',
 ]
 
 UNFOLD = {
     'SITE_TITLE': 'مدیریت سیتارو',
     'SITE_HEADER': 'سیتارو',
     'SITE_SUBHEADER': 'مدیریت پروژه و محتوا',
+    'SITE_ICON': lambda request: static('images/sitaro-logo.svg'),
     'SITE_URL': '/',
     'DASHBOARD_CALLBACK': 'config.admin_dashboard.dashboard_callback',
+    'SITE_VIEWS': [('seo/', 'seo_overview', 'config.admin_seo.SEOOverviewView')],
     'STYLES': [lambda request: static('css/admin-dashboard.css')],
     'SIDEBAR': {
         'show_search': True,
@@ -129,6 +133,21 @@ UNFOLD = {
                          'auth.change_group')},
                 ],
             },
+            {
+                'title': 'بررسی سئو',
+                'separator': True,
+                'items': [
+                    {'title': 'وضعیت سایت و سرچ کنسول', 'icon': 'monitoring',
+                     'link': reverse_lazy('admin:seo_overview'),
+                     'permission': lambda request: request.user.is_superuser},
+                    {'title': 'سئوی صفحات ثابت', 'icon': 'web',
+                     'link': reverse_lazy('admin:seo_staticpageseo_changelist'),
+                     'permission': lambda request: request.user.has_perm('seo.view_staticpageseo')},
+                    {'title': 'تنظیمات سئوی سایت', 'icon': 'tune',
+                     'link': reverse_lazy('admin:seo_siteseosettings_changelist'),
+                     'permission': lambda request: request.user.has_perm('seo.view_siteseosettings')},
+                ],
+            },
         ],
     },
     'COLORS': {
@@ -147,6 +166,11 @@ UNFOLD = {
         },
     },
 }
+
+# A URL-prefix property normally ends in a slash. Keep credentials outside git.
+SITARO_GSC_SITE_URL = os.getenv('SITARO_GSC_SITE_URL', 'https://sitarogroup.ir/').strip()
+SITARO_GSC_CREDENTIALS_FILE = os.getenv('SITARO_GSC_CREDENTIALS_FILE', '').strip()
+SITARO_PUBLIC_SITE_URL = 'https://sitarogroup.ir/'
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -173,6 +197,7 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
                 'tools.context_processors.header_tools',
+                'seo.context_processors.seo_context',
             ],
         },
     },
