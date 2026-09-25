@@ -1,7 +1,8 @@
 @font-face { font-family: "IRANYekanX"; src: url("../fonts/IRANYekanXVF.woff2") format("woff2"); font-style: normal; font-weight: 100 900; font-display: swap; }
 html[lang^="fa"] :is(body, button, input, select, textarea) { font-family: "IRANYekanX", Tahoma, sans-serif; }
-html[lang^="fa"] #page :is(h1, h2, h3, h4, p, label, th, td, dt, dd, li, a, button, input, textarea, select, .help, .description) { text-align: right; }
+html[lang^="fa"] #page :is(h1, h2, h3, h4, p, label, caption, th, td, dt, dd, li, a, button, input, textarea, select, .help, .description) { text-align: right; gap: 5px; }
 html[lang^="fa"] #page :is(input, textarea, select) { direction: rtl; }
+html[lang^="fa"] #page :is(caption) {padding-right: 5px;}
 html[lang^="fa"] #page :is(input[type="url"], input[type="email"], input[type="number"], input[type="date"]) { direction: ltr; text-align: right; }
 html[lang^="fa"] #page .sitaro-dashboard, html[lang^="fa"] #page .sitaro-seo { text-align: right; }
 html[lang^="fa"] #page .sitaro-dashboard-row-meta { justify-items: start; }

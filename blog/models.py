@@ -1,3 +1,5 @@
+from tabnanny import verbose
+
 from django.conf import settings
 from django.db import models
 from django.urls import reverse
@@ -19,7 +21,7 @@ class Post(SEOFieldsMixin):
 
     class Meta:
         ordering = ('-datetime_created',)
-        verbose_name = 'وبلاگ'
+        verbose_name = 'نوشته'
         verbose_name_plural = 'نوشته ها'
 
 
