@@ -22,6 +22,10 @@
                 <svg aria-hidden="true"><use href="{% static 'icons/sitaro-support-icons.svg' %}#dashboard"></use></svg>
                 پروژه‌های من
             </a>
+            <a href="{% url 'accounts:profile_edit' %}">
+                <svg aria-hidden="true"><use href="{% static 'icons/sitaro-support-icons.svg' %}#dashboard"></use></svg>
+                ویرایش پروفایل
+            </a>
             <a href="{% url 'account_change_password' %}">
                 <svg aria-hidden="true"><use href="{% static 'icons/sitaro-support-icons.svg' %}#lock"></use></svg>
                 تغییر رمز عبور
@@ -71,9 +75,9 @@
             <div class="client-projects-head">
                 <div>
                     <span>PROJECT / TRACKER</span>
-                    <h2 id="client-projects-title">مسیر پروژه‌های شما</h2>
+                    <h2 id="client-projects-title">پیشرفت پروژه‌های شما</h2>
                 </div>
-                <p>هر به‌روزرسانی جدید از طرف تیم سیتارو، در همین بخش ثبت می‌شود.</p>
+                <p>مرحله فعلی، درصد پیشرفت و تازه‌ترین گزارش هر پروژه را اینجا دنبال کنید.</p>
             </div>
 
             {% for project in client_projects %}
@@ -85,7 +89,7 @@
                     </div>
                     <div class="client-project-progress" style="--progress: {{ project.progress }}%" aria-label="{{ project.progress }} درصد پیشرفت">
                         <strong>{{ project.progress }}<small>%</small></strong>
-                        <span>پیشرفت</span>
+                        <span>از ۱۰۰٪</span>
                     </div>
                 </header>
                 <div class="client-project-meter" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="{{ project.progress }}" aria-label="پیشرفت {{ project.title }}">
@@ -96,7 +100,32 @@
                     <span><small>آخرین به‌روزرسانی</small><b>{{ project.updated_at|date:"j F Y" }}</b></span>
                     {% if project.target_date %}<span><small>تاریخ هدف</small><b>{{ project.target_date|date:"j F Y" }}</b></span>{% endif %}
                 </div>
+                {% if project.strategy and project.strategy.is_visible %}
+                <section class="project-strategy" aria-labelledby="strategy-{{ project.id }}">
+                    <div class="project-strategy-head"><span>STRATEGY / CURRENT</span><h4 id="strategy-{{ project.id }}">مسیر اجرایی پروژه</h4></div>
+                    <p>{{ project.strategy.summary }}</p>
+                    <div class="project-strategy-details">
+                        <span><small>تمرکز فعلی</small><b>{{ project.strategy.current_focus }}</b></span>
+                        {% if project.strategy.next_step %}<span><small>گام بعدی</small><b>{{ project.strategy.next_step }}</b></span>{% endif %}
+                    </div>
+                </section>
+                {% endif %}
+                {% if project.client_keywords %}
+                <section class="project-keywords" aria-labelledby="keywords-{{ project.id }}">
+                    <div class="project-strategy-head"><span>SEO / KEYWORDS</span><h4 id="keywords-{{ project.id }}">کلمات کلیدی و وضعیت اجرا</h4></div>
+                    <div class="project-keyword-list" role="list">
+                        {% for keyword in project.client_keywords %}
+                        <div role="listitem">
+                            <span class="project-keyword-main"><b>{{ keyword.keyword }}</b><small>{{ keyword.get_priority_display }}</small></span>
+                            <span class="project-keyword-status is-{{ keyword.status }}">{{ keyword.get_status_display }}</span>
+                            {% if keyword.current_position %}<span class="project-keyword-position">رتبه {{ keyword.current_position }}</span>{% endif %}
+                        </div>
+                        {% endfor %}
+                    </div>
+                </section>
+                {% endif %}
                 {% if project.updates.all %}
+                <h4 class="project-updates-title">گزارش‌های پیشرفت</h4>
                 <ol class="project-updates" aria-label="آخرین به‌روزرسانی‌های {{ project.title }}">
                     {% for update in project.updates.all %}
                     <li>
@@ -111,7 +140,7 @@
             </article>
             {% empty %}
             <div class="client-projects-empty">
-                <span>NO ACTIVE PROJECTS</span>
+                <span>PROJECTS / EMPTY</span>
                 <h3>هنوز پروژه‌ای برای پیگیری ندارید.</h3>
                 <p>اگر درخواست خود را با همین حساب ثبت کنید، وضعیت و مراحل پروژه‌تان در این بخش نمایش داده می‌شود.</p>
                 <a href="{% url 'leads:contact' %}">ثبت درخواست پروژه <span aria-hidden="true">←</span></a>

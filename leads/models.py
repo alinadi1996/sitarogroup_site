@@ -100,3 +100,59 @@ class ProjectUpdate(models.Model):
 
     def __str__(self):
         return f"{self.project} — {self.title}"
+
+
+class ProjectStrategy(models.Model):
+    project = models.OneToOneField(
+        ClientProject,
+        on_delete=models.CASCADE,
+        related_name="strategy",
+        verbose_name="پروژه",
+    )
+    summary = models.TextField("خلاصه استراتژی برای مشتری")
+    current_focus = models.CharField("تمرکز فعلی", max_length=180)
+    next_step = models.TextField("گام بعدی", blank=True)
+    is_visible = models.BooleanField("نمایش به مشتری", default=True)
+    updated_at = models.DateTimeField("آخرین به‌روزرسانی", auto_now=True)
+
+    class Meta:
+        verbose_name = "استراتژی پروژه"
+        verbose_name_plural = "استراتژی پروژه‌ها"
+
+    def __str__(self):
+        return f"استراتژی {self.project}"
+
+
+class SEOKeyword(models.Model):
+    class Priority(models.TextChoices):
+        PRIMARY = "primary", "اصلی"
+        SECONDARY = "secondary", "تکمیلی"
+
+    class Status(models.TextChoices):
+        RESEARCH = "research", "در حال تحقیق"
+        PLANNED = "planned", "در برنامه محتوا"
+        OPTIMIZING = "optimizing", "در حال بهینه‌سازی"
+        TRACKING = "tracking", "در حال پایش"
+        ACHIEVED = "achieved", "به هدف رسیده"
+
+    project = models.ForeignKey(
+        ClientProject,
+        on_delete=models.CASCADE,
+        related_name="seo_keywords",
+        verbose_name="پروژه",
+    )
+    keyword = models.CharField("کلمه کلیدی", max_length=180)
+    target_url = models.URLField("صفحه هدف", blank=True)
+    priority = models.CharField("اولویت", max_length=12, choices=Priority.choices, default=Priority.SECONDARY)
+    status = models.CharField("وضعیت", max_length=16, choices=Status.choices, default=Status.RESEARCH)
+    current_position = models.PositiveSmallIntegerField("جایگاه فعلی", blank=True, null=True)
+    is_visible = models.BooleanField("نمایش به مشتری", default=True)
+    order = models.PositiveSmallIntegerField("ترتیب نمایش", default=0)
+
+    class Meta:
+        ordering = ("order", "keyword")
+        verbose_name = "کلمه کلیدی سئو"
+        verbose_name_plural = "کلمات کلیدی سئو"
+
+    def __str__(self):
+        return f"{self.keyword} — {self.project}"

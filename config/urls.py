@@ -24,7 +24,7 @@ urlpatterns = [
     path('robots.txt', robots_txt, name='robots_txt'),
     path('sitemap.xml', sitemap_xml, name='sitemap_xml'),
     path('admin/', admin.site.urls),
-    path('account/', include('allauth.urls')),
+    path('accounts/', include('allauth.urls')),
     path('blog/', include('blog.urls')),
     path('portfolio/', include('portfolio.urls')),
     path('contact/', include('leads.urls')),

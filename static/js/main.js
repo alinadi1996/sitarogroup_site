@@ -11,13 +11,29 @@
     const desktopToolsMenu = document.querySelector("[data-tools-menu]");
     const mobileToolsToggle = document.querySelector("[data-mobile-tools-toggle]");
     const mobileToolsPanel = document.querySelector("[data-mobile-tools-panel]");
+    const mobileAccount = document.querySelector("[data-mobile-account]");
+    const mobileAccountToggle = document.querySelector("[data-mobile-account-toggle]");
+    const mobileAccountPanel = document.querySelector("[data-mobile-account-panel]");
+
+    const setMobileAccount = (open, restoreFocus = false) => {
+        if (!mobileAccountToggle || !mobileAccountPanel) return;
+        mobileAccountToggle.setAttribute("aria-expanded", String(open));
+        mobileAccountPanel.hidden = !open;
+        if (!open && restoreFocus) mobileAccountToggle.focus({preventScroll: true});
+    };
+
+    mobileAccountToggle?.addEventListener("click", () => {
+        const open = mobileAccountToggle.getAttribute("aria-expanded") !== "true";
+        if (open && menuToggle?.getAttribute("aria-expanded") === "true") setMenu(false);
+        setMobileAccount(open);
+    });
 
     const setDesktopTools = (open, restoreFocus = false) => {
         if (!desktopToolsToggle || !desktopToolsMenu) return;
         desktopToolsToggle.setAttribute("aria-expanded", String(open));
         desktopToolsMenu.hidden = !open;
-        if (open) desktopToolsMenu.querySelector("a")?.focus({ preventScroll: true });
-        if (!open && restoreFocus) desktopToolsToggle.focus({ preventScroll: true });
+        if (open) desktopToolsMenu.querySelector("a")?.focus({preventScroll: true});
+        if (!open && restoreFocus) desktopToolsToggle.focus({preventScroll: true});
     };
 
     const setMobileTools = (open, restoreFocus = false) => {
@@ -26,7 +42,7 @@
         mobileToolsPanel.hidden = !open;
         const sign = mobileToolsToggle.querySelector("i");
         if (sign) sign.textContent = open ? "−" : "+";
-        if (!open && restoreFocus) mobileToolsToggle.focus({ preventScroll: true });
+        if (!open && restoreFocus) mobileToolsToggle.focus({preventScroll: true});
     };
 
     desktopToolsToggle?.addEventListener("click", () => {
@@ -55,24 +71,28 @@
     themeToggle?.addEventListener("click", () => {
         const nextTheme = document.documentElement.dataset.theme === "light" ? "dark" : "light";
         document.documentElement.dataset.theme = nextTheme;
-        try { localStorage.setItem("sitaro-theme", nextTheme); } catch (error) { /* Storage can be unavailable. */ }
+        try {
+            localStorage.setItem("sitaro-theme", nextTheme);
+        } catch (error) { /* Storage can be unavailable. */
+        }
         syncThemeToggle();
     });
 
     const updateHeader = () => header?.classList.toggle("is-scrolled", window.scrollY > 20);
     updateHeader();
-    window.addEventListener("scroll", updateHeader, { passive: true });
+    window.addEventListener("scroll", updateHeader, {passive: true});
 
     const setMenu = (open, restoreFocus = false) => {
         if (!menuToggle || !mobileMenu) return;
+        if (open) setMobileAccount(false);
         menuToggle.setAttribute("aria-expanded", String(open));
         menuToggle.setAttribute("aria-label", open ? "بستن منو" : "باز کردن منو");
         mobileMenu.hidden = !open;
         document.body.classList.toggle("menu-open", open);
         if (open) {
-            window.requestAnimationFrame(() => mobileMenu.querySelector("a")?.focus({ preventScroll: true }));
+            window.requestAnimationFrame(() => mobileMenu.querySelector("a")?.focus({preventScroll: true}));
         } else if (restoreFocus) {
-            menuToggle.focus({ preventScroll: true });
+            menuToggle.focus({preventScroll: true});
         }
         if (!open) setMobileTools(false);
     };
@@ -83,15 +103,20 @@
         if (event.key !== "Escape") return;
         if (desktopToolsToggle?.getAttribute("aria-expanded") === "true") setDesktopTools(false, true);
         if (mobileToolsToggle?.getAttribute("aria-expanded") === "true") setMobileTools(false, true);
+        if (mobileAccountToggle?.getAttribute("aria-expanded") === "true") setMobileAccount(false, true);
         if (menuToggle?.getAttribute("aria-expanded") === "true") setMenu(false, true);
     });
     document.addEventListener("pointerdown", (event) => {
         if (desktopToolsToggle?.getAttribute("aria-expanded") === "true" && !desktopToolsDropdown?.contains(event.target)) {
             setDesktopTools(false);
         }
+        if (mobileAccountToggle?.getAttribute("aria-expanded") === "true" && !mobileAccount?.contains(event.target)) {
+            setMobileAccount(false);
+        }
     });
     window.matchMedia("(min-width: 1051px)").addEventListener("change", (event) => {
         if (event.matches && menuToggle?.getAttribute("aria-expanded") === "true") setMenu(false);
+        if (event.matches) setMobileAccount(false);
         if (!event.matches) setDesktopTools(false);
     });
 
@@ -115,10 +140,10 @@
         supportPanel.setAttribute("aria-hidden", String(!open));
         if (open) {
             supportPanel.removeAttribute("inert");
-            window.setTimeout(() => supportInput?.focus({ preventScroll: true }), prefersReducedMotion ? 0 : 260);
+            window.setTimeout(() => supportInput?.focus({preventScroll: true}), prefersReducedMotion ? 0 : 260);
         } else {
             supportPanel.setAttribute("inert", "");
-            if (restoreFocus) supportToggle.focus({ preventScroll: true });
+            if (restoreFocus) supportToggle.focus({preventScroll: true});
         }
     };
 
@@ -134,7 +159,7 @@
         copy.textContent = text;
         message.append(prompt, copy);
         supportLog.append(message);
-        supportLog.scrollTo({ top: supportLog.scrollHeight, behavior: prefersReducedMotion ? "auto" : "smooth" });
+        supportLog.scrollTo({top: supportLog.scrollHeight, behavior: prefersReducedMotion ? "auto" : "smooth"});
     };
 
     const answerSupportMessage = async (message) => {
@@ -145,7 +170,7 @@
         waiting.className = "support-message support-message-agent support-waiting";
         waiting.innerHTML = '<span class="support-prompt" aria-hidden="true">AI</span><p>در حال آماده‌کردن پاسخ…</p>';
         supportLog?.append(waiting);
-        supportLog?.scrollTo({ top: supportLog.scrollHeight, behavior: "smooth" });
+        supportLog?.scrollTo({top: supportLog.scrollHeight, behavior: "smooth"});
         try {
             const response = await fetch(supportForm.dataset.supportUrl, {
                 method: "POST",
@@ -154,12 +179,12 @@
                     "Content-Type": "application/json",
                     "X-CSRFToken": supportForm.querySelector('[name="csrfmiddlewaretoken"]').value,
                 },
-                body: JSON.stringify({ message, history: supportHistory.slice(-6) }),
+                body: JSON.stringify({message, history: supportHistory.slice(-6)}),
             });
             const data = await response.json();
             if (!response.ok) throw new Error(data.error || "پاسخ‌گو فعلاً در دسترس نیست.");
             appendSupportMessage(data.answer);
-            supportHistory.push({ role: "user", content: message }, { role: "assistant", content: data.answer });
+            supportHistory.push({role: "user", content: message}, {role: "assistant", content: data.answer});
             if (supportHistory.length > 6) supportHistory.splice(0, supportHistory.length - 6);
         } catch (error) {
             appendSupportMessage(error.message || "اتصال برقرار نشد. لطفاً دوباره تلاش کنید یا درخواست رسمی ثبت کنید.");
@@ -217,11 +242,17 @@
         if (!blogFeed || !["grid", "list"].includes(view)) return;
         blogFeed.dataset.view = view;
         blogViewButtons.forEach((button) => button.setAttribute("aria-pressed", String(button.dataset.blogView === view)));
-        try { localStorage.setItem("sitaro-blog-view", view); } catch (error) { /* Storage can be unavailable. */ }
+        try {
+            localStorage.setItem("sitaro-blog-view", view);
+        } catch (error) { /* Storage can be unavailable. */
+        }
     };
     if (blogFeed) {
         let initialBlogView = window.matchMedia("(max-width: 760px)").matches ? "list" : "grid";
-        try { initialBlogView = localStorage.getItem("sitaro-blog-view") || initialBlogView; } catch (error) { /* Keep responsive default. */ }
+        try {
+            initialBlogView = localStorage.getItem("sitaro-blog-view") || initialBlogView;
+        } catch (error) { /* Keep responsive default. */
+        }
         setBlogView(initialBlogView);
         blogViewButtons.forEach((button) => button.addEventListener("click", () => setBlogView(button.dataset.blogView)));
     }
@@ -255,7 +286,7 @@
                 entry.target.classList.add("is-visible");
                 observer.unobserve(entry.target);
             });
-        }, { rootMargin: "0px 0px -8%", threshold: 0.12 });
+        }, {rootMargin: "0px 0px -8%", threshold: 0.12});
         reveals.forEach((item) => revealObserver.observe(item));
     }
 
@@ -287,9 +318,64 @@
         });
     });
 
+    const logoutModal = document.querySelector("#logoutModal");
+    const logoutTriggers = document.querySelectorAll("[data-logout-trigger]");
+    let logoutTrigger = null;
+
+    if (logoutModal && logoutTriggers.length) {
+        const logoutDialog = logoutModal.querySelector(".logout-modal__box");
+        const closeButtons = logoutModal.querySelectorAll("[data-close-logout]");
+        const focusableSelector = 'button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
+
+        const closeLogoutModal = (restoreFocus = true) => {
+            if (logoutModal.hidden) return;
+            logoutModal.classList.remove("is-open");
+            logoutModal.setAttribute("aria-hidden", "true");
+            logoutModal.setAttribute("inert", "");
+            logoutModal.hidden = true;
+            document.body.classList.remove("modal-open");
+            if (restoreFocus) logoutTrigger?.focus({preventScroll: true});
+        };
+
+        const openLogoutModal = (trigger) => {
+            logoutTrigger = trigger;
+            if (menuToggle?.getAttribute("aria-expanded") === "true") setMenu(false);
+            logoutModal.hidden = false;
+            logoutModal.removeAttribute("inert");
+            logoutModal.setAttribute("aria-hidden", "false");
+            document.body.classList.add("modal-open");
+            window.requestAnimationFrame(() => {
+                logoutModal.classList.add("is-open");
+                logoutModal.querySelector(".logout-cancel")?.focus({preventScroll: true});
+            });
+        };
+
+        logoutTriggers.forEach((trigger) => trigger.addEventListener("click", () => openLogoutModal(trigger)));
+        closeButtons.forEach((button) => button.addEventListener("click", () => closeLogoutModal()));
+        logoutModal.addEventListener("keydown", (event) => {
+            if (event.key === "Escape") {
+                event.preventDefault();
+                closeLogoutModal();
+                return;
+            }
+            if (event.key !== "Tab") return;
+            const focusable = Array.from(logoutDialog?.querySelectorAll(focusableSelector) || []);
+            if (!focusable.length) return;
+            const first = focusable[0];
+            const last = focusable[focusable.length - 1];
+            if (event.shiftKey && document.activeElement === first) {
+                event.preventDefault();
+                last.focus();
+            } else if (!event.shiftKey && document.activeElement === last) {
+                event.preventDefault();
+                first.focus();
+            }
+        });
+    }
+
     const canvas = document.getElementById("hero-canvas");
     if (!canvas) return;
-    const context = canvas.getContext("2d", { alpha: true, desynchronized: true });
+    const context = canvas.getContext("2d", {alpha: true, desynchronized: true});
     if (!context) return;
 
     const host = canvas.parentElement;
@@ -450,7 +536,6 @@
             cancelAnimationFrame(frame);
         }
     };
-
     const resizeObserver = "ResizeObserver" in window ? new ResizeObserver(() => {
         resize();
         if (prefersReducedMotion) draw(5000);
@@ -459,14 +544,20 @@
     if (!resizeObserver) window.addEventListener("resize", () => {
         resize();
         if (prefersReducedMotion) draw(5000);
-    }, { passive: true });
+    }, {passive: true});
     if (window.matchMedia("(pointer: fine)").matches && !prefersReducedMotion) {
-        host.addEventListener("pointermove", handlePointer, { passive: true });
-        host.addEventListener("pointerleave", () => { targetX = 0; targetY = 0; }, { passive: true });
+        host.addEventListener("pointermove", handlePointer, {passive: true});
+        host.addEventListener("pointerleave", () => {
+            targetX = 0;
+            targetY = 0;
+        }, {passive: true});
     }
     document.addEventListener("visibilitychange", handleVisibility);
     if (prefersReducedMotion) {
-        new MutationObserver(() => draw(5000)).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+        new MutationObserver(() => draw(5000)).observe(document.documentElement, {
+            attributes: true,
+            attributeFilter: ["data-theme"]
+        });
     }
     resize();
     draw(5000);
