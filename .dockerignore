@@ -1,1 +1,14 @@
 venv/
+.git/
+.idea/
+.env
+.env.*
+**/__pycache__/
+**/*.py[cod]
+*.sqlite3
+media/
+staticfiles/
+secrets/
+**/*.pem
+**/*.key
+**/*service-account*.json

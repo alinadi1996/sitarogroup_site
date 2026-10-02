@@ -1,3 +1,13 @@
 venv/
 db.sqlite3
 .env
+.env.*
+__pycache__/
+*.py[cod]
+staticfiles/
+media/
+.idea/
+secrets/
+*.pem
+*.key
+*service-account*.json

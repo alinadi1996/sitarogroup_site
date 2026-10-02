@@ -15,38 +15,50 @@ import os
 from django.templatetags.static import static
 from django.urls import reverse_lazy
 from environs import Env
+from django.core.exceptions import ImproperlyConfigured
 
 
 env = Env()
-env.read_env()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # Docker Compose supplies these variables through env_file. Read the same local
 # file for direct manage.py runs without overriding variables from the host.
-local_env = BASE_DIR / ".env"
-if local_env.is_file():
-    for entry in local_env.read_text(encoding="utf-8-sig").splitlines():
-        entry = entry.strip()
-        if not entry or entry.startswith("#") or "=" not in entry:
-            continue
-        name, value = entry.split("=", 1)
-        name = name.strip()
-        if name in {"OPENAI_API_KEY", "SITARO_SUPPORT_MODEL", "SITARO_SUPPORT_API_BASE_URL",
-                    "SITARO_GSC_SITE_URL", "SITARO_GSC_CREDENTIALS_FILE"}:
-            os.environ.setdefault(name, value.strip().strip('"').strip("'"))
+env.read_env(BASE_DIR / '.env', recurse=False, override=False)
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/6.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = env('DJANGO_SECRET_KEY')
+SECRET_KEY = env.str('DJANGO_SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = env('DJANGO_DEBUG')
+DEBUG = env.bool('DJANGO_DEBUG', default=False)
+PRODUCTION = env.str('DJANGO_ENV', default='development') == 'production'
+if PRODUCTION and (DEBUG or len(SECRET_KEY) < 50 or len(set(SECRET_KEY)) < 5
+                   or SECRET_KEY.startswith(('django-insecure-', 'replace-with-'))):
+    raise ImproperlyConfigured('Production requires DEBUG=False and a strong DJANGO_SECRET_KEY.')
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'testserver' , 'sitarogroup.com' , 'sitarogroup.ir']
+ALLOWED_HOSTS = env.list('DJANGO_ALLOWED_HOSTS', default=['localhost', '127.0.0.1'] if DEBUG else [])
+CSRF_TRUSTED_ORIGINS = env.list('DJANGO_CSRF_TRUSTED_ORIGINS', default=[])
+if PRODUCTION and (not ALLOWED_HOSTS or '*' in ALLOWED_HOSTS or not CSRF_TRUSTED_ORIGINS):
+    raise ImproperlyConfigured('Production requires explicit hosts and HTTPS CSRF origins.')
+if PRODUCTION and any(not origin.startswith('https://') for origin in CSRF_TRUSTED_ORIGINS):
+    raise ImproperlyConfigured('Production CSRF origins must use HTTPS.')
+
+# Safe only behind the supplied proxy, which overwrites X-Forwarded-Proto.
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https') if PRODUCTION else None
+SECURE_SSL_REDIRECT = env.bool('DJANGO_SECURE_SSL_REDIRECT', default=PRODUCTION)
+SECURE_REDIRECT_EXEMPT = [r'^healthz/$']
+SESSION_COOKIE_SECURE = PRODUCTION
+CSRF_COOKIE_SECURE = PRODUCTION
+SECURE_CONTENT_TYPE_NOSNIFF = True
+X_FRAME_OPTIONS = 'DENY'
+SECURE_HSTS_SECONDS = env.int('DJANGO_SECURE_HSTS_SECONDS', default=3600 if PRODUCTION else 0)
+SECURE_HSTS_INCLUDE_SUBDOMAINS = env.bool('DJANGO_HSTS_INCLUDE_SUBDOMAINS', default=False)
+SECURE_HSTS_PRELOAD = env.bool('DJANGO_HSTS_PRELOAD', default=False)
+SECURE_REFERRER_POLICY = 'same-origin'
 
 # Application definition
 
@@ -217,15 +229,22 @@ WSGI_APPLICATION = 'config.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'postgres',
-        'USER': 'postgres',
-        'PASSWORD': 'postgres',
-        'HOST': 'db',
-        'PORT': 5432,
+        'NAME': env.str('POSTGRES_DB', default='postgres'),
+        'USER': env.str('POSTGRES_USER', default='postgres'),
+        'PASSWORD': env.str('POSTGRES_PASSWORD', default=''),
+        'HOST': env.str('POSTGRES_HOST', default='db'),
+        'PORT': env.int('POSTGRES_PORT', default=5432),
+        'CONN_MAX_AGE': env.int('DB_CONN_MAX_AGE', default=60),
+        'CONN_HEALTH_CHECKS': True,
+        'OPTIONS': {'connect_timeout': 5, 'sslmode': env.str('POSTGRES_SSLMODE', default='prefer')},
     }
 }
 
 # Password validation
+if PRODUCTION and (not DATABASES['default']['PASSWORD']
+                   or DATABASES['default']['PASSWORD'].startswith('replace-with-')):
+    raise ImproperlyConfigured('A real POSTGRES_PASSWORD is required in production.')
+
 # https://docs.djangoproject.com/en/6.1/ref/settings/#auth-password-validators
 
 AUTH_PASSWORD_VALIDATORS = [
@@ -259,9 +278,9 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/6.1/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
 STATICFILES_DIRS = [BASE_DIR / 'static']
-STATIC_ROOT = BASE_DIR / 'staticfiles'
+STATIC_ROOT = Path(env.str('DJANGO_STATIC_ROOT', default=str(BASE_DIR / 'staticfiles')))
 
 LOCALE_PATHS = [
     BASE_DIR / "locale",
@@ -279,6 +298,29 @@ MAILERS = {
     },
 }
 
+smtp_host = env.str('EMAIL_HOST', default='')
+smtp_port = env.int('EMAIL_PORT', default=587)
+smtp_user = env.str('EMAIL_HOST_USER', default='')
+smtp_password = env.str('EMAIL_HOST_PASSWORD', default='')
+smtp_tls = env.bool('EMAIL_USE_TLS', default=True)
+smtp_ssl = env.bool('EMAIL_USE_SSL', default=False)
+smtp_timeout = env.int('EMAIL_TIMEOUT', default=10)
+DEFAULT_FROM_EMAIL = env.str('DEFAULT_FROM_EMAIL', default='webmaster@localhost')
+SERVER_EMAIL = env.str('SERVER_EMAIL', default=DEFAULT_FROM_EMAIL)
+if smtp_tls and smtp_ssl:
+    raise ImproperlyConfigured('EMAIL_USE_TLS and EMAIL_USE_SSL cannot both be enabled.')
+if PRODUCTION and (not smtp_host or DEFAULT_FROM_EMAIL.endswith('@localhost')):
+    raise ImproperlyConfigured('Production requires EMAIL_HOST and DEFAULT_FROM_EMAIL.')
+if smtp_host:
+    MAILERS['default'] = {
+        'BACKEND': 'django.core.mail.backends.smtp.EmailBackend',
+        'OPTIONS': {
+            'host': smtp_host, 'port': smtp_port,
+            'username': smtp_user, 'password': smtp_password,
+            'use_tls': smtp_tls, 'use_ssl': smtp_ssl, 'timeout': smtp_timeout,
+        },
+    }
+
 AUTHENTICATION_BACKENDS = [
     'allauth.account.auth_backends.AuthenticationBackend',
 ]
@@ -287,7 +329,14 @@ AUTH_USER_MODEL = 'accounts.CustomUser'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # media files
 MEDIA_URL = '/media/'
-MEDIA_ROOT = str(BASE_DIR.joinpath('media'))
+MEDIA_ROOT = env.str('DJANGO_MEDIA_ROOT', default=str(BASE_DIR / 'media'))
+
+LOGGING = {
+    'version': 1, 'disable_existing_loggers': False,
+    'handlers': {'console': {'class': 'logging.StreamHandler'}},
+    'root': {'handlers': ['console'], 'level': 'INFO'},
+    'loggers': {'django': {'handlers': ['console'], 'level': 'INFO', 'propagate': False}},
+}
 
 # Public contact channels. Keep blank until the real Sitaro details are ready.
 SITARO_CONTACT_PHONE = "09197736862"
