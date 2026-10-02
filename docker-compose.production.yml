@@ -62,16 +62,18 @@ services:
     command: ['sh', '-c', 'python manage.py migrate --noinput && python manage.py collectstatic --noinput']
 
   nginx:
-    image: nginx:stable-alpine
-    restart: unless-stopped
-    ports:
-      - '80:80'
-      - '443:443'
-    volumes:
-      - ./deploy/nginx.conf:/etc/nginx/conf.d/default.conf:ro
-      - ${TLS_CERTIFICATE_DIR:?Set absolute certificate directory in .env}:/etc/nginx/tls:ro
-      - static_data:/srv/static:ro
-      - media_data:/srv/media:ro
+    app:
+      image: 'jc21/nginx-proxy-manager:2.16.0'
+      restart: unless-stopped
+      environment:
+        TZ: "Asia/Tehran"
+      ports:
+        - '80:80'
+        - '81:81'
+        - '443:443'
+      volumes:
+        - ./data:/data
+        - ./letsencrypt:/etc/letsencrypt
     depends_on:
       web:
         condition: service_healthy
