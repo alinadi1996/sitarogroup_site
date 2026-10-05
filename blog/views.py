@@ -1,8 +1,11 @@
 from django.http import HttpResponse
-from django.shortcuts import render
+from django.shortcuts import render , get_object_or_404
 from django.views import generic
+from rest_framework.response import Response
+from rest_framework.decorators import api_view
 
 from blog.models import Post
+from blog.serializers import BlogSerializer
 from portfolio.models import Project
 from seo.services import build_seo
 from seo.models import StaticPageSEO
@@ -86,3 +89,10 @@ class BlogDetailView(generic.DetailView):
         context = super().get_context_data(**kwargs)
         context["seo"] = build_seo(self.object, self.request)
         return context
+
+
+@api_view()
+def blog_list(request):
+    blog = Post.objects.all()
+    serializer = BlogSerializer(blog , many=True)
+    return Response(serializer.data)
