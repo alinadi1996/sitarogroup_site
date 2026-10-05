@@ -1,7 +1,7 @@
 @font-face {
     font-family: "IRANYekanX";
-    src: url("../fonts/IRANYekanXVF.woff2") format("woff2-variations"),
-         url("../fonts/IRANYekanXVF.woff") format("woff-variations");
+    src: url("../fonts/IRANYekanXVF.woff2") format("woff2"),
+         url("../fonts/IRANYekanXVF.woff") format("woff");
     font-weight: 100 1000;
     font-style: normal;
     font-display: swap;
@@ -63,7 +63,6 @@ body {
     font-kerning: normal;
     font-synthesis: none;
     font-variant-numeric: proportional-nums;
-    font-variation-settings: "wght" 450;
     overflow-x: hidden;
     text-rendering: optimizeLegibility;
     transition: background-color .28s ease, color .28s ease;
@@ -811,6 +810,11 @@ html[data-theme="light"] .auth-art p {color: var(--white)}
 .article-content h2 { font-size: clamp(1.8rem, 3vw, 2.8rem); }.article-content h3 { font-size: 1.4rem; }
 .article-content a { color: #087b5b; text-decoration: underline; text-underline-offset: 4px; }
 .article-content blockquote { margin: 2.5em 0; padding: 25px 28px; border-right: 3px solid var(--mint-dark); background: #e6e2d8; font-size: 1.15em; }
+.article-content :is(ul, ol) { margin: 1.5em 0; padding-inline-start: 1.6em; }
+.article-content li { padding-inline-start: .35em; margin-bottom: .4em; }
+.article-content li::marker { color: var(--mint-dark); }
+.article-content pre { max-width: 100%; overflow-x: auto; padding: 20px 24px; border-radius: 10px; background: #0c1916; color: #dceee3; direction: ltr; text-align: left; font: 14px/1.8 ui-monospace, Consolas, monospace; }
+.article-content :not(pre) > code { padding: .1em .35em; border-radius: 4px; background: var(--theme-surface-soft); font: .86em/1.5 ui-monospace, Consolas, monospace; }
 .article-content img { max-width: 100%; height: auto; }
 .article-end { min-height: 260px; padding: 44px 0; display: flex; align-items: center; justify-content: space-between; gap: 40px; border-top: 1px solid var(--line-dark); }
 .article-end > div > span { color: #188763; font-size: 9px; }
@@ -1853,4 +1857,80 @@ body.modal-open {
 }
 @media (prefers-reduced-motion: reduce) {
     .logout-modal, .logout-modal__box { transition: none; }
+}
+
+/* Editorial type and interaction polish. Keep Persian copy on the local variable face. */
+:root { --font-latin: Arial, Helvetica, sans-serif; }
+body { font-weight: 450; line-height: 1.85; }
+:is(h1, h2, h3, h4) { text-wrap: balance; letter-spacing: 0; }
+:is(.hero-lead, .section-heading > p, .service-title p, .project-info p,
+    .process-copy p, .process-steps p, .performance-copy > p, .contact > p) {
+    line-height: 1.95;
+}
+.brand-copy strong { font-size: 16px; font-weight: 750; }
+.desktop-nav a { font-size: 14px; font-weight: 600; }
+.brand-copy small, .footer-signature small, .core-wordmark,
+.hero-trust, .manifesto-meta, .visual-hud, .code-fragment,
+.hero-index, .scroll-cue, .terminal, .portfolio-terminal pre {
+    font-family: var(--font-latin);
+}
+/* Filled lettering reads clearly in Persian at every viewport and in both themes. */
+.hero h1 { font-size: clamp(3.25rem, 6.1vw, 7rem); line-height: 1.24; font-weight: 800; letter-spacing: 0; }
+.hero h1 span { margin-top: .03em; color: var(--mint); -webkit-text-stroke: 0; }
+.hero-lead { max-width: 49ch; margin-top: 26px; color: #b2c3bb; font-weight: 450; }
+.hero-trust { margin-top: 44px; font-size: 10px; }
+.manifesto-copy p { font-size: clamp(2rem, 4vw, 4.4rem); line-height: 1.65; font-weight: 750; letter-spacing: 0; }
+.section-heading h2, .works-head h2, .process h2, .performance h2 {
+    font-size: clamp(2.2rem, 4vw, 4.5rem);
+    line-height: 1.48;
+    letter-spacing: 0;
+    font-weight: 750;
+}
+.section-heading > p, .process-copy p, .performance-copy > p { font-size: clamp(1rem, 1.15vw, 1.125rem); }
+.service-title h3 { font-weight: 700; }
+.service-title p, .process-steps p { font-size: 15px; }
+.project-info { gap: 14px 24px; }
+.project-info h3 { line-height: 1.5; font-weight: 700; }
+.project-info p { color: #adbbb5; font-size: 14px; }
+.project-detail-link { color: #dce8e1; font-size: 13px; }
+.contact h2 { font-size: clamp(2.8rem, 6vw, 6.5rem); line-height: 1.4; letter-spacing: 0; }
+.contact h2 em { color: #075b43; -webkit-text-stroke: 0; }
+.contact > p { font-size: 17px; }
+.portfolio-hero h1 { font-size: clamp(3rem, 6vw, 6.8rem); line-height: 1.35; letter-spacing: 0; }
+.portfolio-hero h1 em { color: var(--mint); -webkit-text-stroke: 0; }
+
+html[data-theme="light"] .hero h1 span { color: #076f50; -webkit-text-stroke: 0; }
+html[data-theme="light"] .project-info p { color: #3d5148; }
+html[data-theme="light"] .project-detail-link { color: #204d3d; border-color: rgba(7,17,15,.2); }
+html[data-theme="light"] .portfolio-hero h1 em { color: #a0f0c8; -webkit-text-stroke: 0; }
+html[data-theme="dark"] .section-heading > p,
+html[data-theme="dark"] .service-title p,
+html[data-theme="dark"] .process-copy p,
+html[data-theme="dark"] .process-steps p { color: #b0c1b8; }
+
+.button, .header-action, .auth-submit, .footer-compact-cta,
+.support-launcher, .theme-toggle, .menu-toggle, .journal-view-switch button,
+.logout-modal button { transition: transform 160ms var(--ease), background-color 200ms ease, color 200ms ease, border-color 200ms ease; }
+:is(.button, .header-action, .auth-submit, .footer-compact-cta,
+    .support-launcher, .theme-toggle, .menu-toggle, .journal-view-switch button,
+    .logout-modal button):active { transform: scale(.97); }
+@media (hover: hover) and (pointer: fine) {
+    .button:hover:not(:active), .header-action:hover:not(:active),
+    .footer-compact-cta:hover:not(:active), .support-launcher:hover:not(:active) { transform: translateY(-2px); }
+}
+
+@media (max-width: 760px) {
+    .hero { min-height: 0; padding-top: 105px; padding-bottom: 70px; }
+    .hero h1 { font-size: clamp(2.65rem, 11.5vw, 4.7rem); line-height: 1.35; }
+    .hero-lead { font-size: 15px; }
+    .hero-visual { height: 300px; }
+    .hero-trust { line-height: 1.6; }
+    .manifesto { min-height: 0; }
+    .manifesto-copy p { font-size: clamp(1.85rem, 7.8vw, 3rem); }
+    .section-heading h2, .works-head h2, .process h2, .performance h2 { font-size: clamp(2rem, 8vw, 3rem); }
+    .service-title p, .process-steps p { font-size: 14px; }
+    .project-info { gap: 8px; }
+    .contact { min-height: 600px; }
+    .contact h2 { font-size: clamp(2.5rem, 11vw, 4.5rem); }
+    .portfolio-hero h1 { font-size: clamp(2.6rem, 10vw, 4.4rem); }
 }

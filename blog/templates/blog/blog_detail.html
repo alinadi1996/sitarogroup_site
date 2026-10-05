@@ -1,5 +1,5 @@
 {% extends "_base.html" %}
-{% load static %}
+{% load static rich_text %}
 
 {% block body_class %}blog-page article-page{% endblock %}
 
@@ -43,7 +43,7 @@
                     </div>
                 </aside>
                 <div class="article-content">
-                    {{ post.content|safe }}
+                    {{ post.content|safe_rich_text }}
                 </div>
             </div>
 

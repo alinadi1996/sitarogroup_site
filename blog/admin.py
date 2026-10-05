@@ -1,10 +1,12 @@
 from django.contrib import admin
 from unfold.admin import ModelAdmin
+from blog.forms import PostAdminForm
 from blog.models import Post
 from seo.admin import SEOAdminMixin, SEO_FIELDS
 
 
 class PostAdmin(SEOAdminMixin, ModelAdmin):
+    form = PostAdminForm
     list_display = ('title', 'author', 'datetime_created', )
     search_fields = ('title', 'content', 'author__username')
     autocomplete_fields = ('author',)

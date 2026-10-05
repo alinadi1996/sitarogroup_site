@@ -1,0 +1,130 @@
+/* Shared visual finish, loaded after individual page styles. */
+:root {
+    --control-radius: 10px;
+    --surface-radius: 14px;
+    --icon-ease: cubic-bezier(.23, 1, .32, 1);
+}
+
+/* Persian letterforms need room; retain monospace only for actual code/telemetry. */
+:is(.journal-heading h1, .article-title-wrap h1, .dashboard-intro h1,
+    .contact-hero h1, .tools-hero h1, .image-converter-copy h1,
+    .website-analyzer-hero h1, .case-hero h1,
+    .schema-hero h1, .serp-hero h1, .sr-hero h1) {
+    font-size: clamp(2.9rem, 5.6vw, 6.2rem);
+    line-height: 1.4;
+    letter-spacing: 0;
+    font-weight: 780;
+}
+:is(.schema-hero h1 em, .serp-hero h1 em, .sr-hero h1 em,
+    .dashboard-intro h1 em, .journal-heading h1 em) {
+    color: var(--mint-dark);
+    -webkit-text-stroke: 0;
+}
+:is(.contact-hero h1 em, .tools-hero h1 em, .image-converter-copy h1 em) {
+    color: var(--mint);
+    -webkit-text-stroke: 0;
+}
+html[data-theme="dark"] .journal-heading h1 em,
+html[data-theme="dark"] .dashboard-intro h1 em { color: var(--mint); -webkit-text-stroke: 0; }
+:is(.schema-section-head h2, .schema-related h2, .schema-cta h2,
+    .serp-section-heading h2, .serp-tips h2, .serp-cta h2,
+    .sr-guide h2, .sr-cta h2, .featured-tool-copy h2) {
+    line-height: 1.45;
+    letter-spacing: 0;
+    font-weight: 720;
+}
+:is(.schema-form-head p, .schema-install-grid p, .schema-types span,
+    .serp-form-head > p, .serp-guide li p, .serp-tip-list p,
+    .sr-form-head p, .footer-about > p, .footer-column > a,
+    .article-content, .contact-privacy) { line-height: 1.9; }
+:is(.schema-form-head p, .schema-install-grid p, .schema-types span,
+    .serp-form-head > p, .serp-guide li p, .serp-tip-list p, .sr-form-head p) { font-size: 12px; }
+:is(.serp-field input, .serp-field textarea, .schema-field input,
+    .schema-field textarea, .schema-field select, .sr-field input,
+    .sr-field textarea, .auth-input, .contact-input) { font-size: max(16px, 1rem); }
+
+/* A single radius for all pressable controls, including page-specific tools. */
+:is(main, .site-header, .global-footer, .support-dock, .logout-modal) button,
+:is(.button, .header-action, .header-login, .footer-compact-cta,
+    .auth-submit, .auth-submit-link, .security-action,
+    .portfolio-list-cta .button, .tool-action[href],
+    .contact-channel-list > a, .dashboard-nav a) {
+    border-radius: var(--control-radius);
+}
+:is(.schema-button, .serp-button, .sr-button, .contact-submit,
+    .button, .auth-submit, .header-action, .support-launcher):active {
+    transform: scale(.97);
+}
+:is(.schema-button, .serp-button, .sr-button):focus-visible { outline: 2px solid var(--mint-dark); outline-offset: 3px; }
+:is(.schema-form, .schema-output, .serp-form, .sr-form, .sr-output,
+    .image-converter-workspace, .portfolio-card, .post-card,
+    .security-action, .client-project-card) { border-radius: var(--surface-radius); }
+
+/* Matching, crisp inline icons replace font-dependent arrow characters. */
+:is(.button, .header-action, .footer-compact-cta, .auth-submit,
+    .works-all-link, .project-detail-link, .portfolio-card-link,
+    .read-article, .tool-action, .serp-cta .button,
+    .schema-cta .button, .sr-cta .button) > span[aria-hidden="true"],
+.header-action .project-icon {
+    display: inline-block;
+    width: 18px;
+    height: 18px;
+    flex: 0 0 18px;
+    background: currentColor;
+    -webkit-mask: url("../icons/arrow-left.svg") center / contain no-repeat;
+    mask: url("../icons/arrow-left.svg") center / contain no-repeat;
+    font-size: 0;
+    line-height: 0;
+    transition: transform 180ms var(--icon-ease);
+}
+:is(.button, .header-action, .footer-compact-cta, .auth-submit,
+    .works-all-link, .project-detail-link, .portfolio-card-link,
+    .read-article, .tool-action):hover > span[aria-hidden="true"] { transform: translateX(-3px); }
+:is(.schema-button-primary, .serp-button-primary, .sr-primary)::before {
+    content: "";
+    display: inline-block;
+    width: 17px;
+    height: 17px;
+    margin-inline-end: 8px;
+    vertical-align: middle;
+    background: currentColor;
+    -webkit-mask: url("../icons/copy.svg") center / contain no-repeat;
+    mask: url("../icons/copy.svg") center / contain no-repeat;
+}
+.sr-primary::before {
+    -webkit-mask-image: url("../icons/sparkles.svg");
+    mask-image: url("../icons/sparkles.svg");
+}
+:is(.dashboard-nav, .journal-view-switch, .journal-social-actions,
+    .contact-channel-list, .support-social-list) svg {
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-width: 1.7;
+}
+html[data-theme] .support-launcher-icon {
+    width: 24px;
+    height: 24px;
+    flex: 0 0 24px;
+    margin-inline: 9px;
+    background: currentColor;
+    -webkit-mask: url("../icons/chat.svg") center / contain no-repeat;
+    mask: url("../icons/chat.svg") center / contain no-repeat;
+}
+@media (max-width: 760px) {
+    html[data-theme] .support-launcher-icon { width: 27px; height: 27px; flex-basis: 27px; margin-inline: auto; }
+}
+
+@media (max-width: 760px) {
+    :is(.journal-heading h1, .article-title-wrap h1, .dashboard-intro h1,
+        .contact-hero h1, .tools-hero h1, .image-converter-copy h1,
+        .website-analyzer-hero h1, .case-hero h1,
+        .schema-hero h1, .serp-hero h1, .sr-hero h1) {
+        font-size: clamp(2.4rem, 10vw, 4rem);
+        line-height: 1.42;
+    }
+}
+@media (prefers-reduced-motion: reduce) {
+    :is(.button, .header-action, .footer-compact-cta, .auth-submit,
+        .works-all-link, .project-detail-link, .portfolio-card-link,
+        .read-article, .tool-action) > span[aria-hidden="true"] { transition: none; }
+}

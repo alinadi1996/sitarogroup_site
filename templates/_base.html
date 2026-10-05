@@ -14,8 +14,10 @@
         }
     </script>
     <link rel="icon" href="{% static 'images/sitaro-logo.svg' %}" type="image/svg+xml">
-    <link rel="stylesheet" href="{% static 'css/main.css' %}?v=20260926-mobile-account">
+    <link rel="preload" href="{% static 'fonts/IRANYekanXVF.woff2' %}" as="font" type="font/woff2" crossorigin>
+    <link rel="stylesheet" href="{% static 'css/main.css' %}?v=20261005-type-polish">
     {% block extra_head %}{% endblock %}
+    <link rel="stylesheet" href="{% static 'css/site-polish.css' %}?v=20261005-site-polish">
 </head>
 <body class="{% block body_class %}{% endblock %}">
 <a class="skip-link" href="#main">پرش به محتوای اصلی</a>
