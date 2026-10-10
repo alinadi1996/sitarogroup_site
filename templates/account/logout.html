@@ -1,0 +1,22 @@
+
+
+
+<div id="logoutModal" class="logout-modal" aria-hidden="true">
+    <div class="logout-modal__overlay" data-close-logout></div>
+
+    <div class="logout-modal__box" role="dialog" aria-modal="true">
+        <h2>خروج از حساب</h2>
+        <p>مطمئن هستید که می‌خواهید خارج شوید؟</p>
+
+        <button type="button" data-close-logout>
+            انصراف
+        </button>
+
+        <form action="{% url 'account_logout' %}" method="post">
+            {% csrf_token %}
+            <button type="submit">
+                بله، خارج شو
+            </button>
+        </form>
+    </div>
+</div>

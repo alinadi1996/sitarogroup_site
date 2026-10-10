@@ -1,0 +1,35 @@
+{% extends "_base.html" %}
+
+{% block title %}ویرایش پروفایل | گروه سیتارو{% endblock %}
+{% block description %}ویرایش مشخصات حساب کاربری گروه سیتارو.{% endblock %}
+{% block robots %}noindex, nofollow{% endblock %}
+{% block body_class %}auth-page{% endblock %}
+
+{% block content %}
+<main class="auth-shell auth-shell-password" id="main">
+    <section class="auth-card" aria-labelledby="profile-edit-title">
+        <a class="auth-back" href="{% url 'accounts:profile' %}"><span aria-hidden="true">→</span> بازگشت به پنل کاربری</a>
+        <div class="auth-card-head">
+            <span class="auth-step">ACCOUNT / PROFILE</span>
+            <h1 id="profile-edit-title">ویرایش پروفایل</h1>
+            <p>مشخصات خود را به‌روز کنید تا در پنل کاربری نمایش داده شوند.</p>
+        </div>
+        {% if form.non_field_errors %}<div class="form-alert" role="alert">{{ form.non_field_errors }}</div>{% endif %}
+        <form class="auth-form" method="post" novalidate>
+            {% csrf_token %}
+            {% for field in form %}
+            <div class="field-group">
+                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                {{ field }}
+                {% for error in field.errors %}<p class="field-error" role="alert">{{ error }}</p>{% endfor %}
+            </div>
+            {% endfor %}
+            <button class="auth-submit" type="submit">ذخیره تغییرات <span aria-hidden="true">←</span></button>
+        </form>
+    </section>
+    <aside class="auth-art auth-security-art" aria-hidden="true">
+        <div class="security-core"><i></i><i></i><span></span><b></b></div>
+        <p>YOUR<br>PROFILE</p>
+    </aside>
+</main>
+{% endblock %}

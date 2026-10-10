@@ -1,6 +1,7 @@
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.forms import UserChangeForm
+from django import forms
 
 from accounts.models import CustomUser
 
@@ -51,3 +52,19 @@ class CustomUserChangeForm(UserChangeForm):
     class Meta:
         model = CustomUser
         fields = UserChangeForm.Meta.fields
+
+
+class ProfileEditForm(forms.ModelForm):
+    class Meta:
+        model = CustomUser
+        fields = ('first_name', 'last_name', 'username')
+        labels = {
+            'first_name': 'نام',
+            'last_name': 'نام خانوادگی',
+            'username': 'نام کاربری',
+        }
+        widgets = {
+            'first_name': forms.TextInput(attrs={'class': 'auth-input', 'autocomplete': 'given-name'}),
+            'last_name': forms.TextInput(attrs={'class': 'auth-input', 'autocomplete': 'family-name'}),
+            'username': forms.TextInput(attrs={'class': 'auth-input', 'autocomplete': 'username'}),
+        }

@@ -1,13 +1,13 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy
-from django.views.generic import CreateView
+from django.views.generic import CreateView, UpdateView
 from django.contrib.auth.views import LoginView, LogoutView
 from django.views.generic import DetailView
 from django.db.models import Prefetch
 
-from leads.models import ProjectUpdate
+from leads.models import ProjectUpdate, SEOKeyword
 
-from .forms import CustomUserCreationForm, PersianAuthenticationForm
+from .forms import CustomUserCreationForm, PersianAuthenticationForm, ProfileEditForm
 
 
 class SitaroLoginView(LoginView):
@@ -34,7 +34,19 @@ class ProfileView(LoginRequiredMixin, DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["client_projects"] = self.request.user.client_projects.prefetch_related(
-            Prefetch("updates", queryset=ProjectUpdate.objects.filter(is_visible=True))
+        context["client_projects"] = (
+            self.request.user.client_projects.select_related("strategy").prefetch_related(
+                Prefetch("updates", queryset=ProjectUpdate.objects.filter(is_visible=True)),
+                Prefetch("seo_keywords", queryset=SEOKeyword.objects.filter(is_visible=True), to_attr="client_keywords"),
+            )
         )
         return context
+
+
+class ProfileEditView(LoginRequiredMixin, UpdateView):
+    form_class = ProfileEditForm
+    template_name = 'account/profile_edit.html'
+    success_url = reverse_lazy('accounts:profile')
+
+    def get_object(self, queryset=None):
+        return self.request.user

@@ -6,6 +6,7 @@ from django.urls import reverse
 from seo.models import SEOFieldsMixin
 
 
+
 class Post(SEOFieldsMixin):
     status_choices = (
         ('drf', 'Draft'),

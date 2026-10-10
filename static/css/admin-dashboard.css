@@ -117,3 +117,28 @@ html[lang^="fa"] #page .sitaro-dashboard-metric { align-items: flex-start; }
 .dark .seo-check strong { color: #78e0ac; }
 .dark .seo-check--warn strong { color: #e8c17f; }
 .dark .seo-check small { color: #9db9aa; }
+
+/* Shared admin finish: form, list and dashboard typography follow the public site. */
+html[lang^="fa"] #page { font-family: "IRANYekanX", Tahoma, sans-serif; font-size: 14px; line-height: 1.85; }
+html[lang^="fa"] #page :is(h1, h2, h3, h4) { line-height: 1.5; letter-spacing: 0; font-weight: 750; text-wrap: balance; }
+html[lang^="fa"] #page :is(input:not([type="checkbox"]):not([type="radio"]), select, textarea) {
+    font-size: 14px;
+    line-height: 1.8;
+    border-radius: 10px;
+}
+html[lang^="fa"] #page :is(button, input[type="submit"], a.button) { border-radius: 10px; }
+html[lang^="fa"] #page :is(button, input[type="submit"], a.button):active { transform: scale(.98); }
+html[lang^="fa"] #page :is(input, textarea, select, button, a):focus-visible { outline: 2px solid #0b9466; outline-offset: 2px; }
+.sitaro-dashboard-intro, .sitaro-seo-intro { border-radius: 18px; }
+.sitaro-dashboard-metric, .sitaro-dashboard-panel, .sitaro-seo-card { border-radius: 14px; }
+.sitaro-dashboard-intro > a, .sitaro-seo-tools a { border-radius: 10px; }
+.sitaro-dashboard-panel li strong { font-size: 14px; }
+.sitaro-dashboard-panel li small, .sitaro-dashboard-metric > span { font-size: 12px; }
+.sitaro-seo-intro p, .sitaro-dashboard-intro p { font-size: 14px; }
+.sitaro-dashboard-metric strong { font-family: "IRANYekanX", Tahoma, sans-serif; font-variant-numeric: tabular-nums; }
+@media (hover: hover) and (pointer: fine) {
+    .sitaro-dashboard-metric:hover { transform: translateY(-2px); }
+}
+@media (prefers-reduced-motion: reduce) {
+    html[lang^="fa"] #page :is(button, input[type="submit"], a.button):active { transform: none; }
+}

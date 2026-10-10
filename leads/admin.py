@@ -2,7 +2,7 @@ from django.contrib import admin
 from unfold.admin import ModelAdmin, StackedInline
 from unfold.contrib.filters.admin import ChoicesRadioFilter
 
-from .models import ClientProject, ContactRequest, ProjectUpdate
+from .models import ClientProject, ContactRequest, ProjectStrategy, ProjectUpdate, SEOKeyword
 
 
 @admin.register(ContactRequest)
@@ -46,6 +46,21 @@ class ProjectUpdateInline(StackedInline):
     readonly_fields = ("created_at",)
 
 
+class ProjectStrategyInline(StackedInline):
+    model = ProjectStrategy
+    extra = 0
+    max_num = 1
+    fields = ("summary", "current_focus", "next_step", "is_visible", "updated_at")
+    readonly_fields = ("updated_at",)
+
+
+class SEOKeywordInline(StackedInline):
+    model = SEOKeyword
+    extra = 0
+    fields = ("keyword", "target_url", "priority", "status", "current_position", "is_visible", "order")
+    ordering = ("order", "keyword")
+
+
 @admin.register(ClientProject)
 class ClientProjectAdmin(ModelAdmin):
     list_display = ("title", "client", "service", "status", "progress", "target_date", "updated_at")
@@ -57,7 +72,7 @@ class ClientProjectAdmin(ModelAdmin):
     list_per_page = 25
     show_full_result_count = False
     readonly_fields = ("created_at", "updated_at")
-    inlines = (ProjectUpdateInline,)
+    inlines = (ProjectStrategyInline, SEOKeywordInline, ProjectUpdateInline)
     fieldsets = (
         ("پروژه", {"fields": ("client", "contact_request", "title", "service")}),
         ("پیشرفت", {"fields": ("status", "progress", "target_date")}),
