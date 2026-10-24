@@ -3,21 +3,39 @@ version: '3.9'
 services:
   web:
     build: .
-    command: sh -c "python /code/manage.py migrate --noinput && python /code/manage.py runserver 0.0.0.0:8000"
+    command: >
+      sh -c "python manage.py migrate --noinput &&
+             python manage.py runserver 0.0.0.0:8000"
     env_file:
       - .env
     volumes:
-      - .:/code
+      - .:/app
     ports:
-      - 8000:8000
+      - "8000:8000"
     depends_on:
-      - db
+      db:
+        condition: service_healthy
     environment:
-      - "DJANGO_SECRET_KEY=dv+8u%c&p$$z(bz%@i+ok-g@f@^13c1$q67p($k0i1u2w-)o(gp"
-      - 'DJANGO_DEBUG=True'
-
+      DATABASE_URL: "postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}"
+      DJANGO_SECRET_KEY: "${DJANGO_SECRET_KEY}"
+      DJANGO_DEBUG: "True"
 
   db:
     image: postgres:18
     environment:
-      - "POSTGRES_HOST_AUTH_METHOD=trust"
+      POSTGRES_DB: "${POSTGRES_DB}"
+      POSTGRES_USER: "${POSTGRES_USER}"
+      POSTGRES_PASSWORD: "${POSTGRES_PASSWORD}"
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U \"$${POSTGRES_USER}\" -d \"$${POSTGRES_DB}\""]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+    volumes:
+      - pg_data:/var/lib/postgresql
+
+volumes:
+  pg_data:

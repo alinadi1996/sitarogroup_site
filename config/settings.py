@@ -15,6 +15,7 @@ import os
 from django.templatetags.static import static
 from django.urls import reverse_lazy
 from environs import Env
+import dj_database_url
 
 
 env = Env()
@@ -174,9 +175,9 @@ UNFOLD = {
 }
 
 # A URL-prefix property normally ends in a slash. Keep credentials outside git.
-SITARO_GSC_SITE_URL = os.getenv('SITARO_GSC_SITE_URL', 'https://sitarogroup.ir/').strip()
+SITARO_GSC_SITE_URL = os.getenv('SITARO_GSC_SITE_URL', 'https://sitarogroup.com/').strip()
 SITARO_GSC_CREDENTIALS_FILE = os.getenv('SITARO_GSC_CREDENTIALS_FILE', '').strip()
-SITARO_PUBLIC_SITE_URL = 'https://sitarogroup.ir/'
+SITARO_PUBLIC_SITE_URL = 'https://sitarogroup.com/'
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -215,12 +216,14 @@ WSGI_APPLICATION = 'config.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/6.1/ref/settings/#databases
 
+
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'postgres',
-        'USER': 'postgres',
-        'PASSWORD': 'postgres',
+        'NAME': env('DATABASE_DB'),
+        'USER': env('POSTGRES_USER'),
+        'PASSWORD': env('POSTGRES_PASSWORD'),
         'HOST': 'db',
         'PORT': 5432,
     }
