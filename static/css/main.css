@@ -422,8 +422,8 @@ html[data-theme="light"] .support-composer input::placeholder { color: #667970; 
 html[data-theme="light"] .support-launcher { background: #f7f8f3; color: var(--ink); border-color: rgba(8,123,91,.35); box-shadow: 0 16px 38px rgba(21,42,34,.18); }
 html[data-theme="light"] .support-launcher:hover { background: var(--white); border-color: var(--mint-dark); }
 html[data-theme="light"] .support-unread { border-color: #f7f8f3; }
-html[data-theme="light"] .support-launcher-icon { display: inline-block; background-color: var(--tool-icon-color); -webkit-mask: url("../icons/24-support-bulk.svg") center / contain no-repeat; mask: url("../icons/24-support-bulk.svg") center / contain no-repeat; }
-html[data-theme="dark"] .support-launcher-icon { display: inline-block; background-color: var(--tool-icon-color-dark); -webkit-mask: url("../icons/24-support-bulk.svg") center / contain no-repeat; mask: url("../icons/24-support-bulk.svg") center / contain no-repeat; }
+html[data-theme="light"] .support-launcher-icon { display: inline-block; background-color: var(--blue); -webkit-mask: url("../icons/24-support-bulk.svg") center / contain no-repeat; mask: url("../icons/24-support-bulk.svg") center / contain no-repeat; }
+html[data-theme="dark"] .support-launcher-icon { display: inline-block; background-color: var(--white); -webkit-mask: url("../icons/24-support-bulk.svg") center / contain no-repeat; mask: url("../icons/24-support-bulk.svg") center / contain no-repeat; }
 @keyframes support-radar { 70%, 100% { opacity: 0; transform: scale(1.16, 1.35); } }
 @keyframes support-message-in { from { opacity: 0; transform: translateY(7px); } to { opacity: 1; transform: none; } }
 @keyframes mobile-menu-in { from { opacity: 0; transform: translateY(-12px); } to { opacity: 1; transform: none; } }
