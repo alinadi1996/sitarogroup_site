@@ -9,6 +9,5 @@ __pycache__/
 .idea/
 .vscode/
 *.sqlite3
-static/
 media/
 certbot/
