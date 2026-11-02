@@ -45,7 +45,7 @@ if local_env.is_file():
 SECRET_KEY = env('DJANGO_SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = env('DJANGO_DEBUG')
+DEBUG = env.bool('DJANGO_DEBUG', default=False)
 
 ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'testserver' , 'sitarogroup.com' , 'sitarogroup.ir']
 
@@ -294,7 +294,7 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = str(BASE_DIR.joinpath('media'))
 
 # Public contact channels. Keep blank until the real Sitaro details are ready.
-SITARO_CONTACT_PHONE = "tel:+989197736862"
+SITARO_CONTACT_PHONE = "09197736862"
 SITARO_WHATSAPP_URL = "https://wa.me/989197736862"
 SITARO_TELEGRAM_URL = "https://t.me/alinadi66"
 
