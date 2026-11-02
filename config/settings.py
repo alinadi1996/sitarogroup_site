@@ -274,6 +274,8 @@ LOCALE_PATHS = [
 LOGIN_REDIRECT_URL = 'home'
 LOGOUT_REDIRECT_URL = 'home'
 
+ACCOUNT_SIGNUP_REDIRECT_URL = 'home'
+
 # Email
 # https://docs.djangoproject.com/en/6.1/topics/email/#topic-email-configuration
 
@@ -301,3 +303,15 @@ SITARO_TELEGRAM_URL = "https://t.me/alinadi66"
 
 ACCOUNT_LOGIN_METHODS={'email' , 'username' , }
 
+CSRF_TRUSTED_ORIGINS = [
+    "https://sitarogroup.com",
+    "https://www.sitarogroup.com",
+    "https://sitarogroup.ir",
+    "https://www.sitarogroup.ir",
+]
+
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
+CSRF_COOKIE_SECURE = True
+
+SESSION_COOKIE_SECURE = True
