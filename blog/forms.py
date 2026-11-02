@@ -6,8 +6,8 @@ from .rich_text import sanitize_rich_text
 
 class RichTextWidget(forms.Textarea):
     class Media:
-        css = {"all": ("css/admin-rich-text.css",)}
-        js = ("js/admin-rich-text.js",)
+        css = {"all": ("dist/css/admin-rich-text.min.css",)}
+        js = ("dist/js/admin-rich-text.min.js",)
 
     def __init__(self, attrs=None):
         super().__init__({"class": "sitaro-rich-text-source", "rows": 18, **(attrs or {})})

@@ -15,9 +15,9 @@
     </script>
     <link rel="icon" href="{% static 'images/sitaro-logo.svg' %}" type="image/svg+xml">
     <link rel="preload" href="{% static 'fonts/IRANYekanXVF.woff2' %}" as="font" type="font/woff2" crossorigin>
-    <link rel="stylesheet" href="{% static 'css/main.css' %}?v=20261005-type-polish">
+    <link rel="stylesheet" href="{% static 'dist/css/main.min.css' %}?v=20261102-min-assets">
     {% block extra_head %}{% endblock %}
-    <link rel="stylesheet" href="{% static 'css/site-polish.css' %}?v=20261005-site-polish">
+    <link rel="stylesheet" href="{% static 'dist/css/site-polish.min.css' %}?v=20261102-min-assets">
 </head>
 <body class="{% block body_class %}{% endblock %}">
 <a class="skip-link" href="#main">پرش به محتوای اصلی</a>
@@ -311,7 +311,7 @@
         </div>
     </div>
 </div>
-<script src="{% static 'js/main.js' %}?v=20260926-mobile-account" defer></script>
+<script src="{% static 'dist/js/main.min.js' %}?v=20261102-min-assets" defer></script>
 {% block extra_scripts %}{% endblock %}
 </body>
 </html>

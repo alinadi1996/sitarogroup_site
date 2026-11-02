@@ -28,7 +28,7 @@ class RichTextTests(SimpleTestCase):
 
     def test_admin_editor_sanitizes_initial_html(self):
         widget = PostAdminForm().fields['content'].widget
-        self.assertIn('admin-rich-text.js', str(widget.media))
+        self.assertIn('dist/js/admin-rich-text.min.js', str(widget.media))
         self.assertNotIn('onerror', widget.format_value('<img src=x onerror=alert(1)>'))
 
 

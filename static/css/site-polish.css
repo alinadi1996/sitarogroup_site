@@ -110,6 +110,8 @@ html[data-theme] .support-launcher-icon {
     -webkit-mask: url("../icons/chat.svg") center / contain no-repeat;
     mask: url("../icons/chat.svg") center / contain no-repeat;
 }
+html[data-theme="dark"] .support-launcher-icon { background: #fff; }
+html[data-theme="light"] .support-launcher-icon { background: #5a7dff; }
 @media (max-width: 760px) {
     html[data-theme] .support-launcher-icon { width: 27px; height: 27px; flex-basis: 27px; margin-inline: auto; }
 }
