@@ -118,17 +118,17 @@
             <div class="contact-aside-head"><span>02 / DIRECT</span><h2 id="direct-contact-title">راه‌های ارتباط مستقیم</h2><p>اطلاعات این بخش از تنظیمات پروژه خوانده می‌شود و بدون داده واقعی، هیچ شماره یا نشانی فرضی نمایش داده نمی‌شود.</p></div>
             <div class="contact-channel-list">
                 {% if contact_phone %}
-                <a href="tel:+989197736862"><svg aria-hidden="true"><use href="{% static 'icons/sitaro-support-icons.svg' %}#support"></use></svg><span><small>تماس تلفنی</small><b dir="ltr">{{ contact_phone }}</b></span><i aria-hidden="true">↙</i></a>
+                <a href="{{ contact_phone }}"><svg aria-hidden="true"><use href="{% static 'icons/sitaro-support-icons.svg' %}#support"></use></svg><span><small>تماس تلفنی</small><b dir="ltr">{{ contact_phone }}</b></span><i aria-hidden="true">↙</i></a>
                 {% else %}
                 <div class="contact-channel-placeholder"><svg aria-hidden="true"><use href="{% static 'icons/sitaro-support-icons.svg' %}#support"></use></svg><span><small>تماس تلفنی</small><b>اطلاعات تماس هنوز تنظیم نشده</b></span><code>PHONE / PLACEHOLDER</code></div>
                 {% endif %}
                 {% if whatsapp_url %}
-                <a href="https://wa.me/989197736862" target="_blank" rel="noopener noreferrer"><svg aria-hidden="true"><use href="{% static 'icons/sitaro-support-icons.svg' %}#whatsapp"></use></svg><span><small>واتساپ</small><b>شروع گفت‌وگو</b></span><i aria-hidden="true">↗</i></a>
+                <a href="{{ whatsapp_url }}" target="_blank" rel="noopener noreferrer"><svg aria-hidden="true"><use href="{% static 'icons/sitaro-support-icons.svg' %}#whatsapp"></use></svg><span><small>واتساپ</small><b>شروع گفت‌وگو</b></span><i aria-hidden="true">↗</i></a>
                 {% else %}
                 <div class="contact-channel-placeholder"><svg aria-hidden="true"><use href="{% static 'icons/sitaro-support-icons.svg' %}#whatsapp"></use></svg><span><small>واتساپ</small><b>لینک رسمی هنوز تنظیم نشده</b></span><code>WHATSAPP / PLACEHOLDER</code></div>
                 {% endif %}
                 {% if telegram_url %}
-                <a href="https://t.me/alinadi66" target="_blank" rel="noopener noreferrer"><svg aria-hidden="true"><use href="{% static 'icons/sitaro-support-icons.svg' %}#telegram"></use></svg><span><small>تلگرام</small><b>شروع گفت‌وگو</b></span><i aria-hidden="true">↗</i></a>
+                <a href="{{ telegram_url }}" target="_blank" rel="noopener noreferrer"><svg aria-hidden="true"><use href="{% static 'icons/sitaro-support-icons.svg' %}#telegram"></use></svg><span><small>تلگرام</small><b>شروع گفت‌وگو</b></span><i aria-hidden="true">↗</i></a>
                 {% else %}
                 <div class="contact-channel-placeholder"><svg aria-hidden="true"><use href="{% static 'icons/sitaro-support-icons.svg' %}#telegram"></use></svg><span><small>تلگرام</small><b>لینک رسمی هنوز تنظیم نشده</b></span><code>TELEGRAM / PLACEHOLDER</code></div>
                 {% endif %}
