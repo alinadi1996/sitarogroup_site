@@ -358,7 +358,8 @@ h2 em, .manifesto-copy em { color: var(--mint-dark); font-style: normal; }
 
 /* Global support terminal */
 .sr-only { position: absolute !important; width: 1px !important; height: 1px !important; padding: 0 !important; margin: -1px !important; overflow: hidden !important; clip: rect(0, 0, 0, 0) !important; white-space: nowrap !important; border: 0 !important; }
-.support-dock { --support-bg: #081310; --support-surface: #0d1d18; --support-text: #f7fff9; --support-muted: #91a79f; --support-line: rgba(103,245,196,.2); width: min(344px, calc(100vw - 28px)); position: fixed; z-index: 70; left: 14px; bottom: 14px; direction: rtl; }
+.support-dock { --support-bg: #081310; --support-surface: #0d1d18; --support-text: #f7fff9; --support-muted: #91a79f; --support-line: rgba(103,245,196,.2); width: min(344px, calc(100vw - 28px)); position: fixed; z-index: 70; left: 14px; bottom: 14px; direction: rtl;  pointer-events: none;  }
+.support-dock a,.support-dock button {pointer-events: auto;}
 .support-console { width: 100%; max-height: min(620px, calc(100svh - 90px)); margin-bottom: 10px; display: flex; flex-direction: column; overflow: hidden; border: 1px solid var(--support-line); background: var(--support-bg); color: var(--support-text); box-shadow: 0 28px 75px rgba(0,0,0,.34), 0 0 0 1px rgba(255,255,255,.025) inset; opacity: 0; visibility: hidden; pointer-events: none; transform: translateY(18px) scale(.96); transform-origin: left bottom; transition: opacity .24s ease, visibility .24s, transform .4s var(--ease); }
 .support-dock.is-open .support-console { opacity: 1; visibility: visible; pointer-events: auto; transform: none; }
 .support-console::before { content: ""; height: 2px; flex: 0 0 2px; background: linear-gradient(90deg, transparent, var(--mint), var(--blue), transparent); }
