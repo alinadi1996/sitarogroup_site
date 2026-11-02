@@ -118,7 +118,7 @@
             <div class="contact-aside-head"><span>02 / DIRECT</span><h2 id="direct-contact-title">راه‌های ارتباط مستقیم</h2><p>اطلاعات این بخش از تنظیمات پروژه خوانده می‌شود و بدون داده واقعی، هیچ شماره یا نشانی فرضی نمایش داده نمی‌شود.</p></div>
             <div class="contact-channel-list">
                 {% if contact_phone %}
-                <a href="{{ contact_phone }}"><svg aria-hidden="true"><use href="{% static 'icons/sitaro-support-icons.svg' %}#support"></use></svg><span><small>تماس تلفنی</small><b dir="ltr">{{ contact_phone }}</b></span><i aria-hidden="true">↙</i></a>
+                <a href="tel:{{ contact_phone }}"><svg aria-hidden="true"><use href="{% static 'icons/sitaro-support-icons.svg' %}#support"></use></svg><span><small>تماس تلفنی</small><b dir="ltr">{{ contact_phone }}</b></span><i aria-hidden="true">↙</i></a>
                 {% else %}
                 <div class="contact-channel-placeholder"><svg aria-hidden="true"><use href="{% static 'icons/sitaro-support-icons.svg' %}#support"></use></svg><span><small>تماس تلفنی</small><b>اطلاعات تماس هنوز تنظیم نشده</b></span><code>PHONE / PLACEHOLDER</code></div>
                 {% endif %}
