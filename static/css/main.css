@@ -358,9 +358,9 @@ h2 em, .manifesto-copy em { color: var(--mint-dark); font-style: normal; }
 
 /* Global support terminal */
 .sr-only { position: absolute !important; width: 1px !important; height: 1px !important; padding: 0 !important; margin: -1px !important; overflow: hidden !important; clip: rect(0, 0, 0, 0) !important; white-space: nowrap !important; border: 0 !important; }
-.support-dock { --support-bg: #081310; --support-surface: #0d1d18; --support-text: #f7fff9; --support-muted: #91a79f; --support-line: rgba(103,245,196,.2); width: min(344px, calc(100vw - 28px)); position: fixed; z-index: 70; left: 14px; bottom: 14px; direction: rtl;  pointer-events: none;  }
-.support-dock a,.support-dock button {pointer-events: auto;}
-.support-console { width: 100%; max-height: min(620px, calc(100svh - 90px)); margin-bottom: 10px; display: flex; flex-direction: column; overflow: hidden; border: 1px solid var(--support-line); background: var(--support-bg); color: var(--support-text); box-shadow: 0 28px 75px rgba(0,0,0,.34), 0 0 0 1px rgba(255,255,255,.025) inset; opacity: 0; visibility: hidden; pointer-events: none; transform: translateY(18px) scale(.96); transform-origin: left bottom; transition: opacity .24s ease, visibility .24s, transform .4s var(--ease); }
+.support-dock { --support-bg: #081310; --support-surface: #0d1d18; --support-text: #f7fff9; --support-muted: #91a79f; --support-line: rgba(103,245,196,.2); width: min(344px, calc(100vw - 28px)); position: fixed; z-index: 70; left: 14px; bottom: 14px; direction: rtl; pointer-events: none; }
+.support-dock .support-launcher { pointer-events: auto; }
+.support-console { width: 100%; max-height: min(620px, calc(100svh - 90px)); position: absolute; left: 0; bottom: 64px; margin: 0; display: flex; flex-direction: column; overflow: hidden; border: 1px solid var(--support-line); background: var(--support-bg); color: var(--support-text); box-shadow: 0 28px 75px rgba(0,0,0,.34), 0 0 0 1px rgba(255,255,255,.025) inset; opacity: 0; visibility: hidden; pointer-events: none; transform: translateY(18px) scale(.96); transform-origin: left bottom; transition: opacity .24s ease, visibility .24s, transform .4s var(--ease); }
 .support-dock.is-open .support-console { opacity: 1; visibility: visible; pointer-events: auto; transform: none; }
 .support-console::before { content: ""; height: 2px; flex: 0 0 2px; background: linear-gradient(90deg, transparent, var(--mint), var(--blue), transparent); }
 .support-console-head { min-height: 72px; padding: 13px 14px 12px 16px; display: flex; align-items: center; justify-content: space-between; gap: 14px; border-bottom: 1px solid var(--support-line); background-image: linear-gradient(rgba(255,255,255,.025) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.025) 1px, transparent 1px); background-size: 18px 18px; }
@@ -404,7 +404,7 @@ h2 em, .manifesto-copy em { color: var(--mint-dark); font-style: normal; }
 .support-project-link:hover { background: var(--mint); color: var(--ink); }
 .support-launcher { border-radius: 10px; position: relative; min-width: 166px; height: 54px; margin-left: 0; margin-right: auto; padding: 4px 6px 4px 11px; display: flex; align-items: center; gap: 9px; border: 1px solid rgba(103,245,196,.35); background: #091510; color: var(--white); box-shadow: 0 16px 38px rgba(0,0,0,.25); cursor: pointer; transition: transform .25s var(--ease), border-color .2s, background .2s; }
 .support-launcher:hover { transform: translateY(-3px); border-color: rgba(103,245,196,.75); background: #0c1c17; }
-.support-launcher-icon {background-image: url("../icons/24-support-bold.svg") width: 42px; height: 42px; flex: 0 0 42px; display: grid; place-items: center; background: var(--mint); color: var(--ink); }
+.support-launcher-icon { width: 42px; height: 42px; flex: 0 0 42px; display: grid; place-items: center; background: var(--mint); color: var(--ink); }
 .support-launcher-copy { display: grid; text-align: right; line-height: 1.35; }.support-launcher-copy b { font-size: 11px; }.support-launcher-copy small { margin-top: 3px; color: #82948d; font-size: 8px; }
 .support-unread { position: absolute; top: -7px; right: -7px; width: 21px; height: 21px; display: grid; place-items: center; border: 3px solid #091510; border-radius: 50%; background: var(--ember); color: #fff; font: 700 8px/1 var(--font-main); }
 .support-dock.is-open .support-unread { display: none; }
@@ -500,6 +500,7 @@ html[data-theme="light"] .auth-art p {color: var(--white)}
 
 /* Authentication */
 .auth-page { background: var(--ink); color: var(--white); }
+body.auth-page .support-dock { display: none; }
 .auth-shell { min-height: 100svh; display: grid; grid-template-columns: minmax(360px, 570px) 1fr; position: relative; padding: 90px 7vw 60px; gap: 10vw; align-items: center; overflow: hidden; }
 .auth-brand { position: absolute; top: 28px; right: 4vw; display: flex; align-items: center; gap: 12px; }.auth-brand span { display: grid; line-height: 1.25; }.auth-brand small { color: var(--muted); font: 8px monospace; letter-spacing: .15em; }
 .auth-card { max-width: 520px; width: 100%; }.auth-card-head { margin-bottom: 35px; }.auth-step { color: var(--mint); font: 10px monospace; }.auth-card h1 { margin: 18px 0 10px; font-size: clamp(2.6rem, 5vw, 5rem); line-height: 1.2; }.auth-card-head p { color: #82938d; }
@@ -1175,7 +1176,7 @@ h1, h2, h3, h4, h5, h6, p, a, button, input, textarea, select, label { font-fami
     .footer-bottom { grid-template-columns: 1fr auto; gap: 18px; }
     .footer-bottom > span:nth-child(2) { display: none; }
     .support-dock { width: calc(100vw - 24px); left: 12px; bottom: 12px; }
-    .support-console { width: 100%; max-height: calc(100svh - 82px); }
+    .support-console { width: 100%; max-height: calc(100svh - 82px); bottom: 68px; }
     .support-launcher { min-width: 58px; width: 58px; height: 58px; padding: 5px; }
     .support-launcher-icon { width: 46px; height: 46px; margin-right: 2px; }
     .support-launcher-copy { display: none; }

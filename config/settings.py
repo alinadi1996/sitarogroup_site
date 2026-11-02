@@ -83,7 +83,7 @@ UNFOLD = {
     'SITE_URL': '/',
     'DASHBOARD_CALLBACK': 'config.admin_dashboard.dashboard_callback',
     'SITE_VIEWS': [('seo/', 'seo_overview', 'config.admin_seo.SEOOverviewView')],
-    'STYLES': [lambda request: static('css/admin-dashboard.css')],
+    'STYLES': [lambda request: static('dist/css/admin-dashboard.min.css')],
     'SIDEBAR': {
         'show_search': True,
         'show_all_applications': False,

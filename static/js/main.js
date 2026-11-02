@@ -84,7 +84,10 @@
 
     const setMenu = (open, restoreFocus = false) => {
         if (!menuToggle || !mobileMenu) return;
-        if (open) setMobileAccount(false);
+        if (open) {
+            setMobileAccount(false);
+            setSupport(false);
+        }
         menuToggle.setAttribute("aria-expanded", String(open));
         menuToggle.setAttribute("aria-label", open ? "بستن منو" : "باز کردن منو");
         mobileMenu.hidden = !open;
@@ -135,6 +138,7 @@
 
     const setSupport = (open, restoreFocus = false) => {
         if (!supportDock || !supportPanel || !supportToggle) return;
+        if (open && menuToggle?.getAttribute("aria-expanded") === "true") setMenu(false);
         supportDock.classList.toggle("is-open", open);
         supportToggle.setAttribute("aria-expanded", String(open));
         supportPanel.setAttribute("aria-hidden", String(!open));
