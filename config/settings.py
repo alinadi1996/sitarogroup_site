@@ -299,6 +299,7 @@ MEDIA_ROOT = str(BASE_DIR.joinpath('media'))
 SITARO_CONTACT_PHONE = "09197736862"
 SITARO_WHATSAPP_URL = "https://wa.me/989197736862"
 SITARO_TELEGRAM_URL = "https://t.me/alinadi66"
+SITARO_BALE_URL = "https://ble.ir/alinadi66"
 
 
 ACCOUNT_LOGIN_METHODS={'email' , 'username' , }

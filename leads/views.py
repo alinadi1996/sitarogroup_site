@@ -39,6 +39,7 @@ class ContactRequestView(FormView):
                 "contact_phone": getattr(settings, "SITARO_CONTACT_PHONE", ""),
                 "whatsapp_url": getattr(settings, "SITARO_WHATSAPP_URL", ""),
                 "telegram_url": getattr(settings, "SITARO_TELEGRAM_URL", ""),
+                "bale_url": getattr(settings, "SITARO_BALE_URL", ""),
             }
         )
         return context
