@@ -4,5 +4,8 @@ db.sqlite3
 .agents/
 skills-lock.json
 .idea/
-__pycache__
-.idea/sitarogroup.iml
+__pycache__/
+.idea/sitarogroup.iml/
+*.pyc
+# PyCharm / IntelliJ
+*.iml
