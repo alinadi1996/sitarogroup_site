@@ -874,8 +874,8 @@ html[data-theme="dark"] .article-byline,
 html[data-theme="dark"] .article-end {
     border-color: var(--theme-border);
 }
-html[data-theme="light"] .brand img  { filter: brightness(0) saturate(100%);}
-html[data-theme="light"] .footer-signature img  {  filter: brightness(0) saturate(100%);}
+html[data-theme="light"] .brand img  { filter: brightness(0) saturate(100%);!important;}
+html[data-theme="light"] .footer-signature img  { filter: brightness(0) saturate(100%);!important;}
 html[data-theme="dark"] .section-heading > p,
 html[data-theme="dark"] .service-title p,
 html[data-theme="dark"] .service-row ul,
