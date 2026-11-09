@@ -112,7 +112,7 @@ main [id] { scroll-margin-top: calc(var(--header-height) + 22px); }
     border-color: var(--line);
 }
 .brand { position: relative; z-index: 53; display: flex; align-items: center; gap: 11px; min-height: 48px; }
-.brand img, .footer-brand img, .auth-brand img { border-radius: 50%; object-fit: contain; }
+.brand img, .footer-brand img, .auth-brand img { border-radius: 50%; object-fit: contain; filter: none }
 .brand-copy { display: grid; line-height: 1.2; }
 .brand-copy strong { font-size: 15px; font-weight: 700; }
 .brand-copy small { color: var(--muted); font-size: 8px; letter-spacing: .16em; direction: ltr; margin-top: 4px; }
@@ -874,6 +874,8 @@ html[data-theme="dark"] .article-byline,
 html[data-theme="dark"] .article-end {
     border-color: var(--theme-border);
 }
+html[data-theme="light"] .brand img  { filter: brightness(0.65) contrast(1.5);}
+html[data-theme="light"] .footer-signature img  { filter: brightness(0.65) contrast(1.5);}
 html[data-theme="dark"] .section-heading > p,
 html[data-theme="dark"] .service-title p,
 html[data-theme="dark"] .service-row ul,
@@ -1211,7 +1213,7 @@ h1, h2, h3, h4, h5, h6, p, a, button, input, textarea, select, label { font-fami
     transition: color .2s, border-color .2s, gap .25s var(--ease);
 }
 .works-all-link:hover { color: var(--mint); border-color: var(--mint); gap: 25px; }
-.project-visual img { width: 100%; height: 100%; position: absolute; inset: 0; object-fit: cover; transition: transform .7s var(--ease), filter .35s; }
+.project-visual img { width: 100%; height: 100%; position: absolute; inset: 0; object-fit: contain; transition: transform .7s var(--ease), filter .35s; object-position: center }
 .project-card:hover .project-visual img { transform: scale(1.035); }
 .project-visual-placeholder { color: rgba(255,255,255,.3); font: 9px/1 monospace; letter-spacing: .18em; }
 .project-detail-link { min-height: 44px; grid-column: 1 / -1; padding-top: 14px; display: inline-flex; align-items: center; justify-content: space-between; border-top: 1px solid var(--line); color: #cbd6d2; font-size: 11px; transition: color .2s, padding .25s var(--ease); }
