@@ -333,6 +333,9 @@
     </div>
 </div>
 <script src="{% static 'dist/js/main.min.js' %}?v=20261102-min-assets" defer></script>
+<script nonce="{{ request.csp_nonce }}">
+    console.log("Sitaro CSP ready");
+</script>
 {% block extra_scripts %}{% endblock %}
 </body>
 </html>

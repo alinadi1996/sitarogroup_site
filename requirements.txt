@@ -9,6 +9,7 @@ dj-email-url==1.0.6
 Django==6.1.1
 django-allauth==65.19.4
 django-cache-url==3.4.6
+django-csp==4.0
 django-unfold==0.102.0
 djangorestframework==3.18.1
 environs==15.2.0
@@ -16,6 +17,7 @@ google-auth==2.58.1
 gunicorn==26.2.0
 idna==3.20
 marshmallow==4.3.1
+packaging==26.3
 pillow==12.3.0
 psycopg2-binary==2.9.13
 pyasn1==0.6.4

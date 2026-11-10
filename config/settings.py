@@ -16,6 +16,7 @@ from django.templatetags.static import static
 from django.urls import reverse_lazy
 from environs import Env
 import dj_database_url
+from csp.constants import SELF, NONE , NONCE
 
 
 env = Env()
@@ -73,6 +74,7 @@ INSTALLED_APPS = [
     'leads',
     'tools',
     'seo',
+    'csp',
 ]
 
 UNFOLD = {
@@ -190,6 +192,8 @@ MIDDLEWARE = [
     "django.middleware.locale.LocaleMiddleware",
     # all auth
     "allauth.account.middleware.AccountMiddleware",
+    # csp
+    "csp.middleware.CSPMiddleware",
 ]
 
 ROOT_URLCONF = 'config.urls'
@@ -310,6 +314,21 @@ CSRF_TRUSTED_ORIGINS = [
     "https://sitarogroup.ir",
     "https://www.sitarogroup.ir",
 ]
+
+CONTENT_SECURITY_POLICY_REPORT_ONLY = {
+    "DIRECTIVES": {
+        "default-src": [SELF],
+        "script-src": [SELF , NONCE],
+        "style-src": [SELF , NONCE],
+        "img-src": [SELF, "data:", "blob:"],
+        "font-src": [SELF, "data:"],
+        "connect-src": [SELF],
+        "object-src": [NONE],
+        "base-uri": [SELF],
+        "form-action": [SELF],
+        "frame-ancestors": [NONE],
+    }
+}
 
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
