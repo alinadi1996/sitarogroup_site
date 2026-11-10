@@ -315,7 +315,7 @@ CSRF_TRUSTED_ORIGINS = [
     "https://www.sitarogroup.ir",
 ]
 
-CONTENT_SECURITY_POLICY_REPORT_ONLY = {
+CONTENT_SECURITY_POLICY = {
     "DIRECTIVES": {
         "default-src": [SELF],
         "script-src": [SELF , NONCE],
