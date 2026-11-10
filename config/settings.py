@@ -321,7 +321,7 @@ CONTENT_SECURITY_POLICY = {
         "script-src": [SELF , NONCE],
         "style-src": [SELF , NONCE , "https://fonts.googleapis.com"],
         "img-src": [SELF, "data:", "blob:"],
-        "font-src": [SELF, "data:" , "https://fonts.googleapis.com" ],
+        "font-src": [SELF, "data:" , "https://fonts.gstatic.com"],
         "connect-src": [SELF],
         "object-src": [NONE],
         "base-uri": [SELF],
