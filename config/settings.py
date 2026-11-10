@@ -316,12 +316,13 @@ CSRF_TRUSTED_ORIGINS = [
 ]
 
 CONTENT_SECURITY_POLICY = {
+    "EXCLUDE_URL_PREFIXES": ["/admin/"],
     "DIRECTIVES": {
         "default-src": [SELF],
         "script-src": [SELF , NONCE],
-        "style-src": [SELF , NONCE , "https://fonts.googleapis.com"],
+        "style-src": [SELF , NONCE],
         "img-src": [SELF, "data:", "blob:"],
-        "font-src": [SELF, "data:" , "https://fonts.gstatic.com"],
+        "font-src": [SELF, "data:"],
         "connect-src": [SELF],
         "object-src": [NONE],
         "base-uri": [SELF],
