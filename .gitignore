@@ -9,3 +9,7 @@ __pycache__/
 *.pyc
 # PyCharm / IntelliJ
 *.iml
+node_modules/
+npm-debug.log*
+.npm/
+.npx/
