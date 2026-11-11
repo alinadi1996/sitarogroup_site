@@ -286,9 +286,17 @@ ACCOUNT_SIGNUP_REDIRECT_URL = 'home'
 MAILERS = {
     'default': {
         'BACKEND': 'django.core.mail.backends.smtp.EmailBackend',
+        'OPTIONS': {
+            "host": env("EMAIL_HOST", ""),
+            "port": int(env("EMAIL_PORT", "587")),
+            "username": env("EMAIL_HOST_USER", ""),
+            "password": env("EMAIL_HOST_PASSWORD", ""),
+            "use_tls": env("EMAIL_USE_TLS", "True").lower() == "true",
+            "use_ssl": env("EMAIL_USE_SSL", "False").lower() == "true",
+            "timeout": 15,
+        }
     },
 }
-
 AUTHENTICATION_BACKENDS = [
     'allauth.account.auth_backends.AuthenticationBackend',
 ]
@@ -340,9 +348,4 @@ SESSION_COOKIE_SECURE = True
 SECURE_HSTS_SECONDS = 60
 SECURE_HSTS_INCLUDE_SUBDOMAINS = True
 
-EMAIL_HOST=env('EMAIL_HOST')
-EMAIL_PORT=env('EMAIL_PORT')
-EMAIL_HOST_USER=env('EMAIL_HOST_USER')
-EMAIL_HOST_PASSWORD=env('EMAIL_HOST_PASSWORD')
-EMAIL_USE_TLS=True
-EMAIL_USE_SSL=False
+
