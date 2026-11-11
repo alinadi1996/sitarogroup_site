@@ -82,7 +82,7 @@ UNFOLD = {
     'SITE_HEADER': 'سیتارو',
     'SITE_SUBHEADER': 'مدیریت پروژه و محتوا',
     'SITE_ICON': lambda request: static('images/sitaro-logo.svg'),
-    'SITE_URL': '/',
+    'SITE_URL': 'https://sitarogroup.com',
     'DASHBOARD_CALLBACK': 'config.admin_dashboard.dashboard_callback',
     'SITE_VIEWS': [('seo/', 'seo_overview', 'config.admin_seo.SEOOverviewView')],
     'STYLES': [lambda request: static('dist/css/admin-dashboard.min.css')],
@@ -285,7 +285,7 @@ ACCOUNT_SIGNUP_REDIRECT_URL = 'home'
 
 MAILERS = {
     'default': {
-        'BACKEND': 'django.core.mail.backends.console.EmailBackend',
+        'BACKEND': 'django.core.mail.backends.smtp.EmailBackend',
     },
 }
 
@@ -339,3 +339,10 @@ SESSION_COOKIE_SECURE = True
 
 SECURE_HSTS_SECONDS = 60
 SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+
+EMAIL_HOST=env('EMAIL_HOST')
+EMAIL_PORT=env('EMAIL_PORT')
+EMAIL_HOST_USER=env('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD=env('EMAIL_HOST_PASSWORD')
+EMAIL_USE_TLS=True
+EMAIL_USE_SSL=False

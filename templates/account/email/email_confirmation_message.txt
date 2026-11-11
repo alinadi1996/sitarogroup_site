@@ -1,0 +1,16 @@
+{% load account %}
+{% load i18n %}
+{% user_display user as user_display %}
+{% autoescape off %}
+{% blocktrans with site_name=گروه سیتارو site_domain=sitarogroup.com %}
+
+
+ به {% site_name %} خوش آمدید
+ سلام {% user_display %} عزیز
+
+ حسابت ساخته شد! فقط یک قدم مانده: برای فعال‌شدنِ ارسالِ ایمیل، ایمیلت را تأیید کن
+
+{{ activate_url }}
+
+{% endblocktrans %}
+{% endautoescape %}
