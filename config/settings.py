@@ -19,6 +19,16 @@ import dj_database_url
 from csp.constants import SELF, NONE , NONCE
 
 
+
+DEBUG = os.getenv("DJANGO_DEBUG", "false").lower() == "true"
+
+if DEBUG:
+    ALLOWED_HOSTS = ["localhost", "127.0.0.1"]
+    SECURE_SSL_REDIRECT = False
+    SESSION_COOKIE_SECURE = False
+    CSRF_COOKIE_SECURE = False
+
+
 env = Env()
 env.read_env()
 
