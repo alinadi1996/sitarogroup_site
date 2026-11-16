@@ -1,4 +1,5 @@
 venv/
+.venv-dev/
 db.sqlite3
 .env
 .agents/

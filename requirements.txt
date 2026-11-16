@@ -29,3 +29,4 @@ sqlparse==0.6.0
 tzdata==2026.3
 urllib3==2.8.0
 webencodings==0.6.1
+vtracer==0.6.15

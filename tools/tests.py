@@ -3,7 +3,11 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import TestCase
 from django.urls import resolve, reverse
 from io import BytesIO
+from pathlib import Path
+import subprocess
 from unittest.mock import patch
+from urllib.parse import unquote
+from xml.etree import ElementTree
 from zipfile import ZIP_DEFLATED, ZipFile
 
 from PIL import Image
@@ -242,6 +246,130 @@ class ImageConverterTests(TestCase):
         )
         self.assertEqual(response.status_code, 400)
         self.assertContains(response, "فایل تصویر معتبر نیست", status_code=400)
+
+    def test_svg_contains_vector_paths_and_original_dimensions(self):
+        response = self.client.post(reverse("tools:image_converter"), {
+            "image": self.image_upload(), "output_format": "svg", "quality": "85",
+        })
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response["Content-Type"], "image/svg+xml")
+        self.assertIn('filename="sample.svg"', response["Content-Disposition"])
+        svg = ElementTree.fromstring(response.content)
+        self.assertEqual(svg.tag, "{http://www.w3.org/2000/svg}svg")
+        self.assertEqual((svg.get("width"), svg.get("height")), ("12", "12"))
+        self.assertTrue(svg.findall("{http://www.w3.org/2000/svg}path"))
+        self.assertFalse(svg.findall(".//{http://www.w3.org/2000/svg}image"))
+
+    def test_large_svg_keeps_original_canvas_with_bounded_tracing(self):
+        content = BytesIO()
+        Image.new("RGB", (2400, 1200), "red").save(content, "PNG")
+        response = self.client.post(reverse("tools:image_converter"), {
+            "image": SimpleUploadedFile("large.png", content.getvalue()),
+            "output_format": "svg", "quality": "50",
+        })
+        self.assertEqual(response.status_code, 200)
+        svg = ElementTree.fromstring(response.content)
+        self.assertEqual((svg.get("width"), svg.get("height")), ("2400", "1200"))
+        self.assertEqual(svg.get("viewBox"), "0 0 640 320")
+
+    def test_zip_converts_each_image_to_real_svg(self):
+        content = BytesIO()
+        with ZipFile(content, "w") as archive:
+            archive.writestr("first.png", self.image_upload().read())
+            archive.writestr("nested/second.png", self.image_upload(color=(0, 0, 255, 255)).read())
+        response = self.client.post(reverse("tools:image_converter"), {
+            "image": SimpleUploadedFile("pictures.zip", content.getvalue()),
+            "output_format": "svg", "quality": "70",
+        })
+        self.assertEqual(response.status_code, 200)
+        with ZipFile(BytesIO(response.content)) as archive:
+            self.assertEqual(archive.namelist(), ["01-first.svg", "02-second.svg"])
+            for name in archive.namelist():
+                self.assertTrue(ElementTree.fromstring(archive.read(name)).findall("{http://www.w3.org/2000/svg}path"))
+
+    def test_requested_jpeg_quality_changes_compression(self):
+        outputs = []
+        for quality in (15, 95):
+            response = self.client.post(reverse("tools:image_converter"), {
+                "image": self.image_upload(), "output_format": "jpeg", "quality": str(quality),
+            })
+            self.assertEqual(response.status_code, 200)
+            outputs.append(Image.open(BytesIO(response.content)).quantization[0])
+        self.assertGreater(sum(outputs[0]), sum(outputs[1]))
+
+    def test_archive_respects_requested_quality(self):
+        outputs = []
+        for quality in (15, 95):
+            content = BytesIO()
+            with ZipFile(content, "w") as archive:
+                archive.writestr("sample.png", self.image_upload().read())
+            response = self.client.post(reverse("tools:image_converter"), {
+                "image": SimpleUploadedFile("images.zip", content.getvalue()),
+                "output_format": "jpeg", "quality": str(quality),
+            })
+            with ZipFile(BytesIO(response.content)) as archive:
+                outputs.append(Image.open(BytesIO(archive.read("01-sample.jpg"))).quantization[0])
+        self.assertGreater(sum(outputs[0]), sum(outputs[1]))
+
+    def test_png_preserves_pixels_at_any_quality(self):
+        for quality in (1, 100):
+            with self.subTest(quality=quality):
+                response = self.client.post(reverse("tools:image_converter"), {
+                    "image": self.image_upload(color=(10, 20, 30, 100)),
+                    "output_format": "png", "quality": str(quality),
+                })
+                self.assertEqual(response.status_code, 200)
+                self.assertEqual(Image.open(BytesIO(response.content)).getpixel((0, 0)), (10, 20, 30, 100))
+
+    def test_invalid_quality_returns_json_error(self):
+        for quality in ("0", "101", "-1", "50.5", "abc", ""):
+            with self.subTest(quality=quality):
+                response = self.client.post(reverse("tools:image_converter"), {
+                    "image": self.image_upload(), "output_format": "webp", "quality": quality,
+                }, HTTP_X_REQUESTED_WITH="XMLHttpRequest")
+                self.assertEqual(response.status_code, 400)
+                self.assertIn("کیفیت", response.json()["error"])
+
+    def test_ajax_invalid_image_returns_json_error(self):
+        response = self.client.post(reverse("tools:image_converter"), {
+            "image": SimpleUploadedFile("invalid.png", b"invalid"), "output_format": "svg",
+        }, HTTP_X_REQUESTED_WITH="XMLHttpRequest")
+        self.assertEqual(response.status_code, 400)
+        self.assertIn("فایل تصویر معتبر نیست", response.json()["error"])
+
+    def test_download_preserves_persian_filename(self):
+        response = self.client.post(reverse("tools:image_converter"), {
+            "image": self.image_upload(name="تصویر من.png"), "output_format": "webp",
+        })
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("filename*=utf-8''", response["Content-Disposition"])
+        self.assertIn("تصویر من.webp", unquote(response["Content-Disposition"]))
+        self.assertEqual(response["Cache-Control"], "no-store")
+
+    def test_fully_transparent_image_produces_empty_transparent_svg(self):
+        response = self.client.post(reverse("tools:image_converter"), {
+            "image": self.image_upload(color=(255, 0, 0, 0)), "output_format": "svg",
+        })
+        self.assertEqual(response.status_code, 200)
+        svg = ElementTree.fromstring(response.content)
+        self.assertEqual(svg.get("viewBox"), "0 0 12 12")
+        self.assertEqual(list(svg), [])
+
+    @patch("tools.views.subprocess.run", side_effect=subprocess.TimeoutExpired("tracer", 15))
+    def test_native_tracer_timeout_returns_a_form_error(self, run):
+        response = self.client.post(reverse("tools:image_converter"), {
+            "image": self.image_upload(), "output_format": "svg",
+        }, HTTP_X_REQUESTED_WITH="XMLHttpRequest")
+        self.assertEqual(response.status_code, 400)
+        self.assertIn("SVG", response.json()["error"])
+        self.assertFalse(Path(run.call_args.args[0][3]).exists())
+
+    def test_invalid_format_keeps_the_form_usable(self):
+        response = self.client.post(reverse("tools:image_converter"), {
+            "image": self.image_upload(), "output_format": "invalid",
+        })
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.context["output_format"], "webp")
 
 
 class WebsiteAnalyzerTests(TestCase):

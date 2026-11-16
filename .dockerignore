@@ -1,8 +1,12 @@
 .git
 .gitignore
 .env
+.env.dev
 .venv
+.venv-dev/
 venv/
+node_modules/
+.npm/
 __pycache__/
 *.pyc
 .pytest_cache/

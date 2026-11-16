@@ -4,22 +4,28 @@ import json
 import os
 from pathlib import Path
 import socket
+import subprocess
+import sys
+from tempfile import TemporaryDirectory
+from time import monotonic
+from xml.etree import ElementTree
 from html.parser import HTMLParser
 from urllib.error import HTTPError, URLError
 from urllib.parse import urlencode, urljoin, urlsplit
 from urllib.request import HTTPRedirectHandler, Request, build_opener, urlopen
 from zipfile import BadZipFile, ZIP_DEFLATED, ZipFile
 
-from django.http import Http404, HttpResponse, HttpResponseBadRequest, HttpResponseRedirect
+from django.http import Http404, HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import render
 from django.urls import reverse
+from django.utils.http import content_disposition_header
 from django.views import View
 from django.views.generic import ListView, TemplateView
-from PIL import Image, UnidentifiedImageError
+from PIL import Image, ImageOps, UnidentifiedImageError
 
 from .models import Tool
 
-OUTPUT_FORMATS = {"webp": ("WEBP", "image/webp", "webp"), "png": ("PNG", "image/png", "png"), "jpeg": ("JPEG", "image/jpeg", "jpg")}
+OUTPUT_FORMATS = {"webp": ("WEBP", "image/webp", "webp"), "png": ("PNG", "image/png", "png"), "jpeg": ("JPEG", "image/jpeg", "jpg"), "svg": ("SVG", "image/svg+xml", "svg")}
 IMAGE_EXTENSIONS = {".avif", ".bmp", ".gif", ".jpeg", ".jpg", ".png", ".tif", ".tiff", ".webp"}
 MAX_UPLOAD_SIZE, MAX_ARCHIVE_FILES, MAX_ARCHIVE_SIZE, MAX_IMAGE_PIXELS = 25 * 1024 * 1024, 50, 100 * 1024 * 1024, 40_000_000
 MAX_WEBSITE_RESPONSE_SIZE = 2 * 1024 * 1024
@@ -92,21 +98,57 @@ def fetch_page_speed(url):
     return {"score": round(score * 100), "first_contentful_paint": audits.get("first-contentful-paint", {}).get("displayValue", "-"), "largest_contentful_paint": audits.get("largest-contentful-paint", {}).get("displayValue", "-"), "total_blocking_time": audits.get("total-blocking-time", {}).get("displayValue", "-"), "cumulative_layout_shift": audits.get("cumulative-layout-shift", {}).get("displayValue", "-")}, None
 
 
-def convert_image(source, output_format):
+def convert_svg(image, quality):
+    # Bound tracing work for photographs and archives. Keep the original canvas
+    # dimensions through viewBox, even when the tracing input is downsampled.
+    original_width, original_height = image.size
+    image = image.convert("RGBA")
+    if image.getchannel("A").getbbox() is None:
+        return (
+            f'<svg xmlns="http://www.w3.org/2000/svg" width="{original_width}" '
+            f'height="{original_height}" viewBox="0 0 {original_width} {original_height}"/>'
+        ).encode("utf-8")
+    edge = 256 + round(quality * 7.68)
+    image.thumbnail((edge, edge), Image.Resampling.LANCZOS)
+    with TemporaryDirectory(prefix="sitaro-svg-") as directory:
+        source, destination = Path(directory) / "source.png", Path(directory) / "result.svg"
+        image.save(source, format="PNG")
+        # Isolate the native tracer: malformed input, native crashes or a timeout
+        # must not terminate a web worker. No uploaded data survives this context.
+        try:
+            subprocess.run(
+                [sys.executable, "-m", "tools.svg_worker", str(source), str(destination), str(quality)],
+                check=True, timeout=15, capture_output=True,
+                cwd=Path(__file__).resolve().parent.parent,
+            )
+        except (subprocess.SubprocessError, OSError) as error:
+            raise ValueError("تبدیل این تصویر به SVG ممکن نشد. تصویر دیگری را امتحان کنید.") from error
+        svg = ElementTree.fromstring(destination.read_bytes())
+    svg.set("viewBox", f"0 0 {image.width} {image.height}")
+    svg.set("width", str(original_width))
+    svg.set("height", str(original_height))
+    return ElementTree.tostring(svg, encoding="utf-8", xml_declaration=True)
+
+
+def convert_image(source, output_format, quality=90):
     pil_format, _, extension = OUTPUT_FORMATS[output_format]
     with Image.open(source) as image:
         if image.width * image.height > MAX_IMAGE_PIXELS:
             raise ValueError("ابعاد تصویر بیش از حد مجاز است.")
         image.load()
+        image = ImageOps.exif_transpose(image)
+        if pil_format == "SVG":
+            return convert_svg(image, quality), extension
         if pil_format == "JPEG":
-            if image.mode in ("RGBA", "LA"):
+            if image.mode in ("RGBA", "LA") or "transparency" in image.info:
+                image = image.convert("RGBA")
                 background = Image.new("RGB", image.size, "white")
                 background.paste(image, mask=image.getchannel("A"))
                 image = background
             elif image.mode != "RGB":
                 image = image.convert("RGB")
         output = BytesIO()
-        image.save(output, format=pil_format, **({"quality": 90} if pil_format in {"JPEG", "WEBP"} else {}))
+        image.save(output, format=pil_format, **({"quality": quality} if pil_format in {"JPEG", "WEBP"} else {}))
     return output.getvalue(), extension
 
 
@@ -119,18 +161,24 @@ class ImageConvertView(View):
     def post(self, request):
         uploaded_file, output_format = request.FILES.get("image"), request.POST.get("output_format")
         if uploaded_file is None or output_format not in OUTPUT_FORMATS:
-            return HttpResponseBadRequest("فایل و فرمت خروجی معتبر نیست.")
+            return self.error_response(request, "فایل و فرمت خروجی معتبر نیست.")
+        try:
+            quality = int(request.POST.get("quality", "90"))
+            if not 1 <= quality <= 100:
+                raise ValueError
+        except (ValueError, TypeError):
+            return self.error_response(request, "کیفیت باید یک عدد صحیح بین ۱ تا ۱۰۰ باشد.")
         if uploaded_file.size > MAX_UPLOAD_SIZE:
             return self.error_response(request, "حجم فایل نباید از ۲۵ مگابایت بیشتر باشد.")
         try:
             if Path(uploaded_file.name).suffix.lower() == ".zip":
-                return self.convert_archive(uploaded_file, output_format)
-            converted, extension = convert_image(uploaded_file, output_format)
-        except (BadZipFile, UnidentifiedImageError, OSError, ValueError) as error:
+                return self.convert_archive(uploaded_file, output_format, quality)
+            converted, extension = convert_image(uploaded_file, output_format, quality)
+        except (BadZipFile, UnidentifiedImageError, Image.DecompressionBombError, OSError, ValueError) as error:
             return self.error_response(request, str(error) if isinstance(error, ValueError) else "فایل تصویر معتبر نیست.")
         return self.download_response(converted, OUTPUT_FORMATS[output_format][1], f"{Path(uploaded_file.name).stem}.{extension}")
 
-    def convert_archive(self, uploaded_file, output_format):
+    def convert_archive(self, uploaded_file, output_format, quality=90):
         with ZipFile(uploaded_file) as source_archive:
             files = [item for item in source_archive.infolist() if not item.is_dir() and Path(item.filename).suffix.lower() in IMAGE_EXTENSIONS]
             total_size = sum(item.file_size for item in files)
@@ -141,19 +189,31 @@ class ImageConvertView(View):
             if any(item.flag_bits & 0x1 for item in files):
                 raise ValueError("تصاویر رمزدار ZIP پشتیبانی نمی‌شوند.")
             result = BytesIO()
+            deadline = monotonic() + 90
             with ZipFile(result, "w", ZIP_DEFLATED) as result_archive:
                 for index, item in enumerate(files, start=1):
-                    converted, extension = convert_image(BytesIO(source_archive.read(item)), output_format)
+                    if monotonic() >= deadline:
+                        raise ValueError("زمان تبدیل ZIP بیش از حد طول کشید. تصاویر کمتری ارسال کنید.")
+                    converted, extension = convert_image(BytesIO(source_archive.read(item)), output_format, quality)
                     result_archive.writestr(f"{index:02d}-{Path(item.filename).stem}.{extension}", converted)
         return self.download_response(result.getvalue(), "application/zip", f"sitaro-images-{output_format}.zip")
 
     def error_response(self, request, message):
-        return render(request, self.template_name, {"error": message}, status=400)
+        if request.headers.get("X-Requested-With") == "XMLHttpRequest":
+            return JsonResponse({"error": message}, status=400)
+        quality = request.POST.get("quality", "90")
+        quality = int(quality) if quality.isascii() and quality.isdigit() and len(quality) <= 3 else 90
+        return render(request, self.template_name, {
+            "error": message,
+            "output_format": request.POST.get("output_format") if request.POST.get("output_format") in OUTPUT_FORMATS else "webp",
+            "quality": quality if 1 <= quality <= 100 else 90,
+        }, status=400)
 
     @staticmethod
     def download_response(content, content_type, filename):
         response = HttpResponse(content, content_type=content_type)
-        response["Content-Disposition"] = f'attachment; filename="{filename}"'
+        response["Content-Disposition"] = content_disposition_header(True, filename)
+        response["Cache-Control"] = "no-store"
         return response
 
 

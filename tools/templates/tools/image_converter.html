@@ -1,4 +1,9 @@
 {% extends "_base.html" %}
+{% load static %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="{% static 'dist/css/image-converter.min.css' %}?v=20261116-1">
+{% endblock %}
 
 {% block body_class %}image-converter-page{% endblock %}
 
@@ -8,12 +13,12 @@
         <div class="image-converter-copy">
             <span class="tools-kicker"><i></i> SITARO / IMAGE CONVERTER</span>
             <h1 id="image-converter-title">تبدیل تصویر<br><em>بدون پیچیدگی</em></h1>
-            <p>یک تصویر را بارگذاری کنید یا یک فایل ZIP از تصاویر بفرستید و خروجی WebP، PNG یا JPEG را همان لحظه دریافت کنید.</p>
+            <p>یک تصویر یا ZIP تصاویر را بارگذاری کنید، کیفیت را تنظیم کنید و خروجی WebP، PNG، JPEG یا SVG بگیرید.</p>
         </div>
         <aside class="image-converter-notes" aria-label="راهنمای ابزار">
             <span>OUTPUT / READY</span>
-            <strong>WEBP&nbsp; PNG&nbsp; JPEG</strong>
-            <small>فایل‌ها ذخیره نمی‌شوند و پس از تبدیل مستقیماً برای دانلود ارسال می‌شوند.</small>
+            <strong>WEBP&nbsp; PNG&nbsp; JPEG&nbsp; SVG</strong>
+            <small>فایل‌ها فقط هنگام تبدیل پردازش می‌شوند و پس از آن نگهداری نمی‌شوند.</small>
         </aside>
     </section>
 
@@ -22,25 +27,46 @@
             <span>01 / UPLOAD</span>
             <h2 id="converter-form-title">فایل خود را انتخاب کنید</h2>
         </div>
-        <form class="image-converter-form" method="post" enctype="multipart/form-data">
+        <form class="image-converter-form" method="post" enctype="multipart/form-data" data-image-converter>
             {% csrf_token %}
-            {% if error %}<p class="image-converter-error" role="alert">{{ error }}</p>{% endif %}
+            <p class="image-converter-error" role="alert" data-converter-error {% if not error %}hidden{% endif %}>{{ error|default:"" }}</p>
             <label class="image-drop-zone" for="image-input">
-                <input id="image-input" name="image" type="file" accept="image/*,.zip" required>
-                <span class="image-drop-icon" aria-hidden="true">↑</span>
-                <strong>تصویر یا ZIP تصاویر را اینجا رها کنید</strong>
-                <small>PNG، JPG، JPEG، WebP، GIF، TIFF، BMP، AVIF یا ZIP</small>
-                <b>انتخاب فایل</b>
+                <input id="image-input" name="image" type="file" accept=".png,.jpg,.jpeg,.webp,.gif,.tif,.tiff,.bmp,.avif,.zip" aria-describedby="image-file-detail image-upload-limit" required>
+                <span class="image-drop-icon" aria-hidden="true" data-file-icon>↑</span>
+                <img class="image-file-preview" data-file-preview alt="" hidden>
+                <strong class="image-file-name" data-file-name aria-live="polite">تصویر یا ZIP تصاویر را اینجا رها کنید</strong>
+                <small id="image-file-detail" data-file-detail>PNG، JPG، JPEG، WebP، GIF، TIFF، BMP، AVIF یا ZIP</small>
+                <b data-file-action>انتخاب فایل</b>
             </label>
             <fieldset class="image-format-picker">
                 <legend>02 / فرمت خروجی</legend>
-                <label><input type="radio" name="output_format" value="webp" checked><span><b>WebP</b><small>وب سریع‌تر</small></span></label>
-                <label><input type="radio" name="output_format" value="png"><span><b>PNG</b><small>شفافیت کامل</small></span></label>
-                <label><input type="radio" name="output_format" value="jpeg"><span><b>JPEG</b><small>فایل سبک</small></span></label>
+                <label><input type="radio" name="output_format" value="webp" {% if not output_format or output_format == 'webp' %}checked{% endif %}><span><b>WebP</b><small>وب سریع‌تر</small></span></label>
+                <label><input type="radio" name="output_format" value="png" {% if output_format == 'png' %}checked{% endif %}><span><b>PNG</b><small>شفافیت کامل</small></span></label>
+                <label><input type="radio" name="output_format" value="jpeg" {% if output_format == 'jpeg' %}checked{% endif %}><span><b>JPEG</b><small>فایل سبک</small></span></label>
+                <label><input type="radio" name="output_format" value="svg" {% if output_format == 'svg' %}checked{% endif %}><span><b>SVG</b><small>برداری و مقیاس‌پذیر</small></span></label>
             </fieldset>
-            <button class="button button-primary image-converter-submit" type="submit">تبدیل و دانلود <span aria-hidden="true">←</span></button>
-            <p class="image-converter-limit">حداکثر حجم هر بارگذاری: ۲۵ مگابایت. ZIP: حداکثر ۵۰ تصویر و ۱۰۰ مگابایت پس از بازشدن.</p>
+            <div class="image-quality-control">
+                <div class="image-quality-heading">
+                    <label for="image-quality">03 / کیفیت خروجی</label>
+                    <output for="image-quality" id="image-quality-value">{{ quality|default:90 }}٪</output>
+                </div>
+                <input id="image-quality" name="quality" type="range" min="1" max="100" value="{{ quality|default:90 }}" aria-describedby="image-quality-hint">
+                <div class="image-quality-scale" aria-hidden="true"><span>حجم کمتر</span><span>جزئیات بیشتر</span></div>
+                <p id="image-quality-hint">کیفیت WebP و JPEG و میزان جزئیات SVG قابل تنظیم است. PNG همیشه بدون افت کیفیت ذخیره می‌شود.</p>
+            </div>
+            <p class="image-svg-note" data-svg-note {% if output_format != 'svg' %}hidden{% endif %}>SVG با ترسیم مسیرهای برداری ساخته می‌شود و برای لوگو و طرح‌های ساده مناسب‌تر است. ظاهر عکس‌ها ممکن است تغییر کند؛ جزئیات بر پایه تصویری با حداکثر ضلع ۱۰۲۴ پیکسل پردازش می‌شوند.</p>
+            <div class="image-converter-progress" data-progress-panel hidden>
+                <p data-progress-label role="status" aria-live="polite">آماده تبدیل</p>
+                <progress id="image-conversion-progress" max="100" value="0" aria-label="پیشرفت تبدیل تصویر"></progress>
+            </div>
+            <button class="button button-primary image-converter-submit" type="submit"><span data-submit-label>تبدیل و دانلود</span> <span aria-hidden="true">←</span></button>
+            <a class="image-download-link" data-download-link hidden>دریافت دوباره فایل تبدیل‌شده</a>
+            <p class="image-converter-limit" id="image-upload-limit">حداکثر حجم هر بارگذاری: ۲۵ مگابایت. ZIP: حداکثر ۵۰ تصویر و ۱۰۰ مگابایت پس از بازشدن.</p>
         </form>
     </section>
 </main>
+{% endblock %}
+
+{% block extra_scripts %}
+<script src="{% static 'dist/js/image-converter.min.js' %}?v=20261116-1" defer></script>
 {% endblock %}
