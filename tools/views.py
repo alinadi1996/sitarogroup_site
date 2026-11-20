@@ -2,6 +2,8 @@ from io import BytesIO
 import ipaddress
 import json
 import os
+import requests
+from django.conf import settings
 from pathlib import Path
 import socket
 import subprocess
@@ -14,7 +16,7 @@ from urllib.error import HTTPError, URLError
 from urllib.parse import urlencode, urljoin, urlsplit
 from urllib.request import HTTPRedirectHandler, Request, build_opener, urlopen
 from zipfile import BadZipFile, ZIP_DEFLATED, ZipFile
-
+from environs import Env
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import Http404, HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import render
@@ -31,7 +33,8 @@ IMAGE_EXTENSIONS = {".avif", ".bmp", ".gif", ".jpeg", ".jpg", ".png", ".tif", ".
 MAX_UPLOAD_SIZE, MAX_ARCHIVE_FILES, MAX_ARCHIVE_SIZE, MAX_IMAGE_PIXELS = 25 * 1024 * 1024, 50, 100 * 1024 * 1024, 40_000_000
 MAX_WEBSITE_RESPONSE_SIZE = 2 * 1024 * 1024
 PAGESPEED_API_URL = "https://www.googleapis.com/pagespeedonline/v5/runPagespeed"
-
+env = Env()
+env.read_env()
 
 class WebsiteMetadataParser(LoginRequiredMixin, HTMLParser):
     def __init__(self):
@@ -54,7 +57,7 @@ class WebsiteMetadataParser(LoginRequiredMixin, HTMLParser):
 class NoRedirectHandler(HTTPRedirectHandler):
     def redirect_request(self, request, fp, code, msg, headers, newurl): return None
 
-@login_required
+
 def validate_public_url(value):
     url, parts = value.strip(), urlsplit(value.strip())
     if parts.scheme not in {"http", "https"} or not parts.hostname or parts.username or parts.password: raise ValueError("یک آدرس معتبر با http:// یا https:// وارد کنید.")
@@ -66,7 +69,7 @@ def validate_public_url(value):
     if not addresses or any(not ipaddress.ip_address(address).is_global for address in addresses): raise ValueError("آدرس‌های محلی یا خصوصی قابل بررسی نیستند.")
     return url
 
-@login_required
+
 def inspect_website(url):
     opener, current_url = build_opener(NoRedirectHandler()), validate_public_url(url)
     for _ in range(6):
@@ -85,20 +88,106 @@ def inspect_website(url):
         return {"final_url": current_url, "status_code": status, "title": " ".join(part for part in parser.title if part), "description": parser.description, "h1_count": parser.h1_count}
     raise ValueError("تعداد تغییرمسیرهای وب‌سایت بیش از حد مجاز است.")
 
-@login_required
-def fetch_page_speed(url):
-    api_key = os.environ.get("GOOGLE_PAGESPEED_API_KEY")
-    if not api_key: return None, "کلید Google PageSpeed تنظیم نشده است."
-    try:
-        with urlopen(f"{PAGESPEED_API_URL}?{urlencode({'url': url, 'strategy': 'mobile', 'category': 'PERFORMANCE', 'key': api_key})}", timeout=60) as response: data = json.load(response)
-    except HTTPError as error: return None, f"Google PageSpeed با خطای {error.code} پاسخ داد."
-    except (URLError, TimeoutError, OSError, json.JSONDecodeError): return None, "دریافت گزارش Google PageSpeed در حال حاضر ممکن نیست."
-    lighthouse, audits = data.get("lighthouseResult", {}), data.get("lighthouseResult", {}).get("audits", {})
-    score = lighthouse.get("categories", {}).get("performance", {}).get("score")
-    if score is None: return None, "Google PageSpeed برای این آدرس امتیازی برنگرداند."
-    return {"score": round(score * 100), "first_contentful_paint": audits.get("first-contentful-paint", {}).get("displayValue", "-"), "largest_contentful_paint": audits.get("largest-contentful-paint", {}).get("displayValue", "-"), "total_blocking_time": audits.get("total-blocking-time", {}).get("displayValue", "-"), "cumulative_layout_shift": audits.get("cumulative-layout-shift", {}).get("displayValue", "-")}, None
 
-@login_required()
+
+def get_pagespeed_data(url, strategy="mobile"):
+    response = requests.post(
+        settings.PAGESPEED_WORKER_URL,
+        json={
+            "url": url,
+            "strategy": strategy,
+        },
+        headers={
+            "X-API-Key": settings.PAGESPEED_WORKER_SECRET,
+        },
+        timeout=65,
+    )
+
+    response.raise_for_status()
+    return response.json()
+
+
+
+import json
+from urllib.request import Request, urlopen
+from urllib.error import HTTPError, URLError
+
+from django.conf import settings
+
+
+def fetch_page_speed(url):
+    worker_url = settings.PAGESPEED_WORKER_URL
+    worker_secret = settings.PAGESPEED_WORKER_SECRET
+
+    if not worker_url or not worker_secret:
+        return None, "تنظیمات سرویس PageSpeed کامل نیست."
+
+    payload = json.dumps({
+        "url": url,
+        "strategy": "mobile"
+    }).encode("utf-8")
+
+    request = Request(
+        worker_url,
+        data=payload,
+        headers={
+            "Content-Type": "application/json",
+            "X-API-Key": worker_secret,
+            "User-Agent": "SitaroGroup-WebsiteAnalyzer/1.0",
+            "Accept": "application/json",
+        },
+        method="POST",
+    )
+
+    try:
+        with urlopen(request, timeout=65) as response:
+            data = json.load(response)
+
+    except HTTPError as error:
+        import logging
+
+        logger = logging.getLogger(__name__)
+
+        error_body = error.read(3000).decode(
+            "utf-8", errors="replace"
+        )
+
+        logger.error(
+            "PageSpeed Worker HTTP %s: %s",
+            error.code,
+            error_body
+        )
+
+        return None, f"سرویس PageSpeed خطای {error.code} داد. جزئیات در لاگ سرور ثبت شد."
+
+    lighthouse = data.get("lighthouseResult", {})
+    audits = lighthouse.get("audits", {})
+
+    score = lighthouse.get(
+        "categories", {}
+    ).get("performance", {}).get("score")
+
+    if score is None:
+        return None, "Google PageSpeed برای این آدرس امتیازی برنگرداند."
+
+    return {
+        "score": round(score * 100),
+        "first_contentful_paint": audits.get(
+            "first-contentful-paint", {}
+        ).get("displayValue", "-"),
+        "largest_contentful_paint": audits.get(
+            "largest-contentful-paint", {}
+        ).get("displayValue", "-"),
+        "total_blocking_time": audits.get(
+            "total-blocking-time", {}
+        ).get("displayValue", "-"),
+        "cumulative_layout_shift": audits.get(
+            "cumulative-layout-shift", {}
+        ).get("displayValue", "-"),
+    }, None
+
+
+
 def convert_svg(image, quality):
     # Bound tracing work for photographs and archives. Keep the original canvas
     # dimensions through viewBox, even when the tracing input is downsampled.
@@ -130,7 +219,7 @@ def convert_svg(image, quality):
     svg.set("height", str(original_height))
     return ElementTree.tostring(svg, encoding="utf-8", xml_declaration=True)
 
-@login_required
+
 def convert_image(source, output_format, quality=90):
     pil_format, _, extension = OUTPUT_FORMATS[output_format]
     with Image.open(source) as image:
@@ -261,13 +350,13 @@ class ToolLaunchView(View):
         return HttpResponseRedirect(f"{reverse('tools:index')}#tool-{tool.slug}")
 
 
-class SitemapRobotsGeneratorView(TemplateView):
+class SitemapRobotsGeneratorView(LoginRequiredMixin , TemplateView):
     template_name = "tools/sitemap_robots_generator.html"
 
 
-class SerpPreviewView(TemplateView):
+class SerpPreviewView(LoginRequiredMixin , TemplateView):
     template_name = "tools/serp_preview.html"
 
 
-class SchemaGeneratorView(TemplateView):
+class SchemaGeneratorView(LoginRequiredMixin , TemplateView):
     template_name = "tools/schema_generator.html"
