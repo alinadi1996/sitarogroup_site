@@ -15,6 +15,7 @@ from urllib.parse import urlencode, urljoin, urlsplit
 from urllib.request import HTTPRedirectHandler, Request, build_opener, urlopen
 from zipfile import BadZipFile, ZIP_DEFLATED, ZipFile
 
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import Http404, HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import render
 from django.urls import reverse
@@ -22,7 +23,7 @@ from django.utils.http import content_disposition_header
 from django.views import View
 from django.views.generic import ListView, TemplateView
 from PIL import Image, ImageOps, UnidentifiedImageError
-
+from django.contrib.auth.decorators import login_required
 from .models import Tool
 
 OUTPUT_FORMATS = {"webp": ("WEBP", "image/webp", "webp"), "png": ("PNG", "image/png", "png"), "jpeg": ("JPEG", "image/jpeg", "jpg"), "svg": ("SVG", "image/svg+xml", "svg")}
@@ -32,7 +33,7 @@ MAX_WEBSITE_RESPONSE_SIZE = 2 * 1024 * 1024
 PAGESPEED_API_URL = "https://www.googleapis.com/pagespeedonline/v5/runPagespeed"
 
 
-class WebsiteMetadataParser(HTMLParser):
+class WebsiteMetadataParser(LoginRequiredMixin, HTMLParser):
     def __init__(self):
         super().__init__()
         self.title, self.description, self.h1_count, self._in_title = [], "", 0, False
@@ -53,7 +54,7 @@ class WebsiteMetadataParser(HTMLParser):
 class NoRedirectHandler(HTTPRedirectHandler):
     def redirect_request(self, request, fp, code, msg, headers, newurl): return None
 
-
+@login_required
 def validate_public_url(value):
     url, parts = value.strip(), urlsplit(value.strip())
     if parts.scheme not in {"http", "https"} or not parts.hostname or parts.username or parts.password: raise ValueError("یک آدرس معتبر با http:// یا https:// وارد کنید.")
@@ -65,7 +66,7 @@ def validate_public_url(value):
     if not addresses or any(not ipaddress.ip_address(address).is_global for address in addresses): raise ValueError("آدرس‌های محلی یا خصوصی قابل بررسی نیستند.")
     return url
 
-
+@login_required
 def inspect_website(url):
     opener, current_url = build_opener(NoRedirectHandler()), validate_public_url(url)
     for _ in range(6):
@@ -84,7 +85,7 @@ def inspect_website(url):
         return {"final_url": current_url, "status_code": status, "title": " ".join(part for part in parser.title if part), "description": parser.description, "h1_count": parser.h1_count}
     raise ValueError("تعداد تغییرمسیرهای وب‌سایت بیش از حد مجاز است.")
 
-
+@login_required
 def fetch_page_speed(url):
     api_key = os.environ.get("GOOGLE_PAGESPEED_API_KEY")
     if not api_key: return None, "کلید Google PageSpeed تنظیم نشده است."
@@ -97,7 +98,7 @@ def fetch_page_speed(url):
     if score is None: return None, "Google PageSpeed برای این آدرس امتیازی برنگرداند."
     return {"score": round(score * 100), "first_contentful_paint": audits.get("first-contentful-paint", {}).get("displayValue", "-"), "largest_contentful_paint": audits.get("largest-contentful-paint", {}).get("displayValue", "-"), "total_blocking_time": audits.get("total-blocking-time", {}).get("displayValue", "-"), "cumulative_layout_shift": audits.get("cumulative-layout-shift", {}).get("displayValue", "-")}, None
 
-
+@login_required()
 def convert_svg(image, quality):
     # Bound tracing work for photographs and archives. Keep the original canvas
     # dimensions through viewBox, even when the tracing input is downsampled.
@@ -129,7 +130,7 @@ def convert_svg(image, quality):
     svg.set("height", str(original_height))
     return ElementTree.tostring(svg, encoding="utf-8", xml_declaration=True)
 
-
+@login_required
 def convert_image(source, output_format, quality=90):
     pil_format, _, extension = OUTPUT_FORMATS[output_format]
     with Image.open(source) as image:
@@ -151,8 +152,7 @@ def convert_image(source, output_format, quality=90):
         image.save(output, format=pil_format, **({"quality": quality} if pil_format in {"JPEG", "WEBP"} else {}))
     return output.getvalue(), extension
 
-
-class ImageConvertView(View):
+class ImageConvertView(LoginRequiredMixin ,View):
     template_name = "tools/image_converter.html"
 
     def get(self, request):
@@ -217,7 +217,7 @@ class ImageConvertView(View):
         return response
 
 
-class WebsiteAnalyzerView(View):
+class WebsiteAnalyzerView(LoginRequiredMixin , View):
     template_name = "tools/website_analyzer.html"
 
     def get(self, request):
@@ -233,7 +233,7 @@ class WebsiteAnalyzerView(View):
         return render(request, self.template_name, {"url": url, "analysis": analysis, "page_speed": page_speed, "page_speed_error": page_speed_error})
 
 
-class ToolIndexView(ListView):
+class ToolIndexView(LoginRequiredMixin , ListView):
     model = Tool
     template_name = "tools/index.html"
     context_object_name = "tools"

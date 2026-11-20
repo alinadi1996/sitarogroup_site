@@ -287,7 +287,7 @@ LOCALE_PATHS = [
 
 LOGIN_REDIRECT_URL = 'home'
 LOGOUT_REDIRECT_URL = 'home'
-
+LOGIN_URL = "account_login"
 ACCOUNT_SIGNUP_REDIRECT_URL = 'home'
 
 # Email
