@@ -16,7 +16,7 @@ COPY requirements.txt .
 
 RUN pip install \
     --no-cache-dir \
-    --index-url https://mirror-pypi.runflare.com/simple \
+    --index-url https://package-mirror.liara.ir/repository/pypi/simple \
     --timeout 120 \
     --retries 5 \
     -r requirements.txt
