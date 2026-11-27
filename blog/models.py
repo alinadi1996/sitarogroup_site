@@ -4,6 +4,7 @@ from django.conf import settings
 from django.db import models
 from django.urls import reverse
 from seo.models import SEOFieldsMixin
+from jodit.fields import RichTextField
 
 
 
@@ -13,7 +14,7 @@ class Post(SEOFieldsMixin):
         ('pub', 'Published'),
     )
     title = models.CharField(max_length=200)
-    content = models.TextField()
+    content = RichTextField(config_name='default')
     cover = models.ImageField(upload_to='blog/%Y/%m', null=True, blank=True)
     datetime_created = models.DateTimeField(auto_now_add=True)
     datetime_updated = models.DateTimeField(auto_now=True)

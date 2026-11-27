@@ -85,6 +85,9 @@ INSTALLED_APPS = [
     'tools',
     'seo',
     'csp',
+
+    # rich text editor
+    'jodit',
 ]
 
 UNFOLD = {
@@ -361,4 +364,128 @@ SECURE_HSTS_INCLUDE_SUBDOMAINS = True
 PAGESPEED_WORKER_URL = env("PAGESPEED_WORKER_URL")
 PAGESPEED_WORKER_SECRET = env("PAGESPEED_WORKER_SECRET")
 
+
+
+JODIT_JS_URL = None
+JODIT_CSS_URL = None
+
+JODIT_CONFIGS = {
+    "default": {
+        # Layout
+        "width": "100%",
+        "height": 650,
+        "minHeight": 400,
+        "maxHeight": 1400,
+        "theme": "auto",
+
+        # Localization
+        "language": "fa",
+        "direction": "rtl",             
+        "defaultMode": 1,
+        "placeholder": "محتوای خود را اینجا وارد کنید...",
+
+        # Toolbar
+        "toolbar": True,
+        "toolbarAdaptive": False,
+        "toolbarSticky": True,
+        "toolbarButtonSize": "middle",
+
+        "buttons": [
+            "source", "fullsize", "|",
+            "undo", "redo", "|",
+            "paragraph", "font", "fontsize", "|",
+            "bold", "italic", "underline",
+            "strikethrough", "|",
+            "brush", "eraser", "|",
+            "ul", "ol", "indent", "outdent", "|",
+            "align", "|",
+            "link", "image", "table", "|",
+            "hr", "symbol", "copyformat", "|",
+            "preview", "print",
+        ],
+
+        # Typography
+        "enter": "P",
+        "style": {
+            "fontFamily": "IRANYekan, Tahoma, sans-serif",
+            "fontSize": "15px",
+            "lineHeight": "2",
+        },
+
+        "controls": {
+            "paragraph": {
+                "list": {
+                    "p": "متن معمولی",
+                    "h2": "عنوان H2",
+                    "h3": "عنوان H3",
+                    "h4": "عنوان H4",
+                    "h5": "عنوان H5",
+                    "h6": "عنوان H6",
+                    "blockquote": "نقل قول",
+                    "pre": "کد",
+                },
+            },
+        },
+
+        # HTML and Paste
+        "askBeforePasteHTML": True,
+        "askBeforePasteFromWord": True,
+        "defaultActionOnPaste": "insert_as_html",
+        "beautifyHTML": True,
+
+        "cleanHTML": {
+            "removeEmptyElements": False,
+            "fillEmptyParagraph": True,
+            "denyTags": "script,iframe,object,embed",
+        },
+
+        # Source editor
+        "sourceEditor": "area",
+
+        # Status bar
+        "showCharsCounter": True,
+        "showWordsCounter": True,
+        "showXPathInStatusbar": False,
+
+        # Behavior
+        "spellcheck": True,
+        "allowResizeY": True,
+        "allowResizeX": False,
+        "saveModeInCookie": False,
+        "useSearch": True,
+
+        # Images
+        "uploader": {
+            "insertImageAsBase64URI": False,
+        },
+
+        "imageDefaultWidth": 800,
+
+        # Plugins
+        "disablePlugins": [
+            "powered-by-jodit",
+        ],
+    },
+
+    # Short description editor
+    "simple": {
+        "width": "100%",
+        "height": 250,
+        "theme": "auto",
+        "language": "fa",
+        "direction": "rtl",
+        "toolbarAdaptive": False,
+
+        "buttons": [
+            "source", "|",
+            "bold", "italic", "underline", "|",
+            "ul", "ol", "link", "|",
+            "undo", "redo", "eraser",
+        ],
+
+        "showCharsCounter": True,
+        "showWordsCounter": True,
+        "showXPathInStatusbar": False,
+    },
+}
 

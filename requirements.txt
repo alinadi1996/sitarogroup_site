@@ -12,6 +12,7 @@ Django==6.1.1
 django-allauth==65.19.4
 django-cache-url==3.4.6
 django-csp==4.0
+django-jodit==0.1.1
 django-unfold==0.102.0
 djangorestframework==3.18.1
 djlint==1.54.0
